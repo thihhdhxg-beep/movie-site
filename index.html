@@ -149,34 +149,52 @@
         </button>
       </nav>
 
-      <!-- Live Search Bar (Submits on Enter + supports instant clear) -->
-      <form id="searchForm" class="relative w-full max-w-[200px] sm:max-w-xs" role="search">
-        <label for="searchInput" class="sr-only">Search movies (press Enter)</label>
-        <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
-          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
-          </svg>
-        </span>
-        <input
-          id="searchInput"
-          type="search"
-          placeholder="Search movies (Enter)..."
-          autocomplete="off"
-          class="h-10 w-full rounded-xl border border-white/10 bg-white/5 pl-9 pr-9 text-sm text-white placeholder-slate-400 backdrop-blur-xl transition-all duration-200 focus:border-cyan-400/70 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 sm:h-11"
-        />
+      <!-- Search & Watchlist Controls -->
+      <div class="flex items-center gap-2 sm:gap-3">
+        <!-- Live Search Bar (Submits on Enter + supports instant clear) -->
+        <form id="searchForm" class="relative w-full max-w-[165px] sm:max-w-xs" role="search">
+          <label for="searchInput" class="sr-only">Search movies in real time</label>
+          <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="11" cy="11" r="8" />
+              <path d="m21 21-4.3-4.3" />
+            </svg>
+          </span>
+          <input
+            id="searchInput"
+            type="search"
+            placeholder="Search movies..."
+            autocomplete="off"
+            class="h-10 w-full rounded-xl border border-white/10 bg-white/5 pl-9 pr-9 text-sm text-white placeholder-slate-400 backdrop-blur-xl transition-all duration-200 focus:border-cyan-400/70 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 sm:h-11"
+          />
+          <button
+            id="clearSearchBtn"
+            type="button"
+            aria-label="Clear search"
+            class="hidden absolute inset-y-0 right-1 my-auto h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M18 6 6 18" />
+              <path d="m6 6 12 12" />
+            </svg>
+          </button>
+        </form>
+
+        <!-- Watchlist Toggle Button -->
         <button
-          id="clearSearchBtn"
+          id="watchlistToggleBtn"
           type="button"
-          aria-label="Clear search"
-          class="hidden absolute inset-y-0 right-1 my-auto flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          aria-expanded="false"
+          aria-controls="watchlistSection"
+          class="inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-semibold text-slate-200 backdrop-blur-xl transition-all duration-200 ease-cinema hover:border-crimson/50 hover:bg-crimson/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 sm:h-11 sm:px-4"
         >
-          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M18 6 6 18" />
-            <path d="m6 6 12 12" />
+          <svg class="h-4 w-4 text-crimson" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />
           </svg>
+          <span class="hidden sm:inline">Watchlist</span>
+          <span id="watchlistCountBadge" class="font-mono tabular-nums text-cyan-300">(0)</span>
         </button>
-      </form>
+      </div>
     </div>
   </header>
 
@@ -230,6 +248,37 @@
           </div>
         </div>
       </div>
+    </section>
+
+    <!-- Toggleable Saved Watchlist Section -->
+    <section id="watchlistSection" aria-labelledby="watchlistHeading" class="mb-10 hidden rounded-2xl border border-white/10 bg-white/[0.03] p-5 backdrop-blur-xl sm:p-7">
+      <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
+        <div>
+          <h2 id="watchlistHeading" class="font-display text-2xl font-bold tracking-tight text-white">
+            My Watchlist
+          </h2>
+          <p id="watchlistSubtitle" class="mt-1 text-sm text-slate-400">
+            Movies saved locally in your browser for quick playback
+          </p>
+        </div>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button
+            id="clearWatchlistBtn"
+            type="button"
+            class="hidden min-h-[40px] rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-300 transition-colors hover:border-crimson/50 hover:bg-crimson/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          >
+            Clear All
+          </button>
+          <button
+            id="closeWatchlistBtn"
+            type="button"
+            class="min-h-[40px] rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-300 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          >
+            Hide Watchlist
+          </button>
+        </div>
+      </div>
+      <div id="watchlistGridWrapper"></div>
     </section>
 
     <!-- Main Catalog Section -->
@@ -305,9 +354,9 @@
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
         <span>Top Rated</span>
       </button>
-      <button type="button" data-category="action" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-        <span>Action</span>
+      <button type="button" id="mobileWatchlistBtn" class="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span id="mobileWatchlistLabel">Watchlist</span>
       </button>
       <button type="button" id="mobileSearchFocusBtn" class="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -348,17 +397,62 @@
         </button>
       </div>
 
-      <!-- Responsive 16:9 Embed Player -->
-      <div class="relative aspect-video w-full bg-black">
+      <!-- Responsive 16:9 Embed Player with Loading & Missing-IMDb Fallback States -->
+      <div class="relative aspect-video w-full overflow-hidden bg-black">
         <iframe
           id="playerIframe"
           src="about:blank"
           title="Theatre Video Player"
           class="h-full w-full border-0"
-          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+          allow="autoplay; fullscreen; encrypted-media; picture-in-picture; accelerometer; gyroscope"
           allowfullscreen
-          referrerpolicy="origin"
+          referrerpolicy="no-referrer-when-downgrade"
         ></iframe>
+
+        <!-- Smooth Server Switch / Stream Loading Overlay -->
+        <div
+          id="playerLoadingOverlay"
+          class="pointer-events-none absolute inset-0 z-10 hidden flex-col items-center justify-center gap-3 bg-[#07070c]/85 backdrop-blur-sm transition-opacity duration-200"
+        >
+          <div class="h-10 w-10 animate-spin rounded-full border-2 border-cyan-400/25 border-t-neonCyan"></div>
+          <p id="playerLoadingText" class="font-mono text-xs font-medium text-cyan-200">
+            Connecting to Server 1...
+          </p>
+        </div>
+
+        <!-- Clean Fallback UI when IMDb Code is Missing or Invalid -->
+        <div
+          id="playerFallbackOverlay"
+          class="absolute inset-0 z-20 hidden flex-col items-center justify-center bg-gradient-to-br from-[#0e101c] via-[#07070c] to-[#120912] p-6 text-center"
+        >
+          <div class="mb-3 flex h-14 w-14 items-center justify-center rounded-2xl border border-crimson/40 bg-crimson/15 text-crimson shadow-[0_0_24px_rgba(255,30,66,0.2)]">
+            <svg class="h-7 w-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect width="18" height="18" x="3" y="3" rx="2" />
+              <path d="m15 9-6 6" />
+              <path d="m9 9 6 6" />
+            </svg>
+          </div>
+          <h4 class="font-display text-lg font-bold text-white sm:text-xl">
+            Stream Unavailable for This Title
+          </h4>
+          <p id="playerFallbackMessage" class="mt-1.5 max-w-md text-xs leading-relaxed text-slate-400 sm:text-sm">
+            A valid IMDb identifier is missing for this release, so embedded playback could not be initialized. You can still use the direct download option below.
+          </p>
+          <a
+            id="playerFallbackDownloadBtn"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="mt-5 inline-flex min-h-[44px] items-center justify-center gap-2 rounded-xl border border-cyan-400/45 bg-cyan-400/15 px-5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            Open Download Page
+          </a>
+        </div>
       </div>
 
       <!-- Server Switcher & Download Bar -->
@@ -656,8 +750,12 @@
         }
       };
 
+      const WATCHLIST_STORAGE_KEY = 'cineverse_watchlist_v1';
+
       const state = {
         movies: [],
+        watchlist: [],
+        isWatchlistOpen: false,
         featuredMovie: null,
         activeCategory: 'trending',
         searchQuery: '',
@@ -666,7 +764,9 @@
         isLoading: false,
         activeMovie: null,
         activeServer: 1,
-        fetchController: null
+        fetchController: null,
+        playerLoadTimer: null,
+        searchDebounceTimer: null
       };
 
       // DOM Elements
@@ -685,11 +785,25 @@
       const categoryTabs = document.querySelectorAll('.cat-tab');
       const mobileNavButtons = document.querySelectorAll('.mobile-nav-btn');
       const mobileSearchFocusBtn = document.getElementById('mobileSearchFocusBtn');
+      const mobileWatchlistBtn = document.getElementById('mobileWatchlistBtn');
+      const mobileWatchlistLabel = document.getElementById('mobileWatchlistLabel');
+      const watchlistToggleBtn = document.getElementById('watchlistToggleBtn');
+      const watchlistCountBadge = document.getElementById('watchlistCountBadge');
+      const watchlistSection = document.getElementById('watchlistSection');
+      const watchlistSubtitle = document.getElementById('watchlistSubtitle');
+      const watchlistGridWrapper = document.getElementById('watchlistGridWrapper');
+      const clearWatchlistBtn = document.getElementById('clearWatchlistBtn');
+      const closeWatchlistBtn = document.getElementById('closeWatchlistBtn');
 
       // Player Modal DOM
       const playerModal = document.getElementById('playerModal');
       const closePlayerBtn = document.getElementById('closePlayerBtn');
       const playerIframe = document.getElementById('playerIframe');
+      const playerLoadingOverlay = document.getElementById('playerLoadingOverlay');
+      const playerLoadingText = document.getElementById('playerLoadingText');
+      const playerFallbackOverlay = document.getElementById('playerFallbackOverlay');
+      const playerFallbackMessage = document.getElementById('playerFallbackMessage');
+      const playerFallbackDownloadBtn = document.getElementById('playerFallbackDownloadBtn');
       const modalTitle = document.getElementById('modalTitle');
       const modalMeta = document.getElementById('modalMeta');
       const modalSynopsis = document.getElementById('modalSynopsis');
@@ -716,38 +830,72 @@
           .replace(/'/g, '&#39;');
       }
 
+      function sanitizeImdbCode(rawCode) {
+        if (rawCode === null || rawCode === undefined) return '';
+        let code = String(rawCode).trim();
+        if (!code) return '';
+
+        // Extract tt-prefixed ID if embedded in a full IMDb URL
+        const urlMatch = code.match(/(tt\d{6,9})/i);
+        if (urlMatch) {
+          return urlMatch[1].toLowerCase();
+        }
+
+        // Prefix numeric-only IMDb IDs cleanly (e.g. "1375666" -> "tt1375666")
+        if (/^\d{6,9}$/.test(code)) {
+          return 'tt' + code;
+        }
+
+        // Normalize whitespace/casing and validate strict IMDb ID format
+        code = code.replace(/\s+/g, '').toLowerCase();
+        if (/^tt\d{6,9}$/.test(code)) {
+          return code;
+        }
+
+        return '';
+      }
+
       function normalizeYtsMovie(raw) {
-        const poster = raw.large_cover_image || raw.medium_cover_image || raw.small_cover_image || '';
-        const backdrop = raw.background_image_original || raw.background_image || poster;
-        const genres = Array.isArray(raw.genres) && raw.genres.length > 0 ? raw.genres : ['Movie'];
-        const rating = raw.rating ? Number(raw.rating).toFixed(1) : 'N/A';
+        const source = raw || {};
+        const poster = source.poster || source.large_cover_image || source.medium_cover_image || source.small_cover_image || '';
+        const backdrop = source.backdrop || source.background_image_original || source.background_image || poster;
+        const genres = Array.isArray(source.genres) && source.genres.length > 0 ? source.genres : ['Movie'];
+        const numericRating = Number(source.rating);
+        const rating = source.rating === 'N/A'
+          ? 'N/A'
+          : (!Number.isNaN(numericRating) && numericRating > 0 ? numericRating.toFixed(1) : 'N/A');
+        const runtime = typeof source.runtime === 'string' && source.runtime.includes('min')
+          ? source.runtime
+          : (source.runtime ? source.runtime + ' min' : 'HD');
 
         return {
-          id: raw.id,
-          imdb_code: raw.imdb_code || '',
-          title: raw.title || raw.title_english || 'Untitled',
-          year: raw.year ? String(raw.year) : '',
+          id: source.id,
+          imdb_code: sanitizeImdbCode(source.imdb_code || source.imdbCode),
+          title: source.title || source.title_english || 'Untitled',
+          year: source.year ? String(source.year) : '',
           rating: rating,
-          runtime: raw.runtime ? raw.runtime + ' min' : 'HD',
+          runtime: runtime,
           genres: genres,
           poster: poster,
           backdrop: backdrop,
-          summary: raw.summary || raw.description_full || 'Stream this movie in crisp high definition across multiple keyless servers.',
-          torrents: Array.isArray(raw.torrents) ? raw.torrents : [],
-          url: raw.url || ''
+          summary: source.summary || source.description_full || 'Stream this movie in crisp high definition across multiple keyless servers.',
+          torrents: Array.isArray(source.torrents) ? source.torrents : [],
+          url: source.url || ''
         };
       }
 
       function getEmbedUrl(imdbCode, serverNum) {
-        const cleanCode = encodeURIComponent(imdbCode || '');
+        const validCode = sanitizeImdbCode(imdbCode);
+        if (!validCode) return '';
+        const encodedCode = encodeURIComponent(validCode);
         if (serverNum === 2) {
-          return 'https://www.2embed.cc/embed/' + cleanCode;
+          return 'https://www.2embed.cc/embed/' + encodedCode;
         }
-        return 'https://vidsrc.xyz/embed/movie/' + cleanCode;
+        return 'https://vidsrc.xyz/embed/movie/' + encodedCode;
       }
 
       function getDownloadUrl(movie) {
-        if (Array.isArray(movie.torrents) && movie.torrents.length > 0) {
+        if (movie && Array.isArray(movie.torrents) && movie.torrents.length > 0) {
           const preferred = movie.torrents.find(function (t) {
             return t.quality === '1080p';
           }) || movie.torrents[0];
@@ -755,7 +903,184 @@
             return preferred.url;
           }
         }
-        return movie.url || ('https://yts.mx/browse-movies/' + encodeURIComponent(movie.imdb_code || movie.title || ''));
+        if (movie && movie.url) {
+          return movie.url;
+        }
+        const searchTerm = (movie && (movie.imdb_code || movie.title)) || '';
+        return 'https://yts.mx/browse-movies/' + encodeURIComponent(searchTerm);
+      }
+
+      function getMovieKey(movie) {
+        return String((movie && (sanitizeImdbCode(movie.imdb_code) || movie.id)) || '');
+      }
+
+      function loadWatchlistFromStorage() {
+        try {
+          const raw = localStorage.getItem(WATCHLIST_STORAGE_KEY);
+          if (!raw) return [];
+          const parsed = JSON.parse(raw);
+          return Array.isArray(parsed) ? parsed.map(normalizeYtsMovie) : [];
+        } catch (err) {
+          return [];
+        }
+      }
+
+      function persistWatchlist() {
+        try {
+          localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(state.watchlist));
+        } catch (err) {
+          // Ignore storage quota / privacy mode errors gracefully
+        }
+      }
+
+      function isInWatchlist(movie) {
+        const key = getMovieKey(movie);
+        if (!key) return false;
+        return state.watchlist.some(function (item) {
+          return getMovieKey(item) === key;
+        });
+      }
+
+      function updateWatchlistUI() {
+        const count = state.watchlist.length;
+        watchlistCountBadge.textContent = '(' + count + ')';
+        if (mobileWatchlistLabel) {
+          mobileWatchlistLabel.textContent = count > 0 ? 'Saved (' + count + ')' : 'Watchlist';
+        }
+        watchlistToggleBtn.setAttribute('aria-expanded', state.isWatchlistOpen ? 'true' : 'false');
+        watchlistToggleBtn.className = state.isWatchlistOpen
+          ? 'inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border border-crimson/60 bg-crimson/20 px-3 text-xs font-semibold text-white backdrop-blur-xl transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 sm:h-11 sm:px-4'
+          : 'inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-semibold text-slate-200 backdrop-blur-xl transition-all duration-200 ease-cinema hover:border-crimson/50 hover:bg-crimson/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 sm:h-11 sm:px-4';
+
+        if (mobileWatchlistBtn) {
+          mobileWatchlistBtn.className = state.isWatchlistOpen
+            ? 'flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-semibold text-crimson transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+            : 'flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+        }
+      }
+
+      function syncAllHeartButtons() {
+        const allHeartBtns = document.querySelectorAll('.watchlist-heart-btn');
+        allHeartBtns.forEach(function (btn) {
+          const key = btn.getAttribute('data-movie-key');
+          const saved = state.watchlist.some(function (item) {
+            return getMovieKey(item) === key;
+          });
+          applyHeartBtnAppearance(btn, saved);
+        });
+      }
+
+      function applyHeartBtnAppearance(btn, saved) {
+        btn.setAttribute('aria-pressed', saved ? 'true' : 'false');
+        btn.setAttribute('aria-label', saved ? 'Remove from Watchlist' : 'Save to Watchlist');
+        btn.title = saved ? 'Remove from Watchlist' : 'Save to Watchlist';
+
+        if (btn.id === 'heroWatchlistBtn') {
+          btn.className = saved
+            ? 'watchlist-heart-btn inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-crimson/60 bg-crimson/20 px-5 py-3 text-sm font-semibold text-white backdrop-blur-xl transition-colors duration-200 hover:bg-crimson/30 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+            : 'watchlist-heart-btn inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-xl transition-colors duration-200 hover:border-crimson/50 hover:bg-crimson/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          const textSpan = btn.querySelector('.hero-wl-label');
+          if (textSpan) {
+            textSpan.textContent = saved ? 'Saved' : 'Watchlist';
+          }
+        } else {
+          btn.className = saved
+            ? 'watchlist-heart-btn absolute right-2 top-2 z-10 flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-crimson/60 bg-crimson/25 text-crimson backdrop-blur-md shadow-lg transition-all duration-150 hover:scale-105 hover:bg-crimson/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+            : 'watchlist-heart-btn absolute right-2 top-2 z-10 flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-white/15 bg-black/55 text-white/85 backdrop-blur-md transition-all duration-150 hover:scale-105 hover:border-crimson/50 hover:bg-crimson/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+        }
+
+        const svg = btn.querySelector('svg');
+        if (svg) {
+          svg.setAttribute('fill', saved ? 'currentColor' : 'none');
+        }
+      }
+
+      function toggleMovieInWatchlist(movie) {
+        if (!movie) return;
+        const key = getMovieKey(movie);
+        if (!key) return;
+        const existingIndex = state.watchlist.findIndex(function (item) {
+          return getMovieKey(item) === key;
+        });
+
+        if (existingIndex >= 0) {
+          state.watchlist.splice(existingIndex, 1);
+        } else {
+          state.watchlist.unshift(movie);
+        }
+
+        persistWatchlist();
+        updateWatchlistUI();
+        syncAllHeartButtons();
+        if (state.isWatchlistOpen) {
+          renderWatchlistSection();
+        }
+      }
+
+      function renderWatchlistSection() {
+        const list = state.watchlist;
+        if (list.length === 0) {
+          clearWatchlistBtn.classList.add('hidden');
+          watchlistSubtitle.textContent = '0 saved titles · Click the heart icon on any movie card to add it';
+          watchlistGridWrapper.innerHTML =
+            '<div class="flex flex-col items-center justify-center rounded-xl border border-dashed border-white/15 bg-white/[0.02] px-6 py-12 text-center">' +
+              '<svg class="mb-3 h-9 w-9 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' +
+              '<p class="font-display text-base font-semibold text-white">Your Watchlist is empty</p>' +
+              '<p class="mt-1 max-w-sm text-xs text-slate-400">Tap the heart icon on any movie poster below to save titles here across visits.</p>' +
+            '</div>';
+          return;
+        }
+
+        clearWatchlistBtn.classList.remove('hidden');
+        watchlistSubtitle.textContent = list.length + (list.length === 1 ? ' saved title' : ' saved titles') + ' · Stored locally in your browser';
+
+        let html = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+        list.forEach(function (movie, i) {
+          html += createCardHtml(movie, i, 'watchlist');
+        });
+        html += '</div>';
+
+        watchlistGridWrapper.innerHTML = html;
+
+        const wlCards = watchlistGridWrapper.querySelectorAll('.catalog-card');
+        wlCards.forEach(function (card) {
+          function launch() {
+            const idx = parseInt(card.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && state.watchlist[idx]) {
+              openPlayerModal(state.watchlist[idx]);
+            }
+          }
+          card.addEventListener('click', launch);
+          card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              launch();
+            }
+          });
+        });
+
+        const wlHearts = watchlistGridWrapper.querySelectorAll('.watchlist-heart-btn');
+        wlHearts.forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const idx = parseInt(btn.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && state.watchlist[idx]) {
+              toggleMovieInWatchlist(state.watchlist[idx]);
+            }
+          });
+        });
+      }
+
+      function toggleWatchlistPanel(forceOpen) {
+        state.isWatchlistOpen = typeof forceOpen === 'boolean' ? forceOpen : !state.isWatchlistOpen;
+        updateWatchlistUI();
+        if (state.isWatchlistOpen) {
+          renderWatchlistSection();
+          watchlistSection.classList.remove('hidden');
+          watchlistSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          watchlistSection.classList.add('hidden');
+        }
       }
 
       function updateCategoryUI() {
@@ -832,12 +1157,16 @@
                   '<svg class="h-4 w-4 text-neonCyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>' +
                   'Details' +
                 '</button>' +
+                '<button type="button" id="heroWatchlistBtn" data-movie-key="' + escapeHtml(getMovieKey(movie)) + '" class="watchlist-heart-btn inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-xl transition-colors duration-200 hover:border-crimson/50 hover:bg-crimson/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+                  '<svg class="h-4 w-4 text-crimson" viewBox="0 0 24 24" fill="' + (isInWatchlist(movie) ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' +
+                  '<span class="hero-wl-label">' + (isInWatchlist(movie) ? 'Saved' : 'Watchlist') + '</span>' +
+                '</button>' +
               '</div>' +
             '</div>' +
             '<div class="hidden shrink-0 lg:block">' +
               '<div class="group relative h-64 w-44 overflow-hidden rounded-xl border border-white/15 bg-white/5 shadow-2xl shadow-black/80">' +
-                '<img src="' + escapeHtml(movie.poster) + '" alt="' + escapeHtml(movie.title) + ' poster" referrerpolicy="no-referrer" class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\');" />' +
-                '<div class="hidden flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-[#07070c] p-4 text-center">' +
+                '<img src="' + escapeHtml(movie.poster) + '" alt="' + escapeHtml(movie.title) + ' poster" referrerpolicy="no-referrer" class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\'); this.nextElementSibling.classList.add(\'flex\');" />' +
+                '<div class="hidden h-full w-full flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-[#07070c] p-4 text-center">' +
                   '<span class="font-display text-sm font-bold text-white">' + escapeHtml(movie.title) + '</span>' +
                   '<span class="mt-1 font-mono text-xs text-slate-400">' + escapeHtml(movie.year) + '</span>' +
                 '</div>' +
@@ -847,6 +1176,7 @@
 
         const heroWatchBtn = document.getElementById('heroWatchBtn');
         const heroDetailsBtn = document.getElementById('heroDetailsBtn');
+        const heroWatchlistBtn = document.getElementById('heroWatchlistBtn');
         if (heroWatchBtn) {
           heroWatchBtn.addEventListener('click', function () {
             openPlayerModal(movie);
@@ -857,22 +1187,39 @@
             openDetailsModal(movie);
           });
         }
+        if (heroWatchlistBtn) {
+          applyHeartBtnAppearance(heroWatchlistBtn, isInWatchlist(movie));
+          heroWatchlistBtn.addEventListener('click', function () {
+            toggleMovieInWatchlist(movie);
+          });
+        }
       }
 
-      function createCardHtml(movie, index) {
+      function createCardHtml(movie, index, listSource) {
         const primaryGenre = movie.genres[0] || 'Movie';
+        const saved = isInWatchlist(movie);
+        const key = getMovieKey(movie);
+        const heartClasses = saved
+          ? 'watchlist-heart-btn absolute right-2 top-2 z-10 flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-crimson/60 bg-crimson/25 text-crimson backdrop-blur-md shadow-lg transition-all duration-150 hover:scale-105 hover:bg-crimson/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+          : 'watchlist-heart-btn absolute right-2 top-2 z-10 flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-white/15 bg-black/55 text-white/85 backdrop-blur-md transition-all duration-150 hover:scale-105 hover:border-crimson/50 hover:bg-crimson/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+
         return (
-          '<article data-movie-index="' + index + '" tabindex="0" role="button" aria-label="Watch ' + escapeHtml(movie.title) + '" class="catalog-card group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 ease-cinema hover:-translate-y-1 hover:border-cyan-400/45 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+          '<article data-movie-index="' + index + '" data-list-source="' + (listSource || 'catalog') + '" data-imdb-code="' + escapeHtml(movie.imdb_code || '') + '" tabindex="0" role="button" aria-label="Watch ' + escapeHtml(movie.title) + '" class="catalog-card group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 ease-cinema hover:-translate-y-1 hover:border-cyan-400/45 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
             '<div class="relative aspect-[2/3] w-full overflow-hidden bg-slate-900">' +
+              '<button type="button" data-movie-index="' + index + '" data-movie-key="' + escapeHtml(key) + '" aria-pressed="' + (saved ? 'true' : 'false') + '" aria-label="' + (saved ? 'Remove from Watchlist' : 'Save to Watchlist') + '" title="' + (saved ? 'Remove from Watchlist' : 'Save to Watchlist') + '" class="' + heartClasses + '">' +
+                '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="' + (saved ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                  '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />' +
+                '</svg>' +
+              '</button>' +
               '<img ' +
                 'src="' + escapeHtml(movie.poster) + '" ' +
                 'alt="' + escapeHtml(movie.title) + ' poster" ' +
                 'loading="lazy" ' +
                 'referrerpolicy="no-referrer" ' +
                 'class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" ' +
-                'onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\');" ' +
+                'onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\'); this.nextElementSibling.classList.add(\'flex\');" ' +
               '/>' +
-              '<div class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#141728] to-[#07070c] p-4 text-center">' +
+              '<div class="hidden absolute inset-0 flex-col items-center justify-center bg-gradient-to-br from-[#141728] to-[#07070c] p-4 text-center">' +
                 '<svg class="mb-2 h-8 w-8 text-neonCyan/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m10 8 6 4-6 4Z"/></svg>' +
                 '<span class="font-display text-sm font-bold text-white line-clamp-2">' + escapeHtml(movie.title) + '</span>' +
               '</div>' +
@@ -963,6 +1310,22 @@
             if (e.key === 'Enter' || e.key === ' ') {
               e.preventDefault();
               launch();
+            }
+          });
+        });
+
+        const heartButtons = catalogGridWrapper.querySelectorAll('.watchlist-heart-btn');
+        heartButtons.forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const idx = parseInt(btn.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && state.movies[idx]) {
+              toggleMovieInWatchlist(state.movies[idx]);
+            }
+          });
+          btn.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
             }
           });
         });
@@ -1073,9 +1436,7 @@
           const data = payload && payload.data ? payload.data : {};
           const rawMovies = Array.isArray(data.movies) ? data.movies : [];
           const normalized = rawMovies
-            .filter(function (m) {
-              return m && m.imdb_code;
-            })
+            .filter(Boolean)
             .map(normalizeYtsMovie);
 
           // If search yielded zero matches cleanly
@@ -1123,30 +1484,96 @@
         }
       }
 
-      function updateServerButtons() {
+      function updateServerButtons(hasValidStream) {
+        const disabled = hasValidStream === false;
+        server1Btn.disabled = disabled;
+        server2Btn.disabled = disabled;
+
+        if (disabled) {
+          const disabledCls = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-500 opacity-50 cursor-not-allowed focus:outline-none';
+          server1Btn.className = disabledCls;
+          server2Btn.className = disabledCls;
+          return;
+        }
+
         if (state.activeServer === 1) {
-          server1Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
-          server2Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          server1Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 shadow-sm transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          server2Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 transition-all duration-150 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
         } else {
-          server1Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
-          server2Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          server1Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 transition-all duration-150 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          server2Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 shadow-sm transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
         }
       }
 
-      function openPlayerModal(movie) {
-        if (!movie) return;
+      function clearPlayerLoadTimer() {
+        if (state.playerLoadTimer) {
+          clearTimeout(state.playerLoadTimer);
+          state.playerLoadTimer = null;
+        }
+      }
+
+      function loadEmbedStream(movie, serverNum) {
+        clearPlayerLoadTimer();
+        const validImdb = sanitizeImdbCode(movie && movie.imdb_code);
+        const embedUrl = getEmbedUrl(validImdb, serverNum);
+        const downloadUrl = getDownloadUrl(movie);
+
+        if (!embedUrl) {
+          updateServerButtons(false);
+          playerIframe.onload = null;
+          playerIframe.src = 'about:blank';
+          playerIframe.classList.add('hidden');
+          playerLoadingOverlay.classList.add('hidden');
+          playerLoadingOverlay.classList.remove('flex');
+          playerFallbackDownloadBtn.href = downloadUrl;
+          playerFallbackMessage.textContent =
+            'A valid IMDb code (e.g., tt1375666) is missing for "' + ((movie && movie.title) || 'this title') + '", so embedded streaming cannot load. Use the direct download button below.';
+          playerFallbackOverlay.classList.remove('hidden');
+          playerFallbackOverlay.classList.add('flex');
+          return;
+        }
+
+        updateServerButtons(true);
+        playerFallbackOverlay.classList.add('hidden');
+        playerFallbackOverlay.classList.remove('flex');
+        playerIframe.classList.remove('hidden');
+
+        playerLoadingText.textContent = serverNum === 2
+          ? 'Connecting to Server 2 (2Embed)...'
+          : 'Connecting to Server 1 (VidSrc)...';
+        playerLoadingOverlay.classList.remove('hidden');
+        playerLoadingOverlay.classList.add('flex');
+
+        playerIframe.onload = function () {
+          clearPlayerLoadTimer();
+          playerLoadingOverlay.classList.add('hidden');
+          playerLoadingOverlay.classList.remove('flex');
+        };
+
+        // Safety timeout so loading overlay clears smoothly even if cross-origin onload fires late
+        state.playerLoadTimer = setTimeout(function () {
+          playerLoadingOverlay.classList.add('hidden');
+          playerLoadingOverlay.classList.remove('flex');
+        }, 2200);
+
+        playerIframe.src = embedUrl;
+      }
+
+      function openPlayerModal(rawMovie) {
+        if (!rawMovie) return;
+        const movie = normalizeYtsMovie(rawMovie);
         closeDetailsModal();
         state.activeMovie = movie;
         state.activeServer = 1;
 
         const genreText = movie.genres.slice(0, 3).join(', ');
+        const imdbBadge = movie.imdb_code ? movie.imdb_code.toUpperCase() : '';
         modalTitle.textContent = movie.title + (movie.year ? ' (' + movie.year + ')' : '');
-        modalMeta.textContent = ['★ ' + movie.rating + ' IMDb', movie.runtime, genreText].filter(Boolean).join(' · ');
+        modalMeta.textContent = ['★ ' + movie.rating + ' IMDb', movie.runtime, genreText, imdbBadge].filter(Boolean).join(' · ');
         modalSynopsis.textContent = movie.summary;
         modalDownloadLink.href = getDownloadUrl(movie);
 
-        updateServerButtons();
-        playerIframe.src = getEmbedUrl(movie.imdb_code, 1);
+        loadEmbedStream(movie, 1);
 
         playerModal.classList.remove('hidden');
         playerModal.classList.add('flex');
@@ -1155,9 +1582,16 @@
       }
 
       function closePlayerModal() {
+        clearPlayerLoadTimer();
         playerModal.classList.add('hidden');
         playerModal.classList.remove('flex');
+        playerIframe.onload = null;
         playerIframe.src = 'about:blank';
+        playerIframe.classList.remove('hidden');
+        playerLoadingOverlay.classList.add('hidden');
+        playerLoadingOverlay.classList.remove('flex');
+        playerFallbackOverlay.classList.add('hidden');
+        playerFallbackOverlay.classList.remove('flex');
         document.body.style.overflow = '';
         state.activeMovie = null;
       }
@@ -1196,6 +1630,7 @@
         state.searchQuery = '';
         searchInput.value = '';
         clearSearchBtn.classList.add('hidden');
+        clearSearchBtn.classList.remove('flex');
         updateCategoryUI();
         loadMovies(false);
       }
@@ -1228,18 +1663,60 @@
         });
       }
 
+      if (watchlistToggleBtn) {
+        watchlistToggleBtn.addEventListener('click', function () {
+          toggleWatchlistPanel();
+        });
+      }
+
+      if (mobileWatchlistBtn) {
+        mobileWatchlistBtn.addEventListener('click', function () {
+          toggleWatchlistPanel();
+        });
+      }
+
+      if (closeWatchlistBtn) {
+        closeWatchlistBtn.addEventListener('click', function () {
+          toggleWatchlistPanel(false);
+        });
+      }
+
+      if (clearWatchlistBtn) {
+        clearWatchlistBtn.addEventListener('click', function () {
+          state.watchlist = [];
+          persistWatchlist();
+          updateWatchlistUI();
+          syncAllHeartButtons();
+          renderWatchlistSection();
+        });
+      }
+
       brandHomeBtn.addEventListener('click', function (e) {
         e.preventDefault();
         resetToHome();
       });
 
-      // Toggle Clear button visibility while typing
+      // Real-time debounced search + Clear button visibility
       searchInput.addEventListener('input', function () {
-        const val = searchInput.value;
-        if (val.trim().length > 0) {
+        const val = searchInput.value.trim();
+        if (state.searchDebounceTimer) {
+          clearTimeout(state.searchDebounceTimer);
+          state.searchDebounceTimer = null;
+        }
+
+        if (val.length > 0) {
           clearSearchBtn.classList.remove('hidden');
+          clearSearchBtn.classList.add('flex');
+          state.searchDebounceTimer = setTimeout(function () {
+            if (state.searchQuery !== val) {
+              state.searchQuery = val;
+              updateCategoryUI();
+              loadMovies(false);
+            }
+          }, 420);
         } else {
           clearSearchBtn.classList.add('hidden');
+          clearSearchBtn.classList.remove('flex');
           if (state.searchQuery) {
             state.searchQuery = '';
             updateCategoryUI();
@@ -1248,18 +1725,27 @@
         }
       });
 
-      // Dynamic search query triggered on pressing Enter
+      // Immediate search query triggered on pressing Enter
       searchForm.addEventListener('submit', function (e) {
         e.preventDefault();
+        if (state.searchDebounceTimer) {
+          clearTimeout(state.searchDebounceTimer);
+          state.searchDebounceTimer = null;
+        }
         state.searchQuery = searchInput.value.trim();
         updateCategoryUI();
         loadMovies(false);
       });
 
       clearSearchBtn.addEventListener('click', function () {
+        if (state.searchDebounceTimer) {
+          clearTimeout(state.searchDebounceTimer);
+          state.searchDebounceTimer = null;
+        }
         searchInput.value = '';
         state.searchQuery = '';
         clearSearchBtn.classList.add('hidden');
+        clearSearchBtn.classList.remove('flex');
         updateCategoryUI();
         loadMovies(false);
         searchInput.focus();
@@ -1275,15 +1761,13 @@
       server1Btn.addEventListener('click', function () {
         if (!state.activeMovie || state.activeServer === 1) return;
         state.activeServer = 1;
-        updateServerButtons();
-        playerIframe.src = getEmbedUrl(state.activeMovie.imdb_code, 1);
+        loadEmbedStream(state.activeMovie, 1);
       });
 
       server2Btn.addEventListener('click', function () {
         if (!state.activeMovie || state.activeServer === 2) return;
         state.activeServer = 2;
-        updateServerButtons();
-        playerIframe.src = getEmbedUrl(state.activeMovie.imdb_code, 2);
+        loadEmbedStream(state.activeMovie, 2);
       });
 
       closePlayerBtn.addEventListener('click', closePlayerModal);
@@ -1311,7 +1795,9 @@
         }
       });
 
-      // Boot CineVerse Keyless Engine
+      // Boot CineVerse Keyless Engine & Hydrate Watchlist
+      state.watchlist = loadWatchlistFromStorage();
+      updateWatchlistUI();
       updateCategoryUI();
       renderHero(normalizeYtsMovie(FALLBACK_MOVIES[0]));
       loadMovies(false);
