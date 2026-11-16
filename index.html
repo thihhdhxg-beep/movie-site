@@ -110,7 +110,7 @@
     }
   </style>
 </head>
-<body class="min-h-screen bg-[#07070c] text-slate-100 antialiased cinema-ambient pb-16 md:pb-0 selection:bg-cyan-400/30 selection:text-cyan-100">
+<body class="min-h-screen bg-[#07070c] text-slate-100 antialiased cinema-ambient pb-32 md:pb-0 selection:bg-cyan-400/30 selection:text-cyan-100">
 
   <!-- Sticky Glassmorphic Navbar -->
   <header class="sticky top-0 z-40 border-b border-white/10 bg-[#07070c]/85 backdrop-blur-xl">
@@ -128,24 +128,33 @@
       </a>
 
       <!-- Desktop Category Filter Tabs -->
-      <nav aria-label="Categories" class="hidden items-center gap-1 rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-xl lg:flex">
-        <button type="button" data-category="trending" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+      <nav aria-label="Categories" class="hidden items-center gap-1 overflow-x-auto no-scrollbar rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-xl lg:flex">
+        <button type="button" data-category="trending" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
           Trending
         </button>
-        <button type="button" data-category="top_rated" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <button type="button" data-category="top_rated" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
           Top Rated
         </button>
-        <button type="button" data-category="action" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <button type="button" data-category="action" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
           Action
         </button>
-        <button type="button" data-category="sci-fi" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <button type="button" data-category="sci-fi" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
           Sci-Fi
         </button>
-        <button type="button" data-category="comedy" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <button type="button" data-category="comedy" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
           Comedy
         </button>
-        <button type="button" data-category="thriller" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <button type="button" data-category="thriller" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
           Thriller
+        </button>
+        <button type="button" data-category="horror" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Horror
+        </button>
+        <button type="button" data-category="animation" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Animation
+        </button>
+        <button type="button" data-category="drama" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Drama
         </button>
       </nav>
 
@@ -255,6 +264,15 @@
       <button type="button" data-category="thriller" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
         Thriller
       </button>
+      <button type="button" data-category="horror" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Horror
+      </button>
+      <button type="button" data-category="animation" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Animation
+      </button>
+      <button type="button" data-category="drama" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Drama
+      </button>
     </div>
 
     <!-- Cinematic Hero Banner (#1 Trending Movie) -->
@@ -307,9 +325,69 @@
 
     <!-- Main Catalog Section -->
     <section aria-labelledby="catalogHeading">
-      <!-- ADSTERRA PRE-CATALOG BANNER (468x60 above Trending Movies Heading) -->
-      <div aria-label="Catalog Advertisement" class="flex justify-center my-4 overflow-hidden">
-        <div class="flex min-h-[60px] w-full max-w-[468px] items-center justify-center overflow-x-auto no-scrollbar rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl">
+      <!-- Recently Watched Carousel (Top of Main Catalog, populated from localStorage IDs) -->
+      <div id="recentlyWatchedSection" aria-labelledby="recentlyWatchedHeading" class="mb-8 hidden rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl sm:p-6">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+          <div class="flex items-center gap-2.5">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-cyan-400/35 bg-cyan-400/15 text-neonCyan">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <circle cx="12" cy="12" r="10" />
+                <polyline points="12 6 12 12 16 14" />
+              </svg>
+            </span>
+            <div>
+              <h2 id="recentlyWatchedHeading" class="font-display text-lg font-bold tracking-tight text-white sm:text-xl">
+                Recently Watched
+              </h2>
+              <p id="recentlyWatchedSubtitle" class="text-xs text-slate-400">
+                Your watched movies saved automatically
+              </p>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button
+              id="recentPrevBtn"
+              type="button"
+              data-ad-skip="true"
+              aria-label="Scroll recently watched left"
+              class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition-colors hover:border-cyan-400/45 hover:bg-cyan-400/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m15 18-6-6 6-6" />
+              </svg>
+            </button>
+            <button
+              id="recentNextBtn"
+              type="button"
+              data-ad-skip="true"
+              aria-label="Scroll recently watched right"
+              class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition-colors hover:border-cyan-400/45 hover:bg-cyan-400/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="m9 18 6-6-6-6" />
+              </svg>
+            </button>
+            <button
+              id="clearRecentBtn"
+              type="button"
+              data-ad-skip="true"
+              class="min-h-[36px] rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 transition-colors hover:border-crimson/50 hover:bg-crimson/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+
+        <div
+          id="recentlyWatchedTrack"
+          class="flex gap-3.5 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory no-scrollbar sm:gap-4"
+        ></div>
+      </div>
+
+      <!-- ADSTERRA PRE-CATALOG BANNER (468x60 Desktop / 320x50 Mobile above Trending Movies Heading) -->
+      <div aria-label="Catalog Advertisement" class="my-4 flex flex-col items-center justify-center gap-2 overflow-hidden">
+        <div class="hidden sm:flex min-h-[60px] w-full max-w-[468px] items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl">
           <div class="flex h-[60px] w-[468px] shrink-0 items-center justify-center overflow-hidden">
             <script>
               atOptions = {
@@ -323,6 +401,7 @@
             <script src="https://bancadeltempoidea.org/22/7ebfbca294d0a5e750dc6b33e75bafa4"></script>
           </div>
         </div>
+        <div id="preCatalogMobileAdHost" class="flex sm:hidden min-h-[50px] w-[320px] max-w-full items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl"></div>
       </div>
 
       <div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
@@ -388,7 +467,30 @@
         </a>
       </div>
 
-      <!-- Movie Grid Remaining Section -->
+      <!-- Movie Grid Middle Section (Movies 7-18) -->
+      <div id="catalogMiddleGrid" class="hidden"></div>
+
+      <!-- ADSTERRA MID-CATALOG AD #2 (High-CPM 728x90 Desktop / 300x250 Mobile + VIP Direct Link) -->
+      <div id="midCatalogAdSection2" aria-label="Secondary Catalog Advertisement" class="my-8 hidden flex-col items-center justify-center gap-3 rounded-2xl border border-cyan-400/15 bg-white/[0.04] px-4 py-4 backdrop-blur-xl">
+        <span class="font-mono text-[10px] uppercase tracking-widest text-slate-400">Sponsored Mirror Network</span>
+        <div id="midCatalogAd2Desktop" class="hidden md:flex min-h-[90px] w-[728px] max-w-full items-center justify-center overflow-hidden rounded-xl bg-black/30"></div>
+        <div id="midCatalogAd2Mobile" class="flex md:hidden min-h-[250px] w-[300px] max-w-full items-center justify-center overflow-hidden rounded-xl bg-black/30"></div>
+        <a
+          href="https://directyp.org/4/a0ab45f58f9fc4cfe1c59cae21b4103e"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-xl border border-crimson/40 bg-crimson/15 px-5 py-2 text-xs font-bold text-rose-200 transition-colors hover:bg-crimson/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+        >
+          <span>Unlock VIP Fast Stream</span>
+          <svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" x2="21" y1="14" y2="3" />
+          </svg>
+        </a>
+      </div>
+
+      <!-- Movie Grid Remaining Section (Movies 19+) -->
       <div id="catalogRestGrid" class="hidden"></div>
 
       <!-- Load More Pagination Button -->
@@ -404,10 +506,34 @@
           </svg>
         </button>
       </div>
+
+      <!-- ADSTERRA PRE-FOOTER HIGH-CPM BANNER (728x90 Desktop / 300x250 Mobile) -->
+      <div id="preFooterAdSection" aria-label="Bottom Advertisement" class="mt-10 flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-5 backdrop-blur-xl">
+        <div id="preFooterAdDesktop" class="hidden md:flex min-h-[90px] w-[728px] max-w-full items-center justify-center overflow-hidden rounded-xl bg-black/30"></div>
+        <div id="preFooterAdMobile" class="flex md:hidden min-h-[250px] w-[300px] max-w-full items-center justify-center overflow-hidden rounded-xl bg-black/30"></div>
+        <a
+          href="https://directyp.org/4/a0ab45f58f9fc4cfe1c59cae21b4103e"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex min-h-[40px] items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/5 px-4 py-1.5 text-xs font-semibold text-slate-200 transition-colors hover:border-cyan-400/45 hover:bg-cyan-400/15 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+        >
+          <span>Watch Ad-Supported HD Backup</span>
+          <svg class="h-3.5 w-3.5 text-neonCyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" x2="21" y1="14" y2="3" />
+          </svg>
+        </a>
+      </div>
     </section>
   </main>
 
-  <!-- Desktop Wide-Screen Skyscraper Rail (160x600 Right, visible >= 1680px only to keep layout clean) -->
+  <!-- Desktop Wide-Screen Skyscraper Rail Left (160x300 Isolated, visible >= 1680px) -->
+  <aside aria-label="Left Advertisement" class="fixed left-4 top-24 z-20 hidden min-[1680px]:flex flex-col items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-xl">
+    <div id="leftSkyscraperAdHost" class="flex h-[300px] w-[160px] items-center justify-center overflow-hidden rounded-lg bg-black/30"></div>
+  </aside>
+
+  <!-- Desktop Wide-Screen Skyscraper Rail Right (160x600, visible >= 1680px only to keep layout clean) -->
   <aside aria-label="Right Advertisement" class="fixed right-4 top-24 z-20 hidden min-[1680px]:flex flex-col items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-xl">
     <div class="flex justify-center my-2 overflow-hidden">
       <script>
@@ -434,6 +560,20 @@
       </p>
     </div>
   </footer>
+
+  <!-- Mobile Sticky Bottom Floating Ad Bar (320x50 above bottom nav) -->
+  <div id="mobileStickyAdBar" aria-label="Mobile Sticky Advertisement" class="fixed bottom-14 left-0 right-0 z-30 flex items-center justify-center border-t border-white/10 bg-[#07070c]/95 py-1 backdrop-blur-xl md:hidden">
+    <div id="mobileStickyAdHost" class="flex h-[50px] w-[320px] items-center justify-center overflow-hidden rounded-lg bg-black/40"></div>
+    <button
+      id="mobileStickyAdDismissBtn"
+      type="button"
+      data-ad-skip="true"
+      aria-label="Hide bottom ad"
+      class="absolute right-1.5 top-1 flex h-6 w-6 items-center justify-center rounded-full border border-white/15 bg-black/70 text-[11px] font-bold text-slate-300 hover:bg-crimson/80 hover:text-white focus:outline-none"
+    >
+      ×
+    </button>
+  </div>
 
   <!-- Mobile Bottom Quick Navigation Bar (Compact 56px height, Android thumb-zone optimized) -->
   <nav aria-label="Mobile Navigation" class="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-[#07070c]/90 backdrop-blur-xl md:hidden">
@@ -548,40 +688,81 @@
         </div>
       </div>
 
-      <!-- Server Switcher & Download Bar -->
-      <div class="flex flex-col justify-between gap-4 border-t border-white/10 bg-white/[0.02] px-4 py-4 sm:flex-row sm:items-center sm:px-6">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="mr-1 text-xs font-medium text-slate-400">Stream Server:</span>
-          <button
-            id="server1Btn"
-            type="button"
-            class="min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+      <!-- Server Switcher (5 Independent Mirrors) & Download Bar -->
+      <div class="flex flex-col gap-3 border-t border-white/10 bg-white/[0.02] px-4 py-4 sm:px-6">
+        <div class="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="mr-1 text-xs font-medium text-slate-400">Stream Server:</span>
+            <button
+              id="server1Btn"
+              type="button"
+              class="min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              Server 1 (VidSrc.cc)
+            </button>
+            <button
+              id="server2Btn"
+              type="button"
+              class="min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              Server 2 (AutoEmbed)
+            </button>
+            <button
+              id="server3Btn"
+              type="button"
+              class="min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              Server 3 (VidSrc.icu)
+            </button>
+            <button
+              id="server4Btn"
+              type="button"
+              class="min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              Server 4 (Embed.su)
+            </button>
+            <button
+              id="server5Btn"
+              type="button"
+              class="min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border px-3.5 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+            >
+              Server 5 (2Embed)
+            </button>
+            <button
+              id="nextServerBtn"
+              type="button"
+              data-ad-skip="true"
+              class="min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border border-amber-400/40 bg-amber-400/15 px-3.5 py-2 text-xs font-bold text-amber-200 transition-all duration-150 hover:bg-amber-400/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-amber-400"
+            >
+              Next Server ↻
+            </button>
+          </div>
+
+          <a
+            id="modalDownloadLink"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex min-h-[42px] shrink-0 items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2 text-xs font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
-            Server 1 (VidSrc)
-          </button>
-          <button
-            id="server2Btn"
-            type="button"
-            class="min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
-          >
-            Server 2 (2Embed)
-          </button>
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+              <polyline points="7 10 12 15 17 10" />
+              <line x1="12" x2="12" y1="15" y2="3" />
+            </svg>
+            Download
+          </a>
         </div>
 
-        <a
-          id="modalDownloadLink"
-          href="#"
-          target="_blank"
-          rel="noopener noreferrer"
-          class="inline-flex min-h-[44px] items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2 text-xs font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
-        >
-          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-            <polyline points="7 10 12 15 17 10" />
-            <line x1="12" x2="12" y1="15" y2="3" />
-          </svg>
-          Download
-        </a>
+        <p id="playerServerHint" class="rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2 text-[11px] leading-relaxed text-slate-400">
+          Player Tip: If a mirror shows a grey icon or is blocked by your mobile network, tap <strong class="text-cyan-300">Server 2–5</strong> or <strong class="text-amber-300">Next Server ↻</strong> to switch instantly.
+        </p>
+
+        <!-- ADSTERRA PLAYER MODAL TOP STRIP (Isolated 468x60 Desktop / 320x50 Mobile) -->
+        <div class="flex justify-center overflow-hidden pt-1">
+          <div id="playerTopAdDesktop" class="hidden sm:flex min-h-[60px] w-[468px] max-w-full items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/30"></div>
+          <div id="playerTopAdMobile" class="flex sm:hidden min-h-[50px] w-[320px] max-w-full items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/30"></div>
+        </div>
       </div>
 
       <!-- Movie Info & High-CPM Modal Rectangle Ad (300x250 beside description / below player) -->
@@ -675,6 +856,17 @@
           >
             Download
           </a>
+          <a
+            href="https://directyp.org/4/a0ab45f58f9fc4cfe1c59cae21b4103e"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-cyan-400/35 bg-cyan-400/10 px-5 py-3 text-xs font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          >
+            Fast Mirror Link
+          </a>
+        </div>
+        <div class="mt-5 flex justify-center overflow-hidden">
+          <div id="detailsAdHost" class="flex h-[50px] w-[320px] items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/30"></div>
         </div>
       </div>
     </div>
@@ -743,7 +935,7 @@
           disabled
           class="inline-flex min-h-[44px] w-full items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2 text-xs font-semibold text-cyan-200 transition-all duration-150 hover:bg-cyan-400/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/5 disabled:text-slate-400"
         >
-          Continue in 3s...
+          Continue in 2s...
         </button>
       </div>
     </div>
@@ -753,11 +945,55 @@
     (function () {
       'use strict';
 
-      // 100% Keyless Public YTS API Endpoint (Zero API Keys Required)
-      const YTS_API_URL = 'https://yts.mx/api/v2/list_movies.json';
-      const PAGE_LIMIT = 24;
+      // 100% Keyless Public Multi-Mirror Movie Engine (Stremio Cinemeta CDN + YTS Mirrors)
+      const YTS_MIRRORS = [
+        'https://yts.gg/api/v2',
+        'https://yts.ag/api/v2',
+        'https://yts.lt/api/v2'
+      ];
+      const CINEMETA_CATALOG_URL = 'https://cinemeta-catalogs.strem.io';
+      const CINEMETA_META_URL = 'https://v3-cinemeta.strem.io';
+      const PAGE_LIMIT = 50;
 
-      // Graceful Fallback Catalog (used automatically if network/ISP blocks YTS API)
+      const EMBED_SERVERS = [
+        {
+          id: 1,
+          name: 'VidSrc.cc',
+          buildUrl: function (code) {
+            return 'https://vidsrc.cc/v2/embed/movie/' + code;
+          }
+        },
+        {
+          id: 2,
+          name: 'AutoEmbed',
+          buildUrl: function (code) {
+            return 'https://player.autoembed.cc/embed/movie/' + code;
+          }
+        },
+        {
+          id: 3,
+          name: 'VidSrc.icu',
+          buildUrl: function (code) {
+            return 'https://vidsrc.icu/embed/movie/' + code;
+          }
+        },
+        {
+          id: 4,
+          name: 'Embed.su',
+          buildUrl: function (code) {
+            return 'https://embed.su/embed/movie/' + code;
+          }
+        },
+        {
+          id: 5,
+          name: '2Embed',
+          buildUrl: function (code) {
+            return 'https://www.2embed.cc/embed/' + code;
+          }
+        }
+      ];
+
+      // Expanded 24-Movie Offline/ISP Fallback Catalog
       const FALLBACK_MOVIES = [
         {
           id: 9001,
@@ -770,7 +1006,7 @@
           large_cover_image: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg',
           summary: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
-          url: 'https://yts.mx/movies/inception-2010'
+          url: 'https://yts.gg/movies/inception-2010'
         },
         {
           id: 9002,
@@ -778,12 +1014,12 @@
           year: 2008,
           rating: 9.0,
           runtime: 152,
-          genres: ['Action', 'Thriller'],
+          genres: ['Action', 'Thriller', 'Drama'],
           imdb_code: 'tt0468569',
           large_cover_image: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
           summary: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.',
-          url: 'https://yts.mx/movies/the-dark-knight-2008'
+          url: 'https://yts.gg/movies/the-dark-knight-2008'
         },
         {
           id: 9003,
@@ -791,12 +1027,12 @@
           year: 2014,
           rating: 8.7,
           runtime: 169,
-          genres: ['Sci-Fi', 'Action'],
+          genres: ['Sci-Fi', 'Drama'],
           imdb_code: 'tt0816692',
           large_cover_image: 'https://image.tmdb.org/t/p/w500/pbrkL804c8yAv3zBZR4QPEafpAR.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/pbrkL804c8yAv3zBZR4QPEafpAR.jpg',
           summary: 'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.',
-          url: 'https://yts.mx/movies/interstellar-2014'
+          url: 'https://yts.gg/movies/interstellar-2014'
         },
         {
           id: 9004,
@@ -809,7 +1045,7 @@
           large_cover_image: 'https://image.tmdb.org/t/p/w500/v1tRXZ4JtD2Iv6fjkPvT4GiwslV.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/v1tRXZ4JtD2Iv6fjkPvT4GiwslV.jpg',
           summary: 'Paul Atreides arrives on Arrakis after his father accepts the stewardship of the dangerous planet, navigating betrayal and ancient destiny amidst desert storms.',
-          url: 'https://yts.mx/movies/dune-2021'
+          url: 'https://yts.gg/movies/dune-2021'
         },
         {
           id: 9005,
@@ -817,12 +1053,12 @@
           year: 2023,
           rating: 8.3,
           runtime: 180,
-          genres: ['Thriller'],
+          genres: ['Drama', 'Thriller'],
           imdb_code: 'tt15398776',
           large_cover_image: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
           summary: 'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.',
-          url: 'https://yts.mx/movies/oppenheimer-2023'
+          url: 'https://yts.gg/movies/oppenheimer-2023'
         },
         {
           id: 9006,
@@ -835,7 +1071,7 @@
           large_cover_image: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
           summary: 'When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth about the reality he lives in.',
-          url: 'https://yts.mx/movies/the-matrix-1999'
+          url: 'https://yts.gg/movies/the-matrix-1999'
         },
         {
           id: 9007,
@@ -848,7 +1084,7 @@
           large_cover_image: 'https://image.tmdb.org/t/p/w500/fZn9cuBZHCxvnizXWlROQ0twPPV.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/fZn9cuBZHCxvnizXWlROQ0twPPV.jpg',
           summary: 'An ex-hitman comes out of retirement to track down the gangsters who killed his dog and took everything from him.',
-          url: 'https://yts.mx/movies/john-wick-2014'
+          url: 'https://yts.gg/movies/john-wick-2014'
         },
         {
           id: 9008,
@@ -861,7 +1097,7 @@
           large_cover_image: 'https://image.tmdb.org/t/p/w500/3E53WEZJqP6aM84D8CckXx4pIHw.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/3E53WEZJqP6aM84D8CckXx4pIHw.jpg',
           summary: 'A wisecracking mercenary gets experimented on and becomes immortal yet hideously scarred, and sets out to track down the man who ruined his looks.',
-          url: 'https://yts.mx/movies/deadpool-2016'
+          url: 'https://yts.gg/movies/deadpool-2016'
         },
         {
           id: 9009,
@@ -869,12 +1105,12 @@
           year: 2017,
           rating: 7.8,
           runtime: 104,
-          genres: ['Thriller'],
+          genres: ['Horror', 'Thriller'],
           imdb_code: 'tt5052448',
           large_cover_image: 'https://image.tmdb.org/t/p/w500/tFXcEccSQM3UuXAUucpB3G8zBv9.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/tFXcEccSQM3UuXAUucpB3G8zBv9.jpg',
           summary: 'A young African-American visits his white girlfriend\'s parents for the weekend, where his simmering uneasiness about their reception eventually reaches a boiling point.',
-          url: 'https://yts.mx/movies/get-out-2017'
+          url: 'https://yts.gg/movies/get-out-2017'
         },
         {
           id: 9010,
@@ -882,12 +1118,12 @@
           year: 2019,
           rating: 8.5,
           runtime: 132,
-          genres: ['Comedy', 'Thriller'],
+          genres: ['Drama', 'Comedy', 'Thriller'],
           imdb_code: 'tt6751668',
           large_cover_image: 'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
           summary: 'Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.',
-          url: 'https://yts.mx/movies/parasite-2019'
+          url: 'https://yts.gg/movies/parasite-2019'
         },
         {
           id: 9011,
@@ -900,7 +1136,7 @@
           large_cover_image: 'https://image.tmdb.org/t/p/w500/hA2ple9q4qnWxMP3hCKO1Q3xOtr.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/hA2ple9q4qnWxMP3hCKO1Q3xOtr.jpg',
           summary: 'In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler in search for her homeland with the aid of a group of female prisoners and a drifter named Max.',
-          url: 'https://yts.mx/movies/mad-max-fury-road-2015'
+          url: 'https://yts.gg/movies/mad-max-fury-road-2015'
         },
         {
           id: 9012,
@@ -908,52 +1144,235 @@
           year: 1995,
           rating: 8.6,
           runtime: 127,
-          genres: ['Thriller'],
+          genres: ['Thriller', 'Drama'],
           imdb_code: 'tt0114369',
           large_cover_image: 'https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EPCqVskdzU8.jpg',
           background_image_original: 'https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EPCqVskdzU8.jpg',
           summary: 'Two detectives, a rookie and a veteran, hunt a serial killer who uses the seven deadly sins as his motives.',
-          url: 'https://yts.mx/movies/se7en-1995'
+          url: 'https://yts.gg/movies/se7en-1995'
+        },
+        {
+          id: 9013,
+          title: 'Spider-Man: Into the Spider-Verse',
+          year: 2018,
+          rating: 8.4,
+          runtime: 117,
+          genres: ['Animation', 'Action', 'Sci-Fi'],
+          imdb_code: 'tt4633694',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/iiZZdoQBEYBv6id8su7ImL0oCbD.jpg',
+          summary: 'Teen Miles Morales becomes the Spider-Man of his universe and must join with five spider-powered individuals from other dimensions to stop a threat.',
+          url: 'https://yts.gg/movies/spider-man-into-the-spider-verse-2018'
+        },
+        {
+          id: 9014,
+          title: 'The Shawshank Redemption',
+          year: 1994,
+          rating: 9.3,
+          runtime: 142,
+          genres: ['Drama'],
+          imdb_code: 'tt0111161',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg',
+          summary: 'Over the course of several years, two convicts form a friendship, seeking consolation and eventual redemption through basic compassion.',
+          url: 'https://yts.gg/movies/the-shawshank-redemption-1994'
+        },
+        {
+          id: 9015,
+          title: 'Avengers: Endgame',
+          year: 2019,
+          rating: 8.4,
+          runtime: 181,
+          genres: ['Action', 'Sci-Fi'],
+          imdb_code: 'tt4154796',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg',
+          summary: 'After the devastating events of Infinity War, the remaining Avengers assemble once more to reverse Thanos\' actions and restore balance to the universe.',
+          url: 'https://yts.gg/movies/avengers-endgame-2019'
+        },
+        {
+          id: 9016,
+          title: 'A Quiet Place',
+          year: 2018,
+          rating: 7.5,
+          runtime: 90,
+          genres: ['Horror', 'Sci-Fi', 'Thriller'],
+          imdb_code: 'tt6644200',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/nAU74GmpUk7t5iklEp3bufwDq4n.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/nAU74GmpUk7t5iklEp3bufwDq4n.jpg',
+          summary: 'In a post-apocalyptic world, a family is forced to live in silence while hiding from monsters with ultra-sensitive hearing.',
+          url: 'https://yts.gg/movies/a-quiet-place-2018'
+        },
+        {
+          id: 9017,
+          title: 'Joker',
+          year: 2019,
+          rating: 8.4,
+          runtime: 122,
+          genres: ['Drama', 'Thriller'],
+          imdb_code: 'tt7286456',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg',
+          summary: 'During the 1980s, a failed stand-up comedian is driven insane and turns to a life of crime and chaos in Gotham City.',
+          url: 'https://yts.gg/movies/joker-2019'
+        },
+        {
+          id: 9018,
+          title: 'The Conjuring',
+          year: 2013,
+          rating: 7.5,
+          runtime: 112,
+          genres: ['Horror', 'Thriller'],
+          imdb_code: 'tt1457767',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/wVYREutTvI2tmxr6ujrHT704wGF.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/wVYREutTvI2tmxr6ujrHT704wGF.jpg',
+          summary: 'Paranormal investigators Ed and Lorraine Warren work to help a family terrorized by a dark presence in their farmhouse.',
+          url: 'https://yts.gg/movies/the-conjuring-2013'
+        },
+        {
+          id: 9019,
+          title: 'Top Gun: Maverick',
+          year: 2022,
+          rating: 8.2,
+          runtime: 130,
+          genres: ['Action', 'Drama'],
+          imdb_code: 'tt1745960',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg',
+          summary: 'After thirty years, Maverick is still pushing the envelope as a top naval aviator, training a detachment of graduates for a specialized mission.',
+          url: 'https://yts.gg/movies/top-gun-maverick-2022'
+        },
+        {
+          id: 9020,
+          title: 'Spirited Away',
+          year: 2001,
+          rating: 8.6,
+          runtime: 125,
+          genres: ['Animation', 'Drama'],
+          imdb_code: 'tt0245429',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/39wmItIWsg5sZMyRUHLkWBcuVCM.jpg',
+          summary: 'During her family\'s move to the suburbs, a sullen 10-year-old girl wanders into a world ruled by gods, witches, and spirits.',
+          url: 'https://yts.gg/movies/spirited-away-2001'
+        },
+        {
+          id: 9021,
+          title: 'Gladiator',
+          year: 2000,
+          rating: 8.5,
+          runtime: 155,
+          genres: ['Action', 'Drama'],
+          imdb_code: 'tt0172495',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg',
+          summary: 'A former Roman General sets out to exact vengeance against the corrupt emperor who murdered his family and sent him into slavery.',
+          url: 'https://yts.gg/movies/gladiator-2000'
+        },
+        {
+          id: 9022,
+          title: 'The Hangover',
+          year: 2009,
+          rating: 7.7,
+          runtime: 100,
+          genres: ['Comedy'],
+          imdb_code: 'tt1119646',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/uluhlXubGu1VxU63X9VHCLWDAYP.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/uluhlXubGu1VxU63X9VHCLWDAYP.jpg',
+          summary: 'Three buddies wake up from a bachelor party in Las Vegas with no memory of the previous night and the bachelor missing.',
+          url: 'https://yts.gg/movies/the-hangover-2009'
+        },
+        {
+          id: 9023,
+          title: 'Hereditary',
+          year: 2018,
+          rating: 7.3,
+          runtime: 127,
+          genres: ['Horror', 'Drama'],
+          imdb_code: 'tt7784604',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/p9fmuz2Oj3HtEJEqbIwkF5h80qQ.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/p9fmuz2Oj3HtEJEqbIwkF5h80qQ.jpg',
+          summary: 'A grieving family is haunted by tragic and disturbing occurrences after the death of their secretive grandmother.',
+          url: 'https://yts.gg/movies/hereditary-2018'
+        },
+        {
+          id: 9024,
+          title: 'Coco',
+          year: 2017,
+          rating: 8.4,
+          runtime: 105,
+          genres: ['Animation', 'Comedy', 'Drama'],
+          imdb_code: 'tt2380307',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/gGEsBPAijhVUFoiNpgZXqRVWJt2.jpg',
+          summary: 'Aspiring musician Miguel enters the Land of the Dead to find his great-great-grandfather, a legendary singer.',
+          url: 'https://yts.gg/movies/coco-2017'
         }
       ];
 
       const CATEGORY_META = {
         trending: {
           heading: 'Trending Movies',
-          subtitle: 'Most downloaded HD movies right now — 100% keyless'
+          subtitle: 'Most popular HD movies right now — Dual Keyless Feed (Cinemeta + YTS)',
+          cinemetaGenre: ''
         },
         top_rated: {
           heading: 'Top Rated Movies',
-          subtitle: 'Highest IMDb rated feature films ready to stream'
+          subtitle: 'Highest IMDb rated feature films ready to stream across 5 mirrors',
+          cinemetaGenre: ''
         },
         action: {
           heading: 'Action Movies',
-          subtitle: 'High-octane action blockbusters in crisp HD'
+          subtitle: 'High-octane action blockbusters in crisp HD',
+          cinemetaGenre: 'Action'
         },
         'sci-fi': {
           heading: 'Sci-Fi Movies',
-          subtitle: 'Futuristic worlds, space epics, and mind-bending cinema'
+          subtitle: 'Futuristic worlds, space epics, and mind-bending cinema',
+          cinemetaGenre: 'Sci-Fi'
         },
         comedy: {
           heading: 'Comedy Movies',
-          subtitle: 'Crowd-favorite comedies and dark satires'
+          subtitle: 'Crowd-favorite comedies and dark satires',
+          cinemetaGenre: 'Comedy'
         },
         thriller: {
           heading: 'Thriller Movies',
-          subtitle: 'Edge-of-your-seat suspense and mystery films'
+          subtitle: 'Edge-of-your-seat suspense and mystery films',
+          cinemetaGenre: 'Thriller'
+        },
+        horror: {
+          heading: 'Horror Movies',
+          subtitle: 'Spine-chilling supernatural terror and psychological horror',
+          cinemetaGenre: 'Horror'
+        },
+        animation: {
+          heading: 'Animation Movies',
+          subtitle: 'Acclaimed animated adventures and anime masterpieces',
+          cinemetaGenre: 'Animation'
+        },
+        drama: {
+          heading: 'Drama Movies',
+          subtitle: 'Award-winning dramas and gripping human stories',
+          cinemetaGenre: 'Drama'
         }
       };
 
       const WATCHLIST_STORAGE_KEY = 'cineverse_watchlist_v1';
+      const RECENT_IDS_STORAGE_KEY = 'cineverse_recently_watched_ids_v1';
+      const RECENT_CACHE_STORAGE_KEY = 'cineverse_recently_watched_cache_v1';
+      const MAX_RECENT_ITEMS = 12;
 
       const state = {
         movies: [],
         watchlist: [],
+        recentIds: [],
+        recentCache: {},
         isWatchlistOpen: false,
         featuredMovie: null,
         activeCategory: 'trending',
         searchQuery: '',
         page: 1,
+        cinemetaSkip: 0,
         hasMore: false,
         isLoading: false,
         activeMovie: null,
@@ -965,8 +1384,16 @@
 
       // DOM Elements
       const heroContent = document.getElementById('heroContent');
+      const recentlyWatchedSection = document.getElementById('recentlyWatchedSection');
+      const recentlyWatchedSubtitle = document.getElementById('recentlyWatchedSubtitle');
+      const recentlyWatchedTrack = document.getElementById('recentlyWatchedTrack');
+      const recentPrevBtn = document.getElementById('recentPrevBtn');
+      const recentNextBtn = document.getElementById('recentNextBtn');
+      const clearRecentBtn = document.getElementById('clearRecentBtn');
       const catalogFirstGrid = document.getElementById('catalogFirstGrid');
       const midCatalogAdSection = document.getElementById('midCatalogAdSection');
+      const catalogMiddleGrid = document.getElementById('catalogMiddleGrid');
+      const midCatalogAdSection2 = document.getElementById('midCatalogAdSection2');
       const catalogRestGrid = document.getElementById('catalogRestGrid');
       const catalogHeading = document.getElementById('catalogHeading');
       const catalogSubtitle = document.getElementById('catalogSubtitle');
@@ -1006,6 +1433,11 @@
       const modalDownloadLink = document.getElementById('modalDownloadLink');
       const server1Btn = document.getElementById('server1Btn');
       const server2Btn = document.getElementById('server2Btn');
+      const server3Btn = document.getElementById('server3Btn');
+      const server4Btn = document.getElementById('server4Btn');
+      const server5Btn = document.getElementById('server5Btn');
+      const nextServerBtn = document.getElementById('nextServerBtn');
+      const serverButtons = [server1Btn, server2Btn, server3Btn, server4Btn, server5Btn];
 
       // Details Modal DOM
       const detailsModal = document.getElementById('detailsModal');
@@ -1016,6 +1448,20 @@
       const detailsOverview = document.getElementById('detailsOverview');
       const detailsWatchBtn = document.getElementById('detailsWatchBtn');
       const detailsDownloadBtn = document.getElementById('detailsDownloadBtn');
+
+      // Extra Isolated Ad Hosts
+      const preCatalogMobileAdHost = document.getElementById('preCatalogMobileAdHost');
+      const midCatalogAd2Desktop = document.getElementById('midCatalogAd2Desktop');
+      const midCatalogAd2Mobile = document.getElementById('midCatalogAd2Mobile');
+      const preFooterAdDesktop = document.getElementById('preFooterAdDesktop');
+      const preFooterAdMobile = document.getElementById('preFooterAdMobile');
+      const leftSkyscraperAdHost = document.getElementById('leftSkyscraperAdHost');
+      const mobileStickyAdBar = document.getElementById('mobileStickyAdBar');
+      const mobileStickyAdHost = document.getElementById('mobileStickyAdHost');
+      const mobileStickyAdDismissBtn = document.getElementById('mobileStickyAdDismissBtn');
+      const playerTopAdDesktop = document.getElementById('playerTopAdDesktop');
+      const playerTopAdMobile = document.getElementById('playerTopAdMobile');
+      const detailsAdHost = document.getElementById('detailsAdHost');
 
       function escapeHtml(str) {
         return String(str || '')
@@ -1031,7 +1477,7 @@
         let code = String(rawCode).trim();
         if (!code) return '';
 
-        // Extract tt-prefixed ID if embedded in a full IMDb URL
+        // Extract tt-prefixed ID if embedded in a full IMDb URL or Stremio ID
         const urlMatch = code.match(/(tt\d{6,9})/i);
         if (urlMatch) {
           return urlMatch[1].toLowerCase();
@@ -1053,30 +1499,40 @@
 
       function normalizeYtsMovie(raw) {
         const source = raw || {};
+        const imdb = sanitizeImdbCode(source.imdb_code || source.imdbCode || source.imdb_id || source.id);
         const poster = source.poster || source.large_cover_image || source.medium_cover_image || source.small_cover_image || '';
-        const backdrop = source.backdrop || source.background_image_original || source.background_image || poster;
-        const genres = Array.isArray(source.genres) && source.genres.length > 0 ? source.genres : ['Movie'];
-        const numericRating = Number(source.rating);
-        const rating = source.rating === 'N/A'
+        const backdrop = source.backdrop || source.background || source.background_image_original || source.background_image || poster;
+        const genres = Array.isArray(source.genres) && source.genres.length > 0
+          ? source.genres
+          : (Array.isArray(source.genre) && source.genre.length > 0 ? source.genre : ['Movie']);
+
+        const rawRating = source.rating !== undefined && source.rating !== null ? source.rating : source.imdbRating;
+        const numericRating = Number(rawRating);
+        const rating = rawRating === 'N/A'
           ? 'N/A'
           : (!Number.isNaN(numericRating) && numericRating > 0 ? numericRating.toFixed(1) : 'N/A');
-        const runtime = typeof source.runtime === 'string' && source.runtime.includes('min')
-          ? source.runtime
-          : (source.runtime ? source.runtime + ' min' : 'HD');
+
+        const rawRuntime = source.runtime;
+        const runtime = typeof rawRuntime === 'string' && rawRuntime.includes('min')
+          ? rawRuntime
+          : (rawRuntime ? String(rawRuntime).replace(/[^\d]/g, '') + ' min' : 'HD');
+
+        const yearMatch = String(source.year || source.releaseInfo || '').match(/\d{4}/);
+        const year = yearMatch ? yearMatch[0] : '';
 
         return {
-          id: source.id,
-          imdb_code: sanitizeImdbCode(source.imdb_code || source.imdbCode),
-          title: source.title || source.title_english || 'Untitled',
-          year: source.year ? String(source.year) : '',
+          id: source.id || imdb,
+          imdb_code: imdb,
+          title: source.title || source.name || source.title_english || 'Untitled',
+          year: year,
           rating: rating,
-          runtime: runtime,
+          runtime: runtime === ' min' ? 'HD' : runtime,
           genres: genres,
           poster: poster,
           backdrop: backdrop,
-          summary: source.summary || source.description_full || 'Stream this movie in crisp high definition across multiple keyless servers.',
+          summary: source.summary || source.description || source.description_full || 'Stream this movie in crisp high definition across multiple keyless servers.',
           torrents: Array.isArray(source.torrents) ? source.torrents : [],
-          url: source.url || ''
+          url: source.url || (imdb ? 'https://www.imdb.com/title/' + imdb + '/' : '')
         };
       }
 
@@ -1084,10 +1540,8 @@
         const validCode = sanitizeImdbCode(imdbCode);
         if (!validCode) return '';
         const encodedCode = encodeURIComponent(validCode);
-        if (serverNum === 2) {
-          return 'https://www.2embed.cc/embed/' + encodedCode;
-        }
-        return 'https://vidsrc.xyz/embed/movie/' + encodedCode;
+        const server = EMBED_SERVERS.find(function (s) { return s.id === serverNum; }) || EMBED_SERVERS[0];
+        return server.buildUrl(encodedCode);
       }
 
       function getDownloadUrl(movie) {
@@ -1103,7 +1557,7 @@
           return movie.url;
         }
         const searchTerm = (movie && (movie.imdb_code || movie.title)) || '';
-        return 'https://yts.mx/browse-movies/' + encodeURIComponent(searchTerm);
+        return 'https://yts.gg/browse-movies/' + encodeURIComponent(searchTerm);
       }
 
       function getMovieKey(movie) {
@@ -1279,6 +1733,204 @@
         }
       }
 
+      // Recently Watched (localStorage ID persistence + top-of-catalog carousel)
+      function loadRecentWatchedFromStorage() {
+        try {
+          const rawIds = localStorage.getItem(RECENT_IDS_STORAGE_KEY);
+          const parsedIds = rawIds ? JSON.parse(rawIds) : [];
+          state.recentIds = Array.isArray(parsedIds)
+            ? parsedIds.map(function (id) { return String(id || '').trim(); }).filter(Boolean).slice(0, MAX_RECENT_ITEMS)
+            : [];
+        } catch (err) {
+          state.recentIds = [];
+        }
+
+        try {
+          const rawCache = localStorage.getItem(RECENT_CACHE_STORAGE_KEY);
+          const parsedCache = rawCache ? JSON.parse(rawCache) : {};
+          const normalizedCache = {};
+          if (parsedCache && typeof parsedCache === 'object' && !Array.isArray(parsedCache)) {
+            Object.keys(parsedCache).forEach(function (k) {
+              if (parsedCache[k]) {
+                normalizedCache[k] = normalizeYtsMovie(parsedCache[k]);
+              }
+            });
+          }
+          state.recentCache = normalizedCache;
+        } catch (err) {
+          state.recentCache = {};
+        }
+      }
+
+      function persistRecentWatched() {
+        try {
+          localStorage.setItem(RECENT_IDS_STORAGE_KEY, JSON.stringify(state.recentIds));
+          // Keep cache pruned to currently saved IDs to stay lightweight
+          const prunedCache = {};
+          state.recentIds.forEach(function (id) {
+            if (state.recentCache[id]) {
+              prunedCache[id] = state.recentCache[id];
+            }
+          });
+          state.recentCache = prunedCache;
+          localStorage.setItem(RECENT_CACHE_STORAGE_KEY, JSON.stringify(prunedCache));
+        } catch (err) {
+          // Ignore storage quota / privacy mode errors gracefully
+        }
+      }
+
+      function resolveRecentMovieById(savedId) {
+        const key = String(savedId || '').trim();
+        if (!key) return null;
+
+        if (state.recentCache[key]) {
+          return state.recentCache[key];
+        }
+
+        const pools = [state.movies, state.watchlist, FALLBACK_MOVIES];
+        for (let p = 0; p < pools.length; p++) {
+          const list = pools[p];
+          if (!Array.isArray(list)) continue;
+          const match = list.find(function (m) {
+            const norm = normalizeYtsMovie(m);
+            return getMovieKey(norm) === key || String(norm.id || '') === key || String(norm.imdb_code || '') === key;
+          });
+          if (match) {
+            const normalized = normalizeYtsMovie(match);
+            state.recentCache[key] = normalized;
+            return normalized;
+          }
+        }
+        return null;
+      }
+
+      async function hydrateMissingRecentMovies() {
+        const missing = state.recentIds.filter(function (id) {
+          return !resolveRecentMovieById(id);
+        });
+        if (missing.length === 0) return;
+
+        let updated = false;
+        await Promise.all(missing.map(async function (id) {
+          const isImdb = /^tt\d{6,9}$/i.test(id);
+          if (isImdb) {
+            try {
+              const cmRes = await fetch(CINEMETA_META_URL + '/meta/movie/' + encodeURIComponent(id) + '.json');
+              if (cmRes.ok) {
+                const cmJson = await cmRes.json();
+                if (cmJson && cmJson.meta && cmJson.meta.name) {
+                  state.recentCache[id] = normalizeYtsMovie(cmJson.meta);
+                  updated = true;
+                  return;
+                }
+              }
+            } catch (err) {
+              // Fall through to YTS mirrors
+            }
+          }
+          const param = isImdb ? ('imdb_id=' + encodeURIComponent(id)) : ('movie_id=' + encodeURIComponent(id));
+          try {
+            const json = await fetchYtsJson('/movie_details.json?' + param, null);
+            const rawMovie = json && json.data && json.data.movie;
+            if (rawMovie && rawMovie.id) {
+              state.recentCache[id] = normalizeYtsMovie(rawMovie);
+              updated = true;
+            }
+          } catch (err) {
+            // Skip unavailable titles gracefully
+          }
+        }));
+
+        if (updated) {
+          persistRecentWatched();
+          renderRecentlyWatchedSection();
+        }
+      }
+
+      function recordRecentlyWatched(movie) {
+        if (!movie) return;
+        const normalized = normalizeYtsMovie(movie);
+        const movieId = getMovieKey(normalized);
+        if (!movieId) return;
+
+        state.recentIds = [movieId].concat(
+          state.recentIds.filter(function (existingId) {
+            return existingId !== movieId;
+          })
+        ).slice(0, MAX_RECENT_ITEMS);
+
+        state.recentCache[movieId] = normalized;
+        persistRecentWatched();
+        renderRecentlyWatchedSection();
+      }
+
+      function clearRecentlyWatched() {
+        state.recentIds = [];
+        state.recentCache = {};
+        try {
+          localStorage.removeItem(RECENT_IDS_STORAGE_KEY);
+          localStorage.removeItem(RECENT_CACHE_STORAGE_KEY);
+        } catch (err) {
+          // Ignore storage errors
+        }
+        renderRecentlyWatchedSection();
+      }
+
+      function renderRecentlyWatchedSection() {
+        const resolvedMovies = state.recentIds
+          .map(resolveRecentMovieById)
+          .filter(Boolean);
+
+        if (resolvedMovies.length === 0) {
+          recentlyWatchedSection.classList.add('hidden');
+          recentlyWatchedTrack.innerHTML = '';
+          return;
+        }
+
+        recentlyWatchedSection.classList.remove('hidden');
+        recentlyWatchedSubtitle.textContent = resolvedMovies.length + (resolvedMovies.length === 1 ? ' recently watched title' : ' recently watched titles') + ' · Saved on this device';
+
+        let html = '';
+        resolvedMovies.forEach(function (movie, i) {
+          html += '<div class="w-[155px] shrink-0 snap-start sm:w-[175px] md:w-[185px]">' + createCardHtml(movie, i, 'recent') + '</div>';
+        });
+
+        recentlyWatchedTrack.innerHTML = html;
+
+        const recentCards = recentlyWatchedTrack.querySelectorAll('.catalog-card');
+        recentCards.forEach(function (card) {
+          function launch() {
+            const idx = parseInt(card.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && resolvedMovies[idx]) {
+              openPlayerModal(resolvedMovies[idx]);
+            }
+          }
+          card.addEventListener('click', launch);
+          card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              launch();
+            }
+          });
+        });
+
+        const recentHearts = recentlyWatchedTrack.querySelectorAll('.watchlist-heart-btn');
+        recentHearts.forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const idx = parseInt(btn.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && resolvedMovies[idx]) {
+              toggleMovieInWatchlist(resolvedMovies[idx]);
+            }
+          });
+          btn.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+            }
+          });
+        });
+      }
+
       function updateCategoryUI() {
         categoryTabs.forEach(function (btn) {
           const isDesktop = btn.closest('nav') !== null;
@@ -1310,6 +1962,10 @@
         }
         html += '</div>';
         catalogFirstGrid.innerHTML = html;
+        catalogMiddleGrid.innerHTML = '';
+        catalogMiddleGrid.classList.add('hidden');
+        midCatalogAdSection2.classList.add('hidden');
+        midCatalogAdSection2.classList.remove('flex');
         catalogRestGrid.innerHTML = '';
         catalogRestGrid.classList.add('hidden');
       }
@@ -1486,6 +2142,10 @@
           loadMoreWrapper.classList.add('hidden');
           loadMoreWrapper.classList.remove('flex');
           midCatalogAdSection.classList.add('hidden');
+          midCatalogAdSection2.classList.add('hidden');
+          midCatalogAdSection2.classList.remove('flex');
+          catalogMiddleGrid.innerHTML = '';
+          catalogMiddleGrid.classList.add('hidden');
           catalogRestGrid.innerHTML = '';
           catalogRestGrid.classList.add('hidden');
           catalogFirstGrid.innerHTML =
@@ -1507,9 +2167,12 @@
 
         catalogCountLabel.textContent = movies.length + (movies.length === 1 ? ' movie' : ' movies');
 
-        const splitAt = movies.length > 6 ? 6 : movies.length;
-        const firstSection = movies.slice(0, splitAt);
-        const restSection = movies.slice(splitAt);
+        const firstEnd = movies.length > 6 ? 6 : movies.length;
+        const middleEnd = movies.length > 18 ? 18 : movies.length;
+
+        const firstSection = movies.slice(0, firstEnd);
+        const middleSection = movies.slice(firstEnd, middleEnd);
+        const restSection = movies.slice(middleEnd);
 
         let firstHtml = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
         firstSection.forEach(function (movie, i) {
@@ -1522,16 +2185,34 @@
 
         midCatalogAdSection.classList.remove('hidden');
 
+        if (middleSection.length > 0) {
+          let middleHtml = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+          middleSection.forEach(function (movie, i) {
+            middleHtml += createCardHtml(movie, firstEnd + i);
+          });
+          middleHtml += '</div>';
+          catalogMiddleGrid.innerHTML = middleHtml;
+          catalogMiddleGrid.classList.remove('hidden');
+          bindCatalogCardEvents(catalogMiddleGrid);
+        } else {
+          catalogMiddleGrid.innerHTML = '';
+          catalogMiddleGrid.classList.add('hidden');
+        }
+
         if (restSection.length > 0) {
+          midCatalogAdSection2.classList.remove('hidden');
+          midCatalogAdSection2.classList.add('flex');
           let restHtml = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
           restSection.forEach(function (movie, i) {
-            restHtml += createCardHtml(movie, splitAt + i);
+            restHtml += createCardHtml(movie, middleEnd + i);
           });
           restHtml += '</div>';
           catalogRestGrid.innerHTML = restHtml;
           catalogRestGrid.classList.remove('hidden');
           bindCatalogCardEvents(catalogRestGrid);
         } else {
+          midCatalogAdSection2.classList.add('hidden');
+          midCatalogAdSection2.classList.remove('flex');
           catalogRestGrid.innerHTML = '';
           catalogRestGrid.classList.add('hidden');
         }
@@ -1572,23 +2253,131 @@
         return list.map(normalizeYtsMovie);
       }
 
-      function buildYtsEndpoint(category, query, page) {
+      function buildYtsListQuery(category, query, page) {
         const q = (query || '').trim();
         if (q) {
-          return YTS_API_URL + '?query_term=' + encodeURIComponent(q) + '&limit=' + PAGE_LIMIT + '&page=' + page;
+          return '/list_movies.json?query_term=' + encodeURIComponent(q) + '&limit=' + PAGE_LIMIT + '&page=' + page;
         }
         switch (category) {
           case 'top_rated':
-            return YTS_API_URL + '?sort_by=rating&minimum_rating=7&limit=' + PAGE_LIMIT + '&page=' + page;
+            return '/list_movies.json?sort_by=rating&minimum_rating=7&limit=' + PAGE_LIMIT + '&page=' + page;
           case 'action':
           case 'sci-fi':
           case 'comedy':
           case 'thriller':
-            return YTS_API_URL + '?genre=' + encodeURIComponent(category) + '&sort_by=download_count&limit=' + PAGE_LIMIT + '&page=' + page;
+          case 'horror':
+          case 'animation':
+          case 'drama':
+            return '/list_movies.json?genre=' + encodeURIComponent(category) + '&sort_by=download_count&limit=' + PAGE_LIMIT + '&page=' + page;
           case 'trending':
           default:
-            return YTS_API_URL + '?sort_by=download_count&limit=' + PAGE_LIMIT + '&page=' + page;
+            return '/list_movies.json?sort_by=download_count&limit=' + PAGE_LIMIT + '&page=' + page;
         }
+      }
+
+      function buildCinemetaEndpoint(category, query, skip) {
+        const q = (query || '').trim();
+        if (q) {
+          return CINEMETA_META_URL + '/catalog/movie/top/search=' + encodeURIComponent(q) + '.json';
+        }
+        const meta = CATEGORY_META[category] || CATEGORY_META.trending;
+        const catalogName = category === 'top_rated' ? 'imdbRating' : 'top';
+        const parts = [];
+        if (meta.cinemetaGenre && catalogName === 'top') {
+          parts.push('genre=' + encodeURIComponent(meta.cinemetaGenre));
+        }
+        if (skip > 0) {
+          parts.push('skip=' + skip);
+        }
+        const extra = parts.length > 0 ? ('/' + parts.join('&')) : '';
+        return CINEMETA_CATALOG_URL + '/' + catalogName + '/catalog/movie/' + catalogName + extra + '.json';
+      }
+
+      function deduplicateMovies(list) {
+        const seen = new Set();
+        const result = [];
+        list.forEach(function (movie) {
+          if (!movie || !movie.title) return;
+          const key = sanitizeImdbCode(movie.imdb_code) || (movie.title.toLowerCase().trim() + '_' + (movie.year || ''));
+          if (seen.has(key)) return;
+          seen.add(key);
+          result.push(movie);
+        });
+        return result;
+      }
+
+      function interleaveMovies(listA, listB) {
+        const merged = [];
+        const maxLen = Math.max(listA.length, listB.length);
+        for (let i = 0; i < maxLen; i++) {
+          if (i < listA.length) merged.push(listA[i]);
+          if (i < listB.length) merged.push(listB[i]);
+        }
+        return deduplicateMovies(merged);
+      }
+
+      async function fetchWithTimeout(url, externalSignal, timeoutMs) {
+        const localController = new AbortController();
+        const ms = timeoutMs || 15000;
+        const timer = setTimeout(function () {
+          localController.abort();
+        }, ms);
+
+        function onExternalAbort() {
+          localController.abort();
+        }
+        if (externalSignal) {
+          if (externalSignal.aborted) {
+            clearTimeout(timer);
+            throw new Error('Aborted');
+          }
+          externalSignal.addEventListener('abort', onExternalAbort, { once: true });
+        }
+
+        try {
+          const res = await fetch(url, { signal: localController.signal });
+          if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          }
+          return await res.json();
+        } finally {
+          clearTimeout(timer);
+          if (externalSignal) {
+            externalSignal.removeEventListener('abort', onExternalAbort);
+          }
+        }
+      }
+
+      async function fetchYtsJson(pathAndQuery, externalSignal) {
+        let lastError = null;
+        for (let i = 0; i < YTS_MIRRORS.length; i++) {
+          if (externalSignal && externalSignal.aborted) {
+            throw new Error('Aborted');
+          }
+          const url = YTS_MIRRORS[i] + pathAndQuery;
+          try {
+            const payload = await fetchWithTimeout(url, externalSignal, 12000);
+            if (payload && payload.data) {
+              return payload;
+            }
+          } catch (err) {
+            lastError = err;
+            if (externalSignal && externalSignal.aborted) {
+              throw err;
+            }
+          }
+        }
+        throw lastError || new Error('All YTS mirrors failed');
+      }
+
+      function mapCinemetaMetas(cmData) {
+        const cmMetas = cmData && Array.isArray(cmData.metas) ? cmData.metas : [];
+        const mapped = cmMetas
+          .filter(function (m) {
+            return m && (m.name || m.title) && sanitizeImdbCode(m.imdb_id || m.id) && (m.poster || m.background);
+          })
+          .map(normalizeYtsMovie);
+        return { rawCount: cmMetas.length, movies: mapped };
       }
 
       async function loadMovies(append) {
@@ -1597,7 +2386,8 @@
             state.fetchController.abort();
           }
         }
-        state.fetchController = new AbortController();
+        const controller = new AbortController();
+        state.fetchController = controller;
         state.isLoading = true;
 
         const q = state.searchQuery.trim();
@@ -1605,6 +2395,7 @@
 
         if (!append) {
           state.page = 1;
+          state.cinemetaSkip = 0;
           renderSkeletonGrid();
           catalogCountLabel.textContent = 'Loading...';
           loadMoreWrapper.classList.add('hidden');
@@ -1616,61 +2407,98 @@
 
         if (q) {
           catalogHeading.textContent = 'Search Results for "' + q + '"';
-          catalogSubtitle.textContent = 'Live keyless results from the public YTS movie index';
+          catalogSubtitle.textContent = 'Live keyless results from Cinemeta & YTS public feeds';
         } else {
           const meta = CATEGORY_META[cat] || CATEGORY_META.trending;
           catalogHeading.textContent = meta.heading;
           catalogSubtitle.textContent = meta.subtitle;
         }
 
-        const apiUrl = buildYtsEndpoint(cat, q, state.page);
-        const timeoutId = setTimeout(function () {
-          if (state.fetchController) {
-            state.fetchController.abort();
-          }
-        }, 6500);
+        const cinemetaUrl1 = buildCinemetaEndpoint(cat, q, state.cinemetaSkip);
+        const fetchSecondCinemetaBatch = !append && !q;
+        const cinemetaUrl2 = fetchSecondCinemetaBatch ? buildCinemetaEndpoint(cat, q, state.cinemetaSkip + 50) : '';
+        const ytsQueryPath = buildYtsListQuery(cat, q, state.page);
 
         try {
-          const response = await fetch(apiUrl, { signal: state.fetchController.signal });
-          clearTimeout(timeoutId);
-
-          if (!response.ok) {
-            throw new Error('YTS HTTP ' + response.status);
+          const requests = [
+            fetchWithTimeout(cinemetaUrl1, controller.signal, 15000),
+            fetchYtsJson(ytsQueryPath, controller.signal)
+          ];
+          if (fetchSecondCinemetaBatch) {
+            requests.push(fetchWithTimeout(cinemetaUrl2, controller.signal, 15000));
           }
 
-          const payload = await response.json();
-          const data = payload && payload.data ? payload.data : {};
-          const rawMovies = Array.isArray(data.movies) ? data.movies : [];
-          const normalized = rawMovies
-            .filter(Boolean)
-            .map(normalizeYtsMovie);
+          const results = await Promise.allSettled(requests);
+          if (controller.signal.aborted) return;
 
-          // If search yielded zero matches cleanly
-          if (q && normalized.length === 0 && !append) {
+          let cinemetaMovies = [];
+          let ytsMovies = [];
+          let ytsTotalCount = 0;
+          let anySucceeded = false;
+
+          if (results[0].status === 'fulfilled') {
+            anySucceeded = true;
+            const cmBatch1 = mapCinemetaMetas(results[0].value);
+            cinemetaMovies = cinemetaMovies.concat(cmBatch1.movies);
+            state.cinemetaSkip += cmBatch1.rawCount;
+          }
+
+          if (results[1].status === 'fulfilled') {
+            anySucceeded = true;
+            const ytsPayload = results[1].value;
+            const data = ytsPayload && ytsPayload.data ? ytsPayload.data : {};
+            ytsTotalCount = Number(data.movie_count) || 0;
+            const rawMovies = Array.isArray(data.movies) ? data.movies : [];
+            ytsMovies = rawMovies.filter(Boolean).map(normalizeYtsMovie);
+          }
+
+          if (fetchSecondCinemetaBatch && results[2] && results[2].status === 'fulfilled') {
+            anySucceeded = true;
+            const cmBatch2 = mapCinemetaMetas(results[2].value);
+            cinemetaMovies = cinemetaMovies.concat(cmBatch2.movies);
+            state.cinemetaSkip += cmBatch2.rawCount;
+          }
+
+          if (!anySucceeded) {
+            throw new Error('All public movie feeds failed');
+          }
+
+          // Interleave live Cinemeta releases with YTS HD catalog for maximum variety right from row 1
+          const combinedBatch = interleaveMovies(cinemetaMovies, ytsMovies);
+
+          if (q && combinedBatch.length === 0 && !append) {
             state.movies = [];
             state.hasMore = false;
             renderCatalog([]);
             return;
           }
 
-          if (!append && normalized.length === 0) {
+          if (!append && combinedBatch.length === 0) {
             throw new Error('Empty movie catalog');
           }
 
-          const totalCount = Number(data.movie_count) || normalized.length;
-          state.movies = append ? state.movies.concat(normalized) : normalized;
-          state.hasMore = state.movies.length < totalCount && normalized.length === PAGE_LIMIT;
+          state.movies = append
+            ? deduplicateMovies(state.movies.concat(combinedBatch))
+            : combinedBatch;
 
-          if (!append && !q && state.movies[0]) {
-            renderHero(state.movies[0]);
+          const canLoadMoreYts = ytsMovies.length >= PAGE_LIMIT && (ytsTotalCount === 0 || state.movies.length < ytsTotalCount);
+          const canLoadMoreCinemeta = !q && cinemetaMovies.length >= 20;
+          state.hasMore = canLoadMoreYts || canLoadMoreCinemeta;
+
+          if (!append && !q && state.movies.length > 0) {
+            const heroCandidate = state.movies.find(function (m) {
+              return m.backdrop && m.summary && m.summary.length > 40;
+            }) || state.movies[0];
+            renderHero(heroCandidate);
           } else if (!state.featuredMovie && state.movies[0]) {
             renderHero(state.movies[0]);
           }
 
           renderCatalog(state.movies);
+          renderRecentlyWatchedSection();
         } catch (err) {
-          clearTimeout(timeoutId);
-          // Graceful fallback if network/sandbox blocks yts.mx
+          if (controller.signal.aborted) return;
+          // Graceful fallback if network/sandbox blocks all external feeds
           if (!append) {
             const fallbackList = filterFallbackMovies(cat, q);
             state.movies = fallbackList;
@@ -1684,30 +2512,30 @@
             renderCatalog(state.movies);
           }
         } finally {
-          state.isLoading = false;
-          loadMoreBtn.disabled = false;
-          loadMoreText.textContent = 'Load More Movies';
+          if (state.fetchController === controller) {
+            state.isLoading = false;
+            loadMoreBtn.disabled = false;
+            loadMoreText.textContent = 'Load More Movies';
+          }
         }
       }
 
       function updateServerButtons(hasValidStream) {
         const disabled = hasValidStream === false;
-        server1Btn.disabled = disabled;
-        server2Btn.disabled = disabled;
-
-        if (disabled) {
-          const disabledCls = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-500 opacity-50 cursor-not-allowed focus:outline-none';
-          server1Btn.className = disabledCls;
-          server2Btn.className = disabledCls;
-          return;
-        }
-
-        if (state.activeServer === 1) {
-          server1Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 shadow-sm transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
-          server2Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 transition-all duration-150 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
-        } else {
-          server1Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 transition-all duration-150 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
-          server2Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 shadow-sm transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+        serverButtons.forEach(function (btn, idx) {
+          if (!btn) return;
+          const serverNum = idx + 1;
+          btn.disabled = disabled;
+          if (disabled) {
+            btn.className = 'min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-500 opacity-50 cursor-not-allowed focus:outline-none';
+          } else if (state.activeServer === serverNum) {
+            btn.className = 'min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-3.5 py-2 text-xs font-semibold text-cyan-200 shadow-sm transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          } else {
+            btn.className = 'min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all duration-150 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          }
+        });
+        if (nextServerBtn) {
+          nextServerBtn.disabled = disabled;
         }
       }
 
@@ -1733,7 +2561,7 @@
           playerLoadingOverlay.classList.remove('flex');
           playerFallbackDownloadBtn.href = downloadUrl;
           playerFallbackMessage.textContent =
-            'A valid IMDb code (e.g., tt1375666) is missing for "' + ((movie && movie.title) || 'this title') + '", so embedded streaming cannot load. Use the direct download button below.';
+            'A valid IMDb code (e.g., tt1375666) is missing for "' + ((movie && movie.title) || 'this title') + '", so embedded streaming cannot load. Use the direct download option below.';
           playerFallbackOverlay.classList.remove('hidden');
           playerFallbackOverlay.classList.add('flex');
           return;
@@ -1744,9 +2572,8 @@
         playerFallbackOverlay.classList.remove('flex');
         playerIframe.classList.remove('hidden');
 
-        playerLoadingText.textContent = serverNum === 2
-          ? 'Connecting to Server 2 (2Embed)...'
-          : 'Connecting to Server 1 (VidSrc)...';
+        const serverMeta = EMBED_SERVERS.find(function (s) { return s.id === serverNum; }) || EMBED_SERVERS[0];
+        playerLoadingText.textContent = 'Connecting to Server ' + serverMeta.id + ' (' + serverMeta.name + ')...';
         playerLoadingOverlay.classList.remove('hidden');
         playerLoadingOverlay.classList.add('flex');
 
@@ -1760,7 +2587,7 @@
         state.playerLoadTimer = setTimeout(function () {
           playerLoadingOverlay.classList.add('hidden');
           playerLoadingOverlay.classList.remove('flex');
-        }, 2200);
+        }, 2000);
 
         playerIframe.src = embedUrl;
       }
@@ -1769,6 +2596,7 @@
         if (!rawMovie) return;
         const movie = normalizeYtsMovie(rawMovie);
         closeDetailsModal();
+        recordRecentlyWatched(movie);
         state.activeMovie = movie;
         state.activeServer = 1;
 
@@ -1964,17 +2792,24 @@
         }
       });
 
-      server1Btn.addEventListener('click', function () {
-        if (!state.activeMovie || state.activeServer === 1) return;
-        state.activeServer = 1;
-        loadEmbedStream(state.activeMovie, 1);
+      serverButtons.forEach(function (btn, idx) {
+        if (!btn) return;
+        const serverNum = idx + 1;
+        btn.addEventListener('click', function () {
+          if (!state.activeMovie || state.activeServer === serverNum) return;
+          state.activeServer = serverNum;
+          loadEmbedStream(state.activeMovie, serverNum);
+        });
       });
 
-      server2Btn.addEventListener('click', function () {
-        if (!state.activeMovie || state.activeServer === 2) return;
-        state.activeServer = 2;
-        loadEmbedStream(state.activeMovie, 2);
-      });
+      if (nextServerBtn) {
+        nextServerBtn.addEventListener('click', function () {
+          if (!state.activeMovie) return;
+          const nextNum = (state.activeServer % EMBED_SERVERS.length) + 1;
+          state.activeServer = nextNum;
+          loadEmbedStream(state.activeMovie, nextNum);
+        });
+      }
 
       closePlayerBtn.addEventListener('click', closePlayerModal);
       closeDetailsBtn.addEventListener('click', closeDetailsModal);
@@ -1993,8 +2828,8 @@
 
       // Global Click-to-Ad Interstitial Controller (shows Adsterra ad on button clicks)
       const AD_GATE_ENABLED = true;
-      const AD_COOLDOWN_MS = 0; // Set to e.g. 15000 (15s) if you ever want a cooldown between ads
-      const AD_COUNTDOWN_SECONDS = 3;
+      const AD_COOLDOWN_MS = 0;
+      const AD_COUNTDOWN_SECONDS = 2;
 
       const adGateModal = document.getElementById('adGateModal');
       const adGateBannerHost = document.getElementById('adGateBannerHost');
@@ -2019,21 +2854,68 @@
         }
       });
 
-      function mountIsolatedAdsterraBanner() {
-        adGateBannerHost.innerHTML = '';
+      function mountIsolatedAdSlot(hostEl, key, width, height, title) {
+        if (!hostEl) return;
+        hostEl.innerHTML = '';
         const adFrame = document.createElement('iframe');
-        adFrame.width = '300';
-        adFrame.height = '250';
+        adFrame.width = String(width);
+        adFrame.height = String(height);
         adFrame.scrolling = 'no';
         adFrame.frameBorder = '0';
-        adFrame.title = 'Sponsored Advertisement';
-        adFrame.className = 'h-[250px] w-[300px] border-0 overflow-hidden rounded-xl';
+        adFrame.title = title || 'Sponsored Advertisement';
+        adFrame.style.width = width + 'px';
+        adFrame.style.height = height + 'px';
+        adFrame.style.border = '0';
+        adFrame.style.overflow = 'hidden';
         adFrame.srcdoc =
           '<!doctype html><html><body style="margin:0;padding:0;background:#07070c;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
-          '<script>atOptions={"key":"c63930c6b3565d894998c44776c4a2b2","format":"iframe","height":250,"width":300,"params":{}};<\/script>' +
-          '<script src="https://bancadeltempoidea.org/22/c63930c6b3565d894998c44776c4a2b2"><\/script>' +
+          '<script>atOptions={"key":"' + key + '","format":"iframe","height":' + height + ',"width":' + width + ',"params":{}};<\/script>' +
+          '<script src="https://bancadeltempoidea.org/22/' + key + '"><\/script>' +
           '</body></html>';
-        adGateBannerHost.appendChild(adFrame);
+        hostEl.appendChild(adFrame);
+      }
+
+      function mountIsolatedAdsterraBanner() {
+        mountIsolatedAdSlot(adGateBannerHost, 'c63930c6b3565d894998c44776c4a2b2', 300, 250, 'Sponsored Interstitial');
+      }
+
+      function initExtraAdPlacements() {
+        const isDesktopMd = window.innerWidth >= 768;
+        const isTabletSm = window.innerWidth >= 640;
+        const isWideRail = window.innerWidth >= 1680;
+
+        if (!isTabletSm) {
+          mountIsolatedAdSlot(preCatalogMobileAdHost, 'f70c2574fc68f0a4875a0abf2b273503', 320, 50, 'Catalog Top Mobile Ad');
+        }
+
+        if (isDesktopMd) {
+          mountIsolatedAdSlot(midCatalogAd2Desktop, '0815ee6e9d7008b512c9bfbce803ba74', 728, 90, 'Catalog Secondary Banner');
+          mountIsolatedAdSlot(preFooterAdDesktop, '0815ee6e9d7008b512c9bfbce803ba74', 728, 90, 'Pre-Footer Banner');
+        } else {
+          mountIsolatedAdSlot(midCatalogAd2Mobile, 'c63930c6b3565d894998c44776c4a2b2', 300, 250, 'Catalog Secondary Mobile Ad');
+          mountIsolatedAdSlot(preFooterAdMobile, 'c63930c6b3565d894998c44776c4a2b2', 300, 250, 'Pre-Footer Mobile Ad');
+          mountIsolatedAdSlot(mobileStickyAdHost, 'f70c2574fc68f0a4875a0abf2b273503', 320, 50, 'Mobile Sticky Ad');
+        }
+
+        if (isWideRail) {
+          mountIsolatedAdSlot(leftSkyscraperAdHost, '39f721c850285e1ca7bea308ae95b297', 160, 300, 'Left Skyscraper Ad');
+        }
+
+        if (isTabletSm) {
+          mountIsolatedAdSlot(playerTopAdDesktop, '7ebfbca294d0a5e750dc6b33e75bafa4', 468, 60, 'Player Top Banner');
+        } else {
+          mountIsolatedAdSlot(playerTopAdMobile, 'f70c2574fc68f0a4875a0abf2b273503', 320, 50, 'Player Top Mobile Banner');
+        }
+
+        mountIsolatedAdSlot(detailsAdHost, 'f70c2574fc68f0a4875a0abf2b273503', 320, 50, 'Movie Details Ad');
+      }
+
+      if (mobileStickyAdDismissBtn && mobileStickyAdBar) {
+        mobileStickyAdDismissBtn.addEventListener('click', function () {
+          mobileStickyAdBar.classList.add('hidden');
+          document.body.classList.remove('pb-32');
+          document.body.classList.add('pb-16');
+        });
       }
 
       function clearAdCountdown() {
@@ -2144,11 +3026,31 @@
         openAdGateForTarget(actionable);
       }, true);
 
-      // Boot CineVerse Keyless Engine & Hydrate Watchlist
+      if (recentPrevBtn) {
+        recentPrevBtn.addEventListener('click', function () {
+          recentlyWatchedTrack.scrollBy({ left: -360, behavior: 'smooth' });
+        });
+      }
+
+      if (recentNextBtn) {
+        recentNextBtn.addEventListener('click', function () {
+          recentlyWatchedTrack.scrollBy({ left: 360, behavior: 'smooth' });
+        });
+      }
+
+      if (clearRecentBtn) {
+        clearRecentBtn.addEventListener('click', clearRecentlyWatched);
+      }
+
+      // Boot CineVerse Keyless Engine, Watchlist, Recently Watched Carousel & Isolated Ads
       state.watchlist = loadWatchlistFromStorage();
+      loadRecentWatchedFromStorage();
       updateWatchlistUI();
       updateCategoryUI();
+      renderRecentlyWatchedSection();
+      hydrateMissingRecentMovies();
       renderHero(normalizeYtsMovie(FALLBACK_MOVIES[0]));
+      initExtraAdPlacements();
       loadMovies(false);
     })();
   </script>
