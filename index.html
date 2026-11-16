@@ -170,6 +170,7 @@
           <button
             id="clearSearchBtn"
             type="button"
+            data-ad-skip="true"
             aria-label="Clear search"
             class="hidden absolute inset-y-0 right-1 my-auto h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
@@ -294,6 +295,7 @@
           <button
             id="closeWatchlistBtn"
             type="button"
+            data-ad-skip="true"
             class="min-h-[40px] rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-300 transition-colors hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
           >
             Hide Watchlist
@@ -477,6 +479,7 @@
         <button
           id="closePlayerBtn"
           type="button"
+          data-ad-skip="true"
           aria-label="Close video player"
           class="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition-colors hover:border-crimson/50 hover:bg-crimson/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
         >
@@ -640,6 +643,7 @@
         <button
           id="closeDetailsBtn"
           type="button"
+          data-ad-skip="true"
           aria-label="Close details"
           class="absolute right-4 top-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 bg-black/60 text-white backdrop-blur-md transition-colors hover:bg-crimson/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
         >
@@ -672,6 +676,75 @@
             Download
           </a>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Global Click-to-Ad Sponsored Interstitial Modal (Triggered on Button Clicks) -->
+  <div
+    id="adGateModal"
+    data-ad-skip="true"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="adGateTitle"
+    class="fixed inset-0 z-[70] hidden items-center justify-center overflow-y-auto bg-black/90 p-4 backdrop-blur-md"
+  >
+    <div class="relative my-auto w-full max-w-md overflow-hidden rounded-2xl border border-cyan-400/30 bg-[#0d0e17]/95 p-5 shadow-2xl shadow-black/90 backdrop-blur-xl sm:p-6">
+      <div class="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
+        <div>
+          <span class="font-mono text-[10px] font-semibold uppercase tracking-widest text-neonCyan">Sponsored Preview</span>
+          <h3 id="adGateTitle" class="font-display text-base font-bold text-white sm:text-lg">
+            Support Free HD Streaming
+          </h3>
+        </div>
+        <button
+          id="closeAdGateBtn"
+          type="button"
+          data-ad-skip="true"
+          aria-label="Close ad preview"
+          class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition-colors hover:border-crimson/50 hover:bg-crimson/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Centered 300x250 Adsterra Showcase Container -->
+      <div class="flex justify-center my-4 overflow-hidden">
+        <div
+          id="adGateBannerHost"
+          class="flex h-[250px] w-[300px] max-w-full items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/40"
+        ></div>
+      </div>
+
+      <div class="mt-4 flex flex-col gap-2.5">
+        <a
+          id="adGateSponsorLink"
+          href="https://directyp.org/4/a0ab45f58f9fc4cfe1c59cae21b4103e"
+          target="_blank"
+          rel="noopener noreferrer"
+          data-ad-skip="true"
+          class="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl bg-crimson px-5 py-2.5 text-xs font-bold text-white shadow-[0_0_20px_rgba(255,30,66,0.35)] transition-all duration-150 hover:bg-rose-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 sm:text-sm"
+        >
+          <span>Open Sponsor Ad &amp; Continue Instantly</span>
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+            <polyline points="15 3 21 3 21 9" />
+            <line x1="10" x2="21" y1="14" y2="3" />
+          </svg>
+        </a>
+
+        <button
+          id="adGateContinueBtn"
+          type="button"
+          data-ad-skip="true"
+          disabled
+          class="inline-flex min-h-[44px] w-full items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2 text-xs font-semibold text-cyan-200 transition-all duration-150 hover:bg-cyan-400/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 disabled:cursor-not-allowed disabled:border-white/10 disabled:bg-white/5 disabled:text-slate-400"
+        >
+          Continue in 3s...
+        </button>
       </div>
     </div>
   </div>
@@ -1918,15 +1991,158 @@
         }
       });
 
+      // Global Click-to-Ad Interstitial Controller (shows Adsterra ad on button clicks)
+      const AD_GATE_ENABLED = true;
+      const AD_COOLDOWN_MS = 0; // Set to e.g. 15000 (15s) if you ever want a cooldown between ads
+      const AD_COUNTDOWN_SECONDS = 3;
+
+      const adGateModal = document.getElementById('adGateModal');
+      const adGateBannerHost = document.getElementById('adGateBannerHost');
+      const adGateContinueBtn = document.getElementById('adGateContinueBtn');
+      const adGateSponsorLink = document.getElementById('adGateSponsorLink');
+      const closeAdGateBtn = document.getElementById('closeAdGateBtn');
+
+      let pendingAdTarget = null;
+      let bypassedAdTarget = null;
+      let adCountdownTimer = null;
+      let lastAdShownAt = 0;
+
       document.addEventListener('keydown', function (e) {
         if (e.key === 'Escape') {
-          if (!playerModal.classList.contains('hidden')) {
+          if (!adGateModal.classList.contains('hidden')) {
+            closeAdGate(false);
+          } else if (!playerModal.classList.contains('hidden')) {
             closePlayerModal();
           } else if (!detailsModal.classList.contains('hidden')) {
             closeDetailsModal();
           }
         }
       });
+
+      function mountIsolatedAdsterraBanner() {
+        adGateBannerHost.innerHTML = '';
+        const adFrame = document.createElement('iframe');
+        adFrame.width = '300';
+        adFrame.height = '250';
+        adFrame.scrolling = 'no';
+        adFrame.frameBorder = '0';
+        adFrame.title = 'Sponsored Advertisement';
+        adFrame.className = 'h-[250px] w-[300px] border-0 overflow-hidden rounded-xl';
+        adFrame.srcdoc =
+          '<!doctype html><html><body style="margin:0;padding:0;background:#07070c;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
+          '<script>atOptions={"key":"c63930c6b3565d894998c44776c4a2b2","format":"iframe","height":250,"width":300,"params":{}};<\/script>' +
+          '<script src="https://bancadeltempoidea.org/22/c63930c6b3565d894998c44776c4a2b2"><\/script>' +
+          '</body></html>';
+        adGateBannerHost.appendChild(adFrame);
+      }
+
+      function clearAdCountdown() {
+        if (adCountdownTimer) {
+          clearInterval(adCountdownTimer);
+          adCountdownTimer = null;
+        }
+      }
+
+      function closeAdGate(proceedWithAction) {
+        clearAdCountdown();
+        const targetToRun = proceedWithAction ? pendingAdTarget : null;
+        pendingAdTarget = null;
+        adGateModal.classList.add('hidden');
+        adGateModal.classList.remove('flex');
+        adGateBannerHost.innerHTML = '';
+
+        if (playerModal.classList.contains('hidden') && detailsModal.classList.contains('hidden')) {
+          document.body.style.overflow = '';
+        }
+
+        if (targetToRun && document.contains(targetToRun)) {
+          bypassedAdTarget = targetToRun;
+          targetToRun.click();
+          bypassedAdTarget = null;
+        }
+      }
+
+      function openAdGateForTarget(targetEl) {
+        clearAdCountdown();
+        pendingAdTarget = targetEl;
+        lastAdShownAt = Date.now();
+
+        mountIsolatedAdsterraBanner();
+
+        let remaining = AD_COUNTDOWN_SECONDS;
+        adGateContinueBtn.disabled = true;
+        adGateContinueBtn.textContent = 'Continue in ' + remaining + 's...';
+
+        adGateModal.classList.remove('hidden');
+        adGateModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+
+        adCountdownTimer = setInterval(function () {
+          remaining -= 1;
+          if (remaining <= 0) {
+            clearAdCountdown();
+            adGateContinueBtn.disabled = false;
+            adGateContinueBtn.textContent = 'Continue to Action';
+          } else {
+            adGateContinueBtn.textContent = 'Continue in ' + remaining + 's...';
+          }
+        }, 1000);
+      }
+
+      if (adGateContinueBtn) {
+        adGateContinueBtn.addEventListener('click', function () {
+          if (!adGateContinueBtn.disabled) {
+            closeAdGate(true);
+          }
+        });
+      }
+
+      if (adGateSponsorLink) {
+        adGateSponsorLink.addEventListener('click', function () {
+          // Clicking the sponsor link opens the Direct Link in a new tab and immediately unlocks the pending action
+          setTimeout(function () {
+            closeAdGate(true);
+          }, 50);
+        });
+      }
+
+      if (closeAdGateBtn) {
+        closeAdGateBtn.addEventListener('click', function () {
+          closeAdGate(false);
+        });
+      }
+
+      if (adGateModal) {
+        adGateModal.addEventListener('click', function (e) {
+          if (e.target === adGateModal && !adGateContinueBtn.disabled) {
+            closeAdGate(true);
+          }
+        });
+      }
+
+      // Intercept clicks on interactive buttons & movie cards in capture phase
+      document.addEventListener('click', function (e) {
+        if (!AD_GATE_ENABLED) return;
+        if (e.target && e.target.closest && e.target.closest('[data-ad-skip="true"]')) return;
+        if (!adGateModal.classList.contains('hidden')) return;
+
+        const actionable = e.target && e.target.closest
+          ? e.target.closest('.watchlist-heart-btn, button, .catalog-card, #modalDownloadLink, #detailsDownloadBtn, #playerFallbackDownloadBtn')
+          : null;
+
+        if (!actionable) return;
+        if (actionable === bypassedAdTarget) return;
+        if (actionable.disabled) return;
+
+        if (AD_COOLDOWN_MS > 0 && Date.now() - lastAdShownAt < AD_COOLDOWN_MS) {
+          return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        openAdGateForTarget(actionable);
+      }, true);
 
       // Boot CineVerse Keyless Engine & Hydrate Watchlist
       state.watchlist = loadWatchlistFromStorage();
