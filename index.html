@@ -1,0 +1,1403 @@
+<!DOCTYPE html>
+<html lang="en" class="dark scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+  <title>CineVerse — Stream Movies &amp; Web Series in HD</title>
+  <meta name="description" content="CineVerse — Modern cross-device movie and web series streaming hub with TMDb discovery, smart demo mode, and instant multi-server theatre playback." />
+  <meta property="og:title" content="CineVerse — Stream Movies & Web Series in HD" />
+  <meta property="og:description" content="Stream trending movies, Bollywood hits, and web series with instant multi-server playback." />
+  <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="theme-color" content="#07070c" />
+
+  <!-- Google Fonts: Outfit (Display), Plus Jakarta Sans (Body), JetBrains Mono (Ratings/Numerals) -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@500;600&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: '#07070c',
+            neonCyan: '#00f0ff',
+            crimson: '#ff1e42',
+          },
+          fontFamily: {
+            display: ['Outfit', 'sans-serif'],
+            sans: ['Plus Jakarta Sans', 'sans-serif'],
+            mono: ['JetBrains Mono', 'monospace'],
+          },
+          transitionTimingFunction: {
+            cinema: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          },
+        },
+      },
+    };
+  </script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+    }
+
+    body {
+      background-color: #07070c;
+      color: #f1f5f9;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      overflow-x: hidden;
+    }
+
+    /* Ambient dark cinema backdrop gradients */
+    .cinema-ambient {
+      background-image:
+        radial-gradient(circle at 12% 14%, rgba(0, 240, 255, 0.08) 0%, transparent 40%),
+        radial-gradient(circle at 88% 10%, rgba(255, 30, 66, 0.09) 0%, transparent 38%);
+    }
+
+    /* Sleek custom scrollbars */
+    ::-webkit-scrollbar {
+      width: 8px;
+      height: 8px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #07070c;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.14);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(0, 240, 255, 0.45);
+    }
+
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Skeleton loading shimmer */
+    @keyframes shimmer {
+      0% {
+        background-position: -200% 0;
+      }
+      100% {
+        background-position: 200% 0;
+      }
+    }
+    .skeleton-shimmer {
+      background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.09) 50%, rgba(255, 255, 255, 0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.4s infinite linear;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .skeleton-shimmer {
+        animation: none;
+      }
+      * {
+        transition-duration: 0.01ms !important;
+        animation-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body class="min-h-screen bg-[#07070c] text-slate-100 antialiased cinema-ambient pb-16 md:pb-0 selection:bg-cyan-400/30 selection:text-cyan-100">
+
+  <!-- Sticky Glassmorphic Navbar -->
+  <header class="sticky top-0 z-40 border-b border-white/10 bg-[#07070c]/85 backdrop-blur-xl">
+    <div class="mx-auto flex h-14 max-w-7xl items-center justify-between gap-3 px-4 sm:h-16 sm:px-6 lg:gap-8 lg:px-8">
+      <!-- Glowing Brand Logo -->
+      <a href="#top" id="brandHomeBtn" class="flex shrink-0 items-center gap-2.5 whitespace-nowrap rounded-lg focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <span class="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-crimson to-rose-700 shadow-[0_0_20px_rgba(255,30,66,0.45)]">
+          <svg class="h-4 w-4 text-white" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+            <path d="M8 5.14v14l11-7-11-7z" />
+          </svg>
+        </span>
+        <span class="font-display text-lg font-extrabold tracking-tight text-white sm:text-xl">
+          Cine<span class="text-neonCyan drop-shadow-[0_0_10px_rgba(0,240,255,0.55)]">Verse</span>
+        </span>
+      </a>
+
+      <!-- Desktop Category Filter Tabs -->
+      <nav aria-label="Categories" class="hidden items-center gap-1 rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-xl lg:flex">
+        <button type="button" data-category="trending" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Trending
+        </button>
+        <button type="button" data-category="movies" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Movies
+        </button>
+        <button type="button" data-category="bollywood" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Bollywood
+        </button>
+        <button type="button" data-category="tv" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          TV Series
+        </button>
+        <button type="button" data-category="top_rated" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Top Rated
+        </button>
+      </nav>
+
+      <!-- Live Debounced Search Bar -->
+      <form id="searchForm" class="relative w-full max-w-[200px] sm:max-w-xs" role="search">
+        <label for="searchInput" class="sr-only">Search movies and web series</label>
+        <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <circle cx="11" cy="11" r="8" />
+            <path d="m21 21-4.3-4.3" />
+          </svg>
+        </span>
+        <input
+          id="searchInput"
+          type="search"
+          placeholder="Search titles..."
+          autocomplete="off"
+          class="h-10 w-full rounded-xl border border-white/10 bg-white/5 pl-9 pr-9 text-sm text-white placeholder-slate-400 backdrop-blur-xl transition-all duration-200 focus:border-cyan-400/70 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 sm:h-11"
+        />
+        <button
+          id="clearSearchBtn"
+          type="button"
+          aria-label="Clear search"
+          class="hidden absolute inset-y-0 right-1 my-auto flex h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </form>
+    </div>
+  </header>
+
+  <main id="top" class="mx-auto max-w-7xl px-4 pb-14 pt-4 sm:px-6 lg:px-8">
+
+    <!-- ADSTERRA TOP BANNER (728x90 Desktop / 320x50 Mobile) -->
+    <section aria-label="Advertisement" class="mb-4 flex justify-center sm:mb-5">
+      <div class="hidden h-[90px] w-[728px] max-w-full items-center justify-center rounded-xl border border-white/10 bg-white/5 text-xs font-medium tracking-wide text-slate-500 backdrop-blur-xl md:flex">
+        <!-- Paste Adsterra 728x90 Desktop Banner Script Here -->
+        <span>Adsterra Leaderboard Slot (728×90)</span>
+      </div>
+      <div class="flex h-[50px] w-[320px] max-w-full items-center justify-center rounded-xl border border-white/10 bg-white/5 text-xs font-medium tracking-wide text-slate-500 backdrop-blur-xl md:hidden">
+        <!-- Paste Adsterra 320x50 Mobile Banner Script Here -->
+        <span>Adsterra Mobile Banner (320×50)</span>
+      </div>
+    </section>
+
+    <!-- Mobile & Tablet Horizontal Scrollable Category Tabs -->
+    <div class="mb-5 flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar lg:hidden" role="tablist" aria-label="Browse categories">
+      <button type="button" data-category="trending" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Trending
+      </button>
+      <button type="button" data-category="movies" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Movies
+      </button>
+      <button type="button" data-category="bollywood" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Bollywood
+      </button>
+      <button type="button" data-category="tv" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        TV Series
+      </button>
+      <button type="button" data-category="top_rated" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Top Rated
+      </button>
+    </div>
+
+    <!-- Cinematic Hero Banner (#1 Trending Title) -->
+    <section id="heroSection" aria-label="Featured Title" class="relative mb-10 overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+      <div id="heroContent" class="relative flex min-h-[400px] items-end sm:min-h-[460px] lg:min-h-[500px]">
+        <div class="w-full p-6 sm:p-10">
+          <div class="mb-4 h-5 w-36 rounded skeleton-shimmer"></div>
+          <div class="mb-4 h-10 w-2/3 max-w-lg rounded skeleton-shimmer"></div>
+          <div class="mb-2 h-4 w-full max-w-xl rounded skeleton-shimmer"></div>
+          <div class="mb-6 h-4 w-4/5 max-w-md rounded skeleton-shimmer"></div>
+          <div class="flex gap-3">
+            <div class="h-12 w-36 rounded-xl skeleton-shimmer"></div>
+            <div class="h-12 w-32 rounded-xl skeleton-shimmer"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Main Catalog Section -->
+    <section aria-labelledby="catalogHeading">
+      <div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
+        <div>
+          <h2 id="catalogHeading" class="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
+            Trending Now
+          </h2>
+          <p id="catalogSubtitle" class="mt-1 text-sm text-slate-400">
+            Watch the most popular movies and web series in high definition
+          </p>
+        </div>
+        <div class="flex items-center gap-3 font-mono text-xs tabular-nums text-slate-400">
+          <span id="catalogCountLabel">Loading catalog...</span>
+        </div>
+      </div>
+
+      <!-- Movie & Series Grid Wrapper -->
+      <div id="catalogGridWrapper">
+        <div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+          <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
+        </div>
+      </div>
+
+      <!-- Load More Pagination Button -->
+      <div id="loadMoreWrapper" class="mt-10 hidden justify-center">
+        <button
+          id="loadMoreBtn"
+          type="button"
+          class="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-xl border border-cyan-400/40 bg-white/5 px-8 py-3 text-sm font-semibold text-white backdrop-blur-xl transition-all duration-200 ease-cinema hover:border-cyan-400 hover:bg-cyan-400/15 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
+        >
+          <span id="loadMoreText">Load More Titles</span>
+          <svg id="loadMoreIcon" class="h-4 w-4 text-neonCyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="m6 9 6 6 6-6" />
+          </svg>
+        </button>
+      </div>
+    </section>
+  </main>
+
+  <!-- Clean Footer -->
+  <footer class="border-t border-white/10 bg-[#07070c]/95 py-8">
+    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-center text-xs text-slate-500 sm:flex-row sm:px-6 sm:text-left lg:px-8">
+      <p class="font-medium text-slate-400">
+        CineVerse <span aria-hidden="true" class="mx-1.5">·</span> Movies &amp; Web Series Streaming Hub
+      </p>
+      <p>
+        Metadata powered by TMDb. Streams are embedded from third-party public providers.
+      </p>
+    </div>
+  </footer>
+
+  <!-- Mobile Bottom Quick Navigation Bar (Compact 56px height, Android thumb-zone optimized) -->
+  <nav aria-label="Mobile Navigation" class="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-[#07070c]/90 backdrop-blur-xl md:hidden">
+    <div class="grid h-14 grid-cols-4 items-center">
+      <button type="button" data-category="trending" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+        <span>Trending</span>
+      </button>
+      <button type="button" data-category="movies" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+        <span>Movies</span>
+      </button>
+      <button type="button" data-category="tv" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
+        <span>Series</span>
+      </button>
+      <button type="button" id="mobileSearchFocusBtn" class="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>Search</span>
+      </button>
+    </div>
+  </nav>
+
+  <!-- Instant Theatre Video Player Modal -->
+  <div
+    id="playerModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="modalTitle"
+    class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/90 p-3 backdrop-blur-md sm:p-6"
+  >
+    <div class="relative my-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-white/15 bg-[#0d0e17]/95 shadow-2xl shadow-black/90 backdrop-blur-xl">
+      <!-- Modal Header -->
+      <div class="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3.5 sm:px-6">
+        <div class="min-w-0">
+          <h3 id="modalTitle" class="truncate font-display text-lg font-bold text-white sm:text-xl">
+            Loading Player...
+          </h3>
+          <p id="modalMeta" class="mt-0.5 truncate font-mono text-xs tabular-nums text-slate-400">
+            HD Stream
+          </p>
+        </div>
+        <button
+          id="closePlayerBtn"
+          type="button"
+          aria-label="Close video player"
+          class="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 transition-colors hover:border-crimson/50 hover:bg-crimson/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </div>
+
+      <!-- Responsive 16:9 Embed Player -->
+      <div class="relative aspect-video w-full bg-black">
+        <iframe
+          id="playerIframe"
+          src="about:blank"
+          title="Theatre Video Player"
+          class="h-full w-full border-0"
+          allow="autoplay; fullscreen; encrypted-media; picture-in-picture"
+          allowfullscreen
+          referrerpolicy="origin"
+        ></iframe>
+      </div>
+
+      <!-- Server Switcher & Download Bar -->
+      <div class="flex flex-col justify-between gap-4 border-t border-white/10 bg-white/[0.02] px-4 py-4 sm:flex-row sm:items-center sm:px-6">
+        <div class="flex flex-wrap items-center gap-2">
+          <span class="mr-1 text-xs font-medium text-slate-400">Stream Server:</span>
+          <button
+            id="server1Btn"
+            type="button"
+            class="min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          >
+            Server 1 (VidSrc)
+          </button>
+          <button
+            id="server2Btn"
+            type="button"
+            class="min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          >
+            Server 2 (2Embed)
+          </button>
+        </div>
+
+        <a
+          id="modalDownloadLink"
+          href="#"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="inline-flex min-h-[44px] items-center justify-center gap-2 whitespace-nowrap rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2 text-xs font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/25 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+        >
+          <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
+            <polyline points="7 10 12 15 17 10" />
+            <line x1="12" x2="12" y1="15" y2="3" />
+          </svg>
+          Download
+        </a>
+      </div>
+
+      <!-- Movie/Series Info & Modal Native Ad -->
+      <div class="space-y-4 border-t border-white/10 px-4 py-4 sm:px-6">
+        <p id="modalSynopsis" class="text-sm leading-relaxed text-slate-300 line-clamp-3"></p>
+
+        <!-- ADSTERRA NATIVE BANNER -->
+        <div aria-label="Advertisement" class="flex min-h-[72px] w-full items-center justify-center rounded-xl border border-white/10 bg-white/[0.03] px-4 py-3 text-center text-xs font-medium text-slate-500">
+          <!-- Paste Adsterra Native Banner Script Here -->
+          <span>Adsterra Native Banner (Player Modal)</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Title Details Modal (Triggered by Hero "Details" Button) -->
+  <div
+    id="detailsModal"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="detailsTitle"
+    class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-md"
+  >
+    <div class="relative my-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-white/15 bg-[#0d0e17]/95 shadow-2xl backdrop-blur-xl">
+      <div class="relative h-52 w-full overflow-hidden bg-slate-900 sm:h-64">
+        <img id="detailsBackdrop" src="" alt="" referrerpolicy="no-referrer" class="h-full w-full object-cover" onerror="this.style.display='none'" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0d0e17] via-[#0d0e17]/60 to-transparent"></div>
+        <button
+          id="closeDetailsBtn"
+          type="button"
+          aria-label="Close details"
+          class="absolute right-4 top-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 bg-black/60 text-white backdrop-blur-md transition-colors hover:bg-crimson/80 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+        >
+          <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M18 6 6 18" />
+            <path d="m6 6 12 12" />
+          </svg>
+        </button>
+      </div>
+      <div class="p-6">
+        <h3 id="detailsTitle" class="font-display text-2xl font-bold text-white"></h3>
+        <p id="detailsMeta" class="mt-2 font-mono text-xs tabular-nums text-slate-400"></p>
+        <p id="detailsOverview" class="mt-4 text-sm leading-relaxed text-slate-300 sm:text-base"></p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <button
+            id="detailsWatchBtn"
+            type="button"
+            class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white shadow-lg shadow-crimson/30 transition-colors hover:bg-rose-500 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          >
+            <svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v14l11-7-11-7z"/></svg>
+            Watch Now
+          </button>
+          <a
+            id="detailsDownloadBtn"
+            href="#"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white transition-colors hover:border-cyan-400/50 hover:bg-cyan-400/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400"
+          >
+            Download
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // =========================================================================
+    // CONFIGURATION: Paste your free TMDb v3 API Key below when ready.
+    // Leave as "YOUR_TMDB_API_KEY" to run in Smart Demo Mode with pre-loaded titles.
+    // =========================================================================
+    const TMDB_API_KEY = "YOUR_TMDB_API_KEY";
+
+    (function () {
+      'use strict';
+
+      const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
+      const TMDB_IMG_W500 = 'https://image.tmdb.org/t/p/w500';
+      const TMDB_IMG_ORIG = 'https://image.tmdb.org/t/p/original';
+
+      // Helper to generate crisp SVG poster artwork for Demo Bollywood/TV titles without risking broken external URLs
+      function buildDemoPosterSvg(title, subtitle, accentHex) {
+        const safeTitle = String(title).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const safeSub = String(subtitle).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+        const svg =
+          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600">' +
+            '<defs>' +
+              '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">' +
+                '<stop offset="0%" stop-color="#121424"/>' +
+                '<stop offset="100%" stop-color="#07070c"/>' +
+              '</linearGradient>' +
+              '<radialGradient id="glow" cx="50%" cy="35%" r="55%">' +
+                '<stop offset="0%" stop-color="' + accentHex + '" stop-opacity="0.35"/>' +
+                '<stop offset="100%" stop-color="#07070c" stop-opacity="0"/>' +
+              '</radialGradient>' +
+            '</defs>' +
+            '<rect width="400" height="600" fill="url(#bg)"/>' +
+            '<rect width="400" height="600" fill="url(#glow)"/>' +
+            '<rect x="20" y="20" width="360" height="560" rx="18" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>' +
+            '<text x="200" y="275" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="30" font-weight="800">' + safeTitle + '</text>' +
+            '<text x="200" y="320" text-anchor="middle" fill="' + accentHex + '" font-family="monospace" font-size="16" font-weight="600">' + safeSub + '</text>' +
+          '</svg>';
+        return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
+      }
+
+      // 12+ Realistic Demo Movies & Series (Smart Demo Mode)
+      const DEMO_CATALOG = [
+        {
+          id: 27205,
+          title: 'Inception',
+          media_type: 'movie',
+          categoryTags: ['trending', 'movies', 'top_rated'],
+          vote_average: 8.4,
+          release_date: '2010-07-16',
+          poster_url: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg',
+          overview: 'Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets, is offered a chance to regain his old life as payment for a task considered impossible: inception.'
+        },
+        {
+          id: 155,
+          title: 'The Dark Knight',
+          media_type: 'movie',
+          categoryTags: ['trending', 'movies', 'top_rated'],
+          vote_average: 8.5,
+          release_date: '2008-07-16',
+          poster_url: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+          overview: 'Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations that plague Gotham.'
+        },
+        {
+          id: 157336,
+          title: 'Interstellar',
+          media_type: 'movie',
+          categoryTags: ['trending', 'movies', 'top_rated'],
+          vote_average: 8.4,
+          release_date: '2014-11-05',
+          poster_url: 'https://image.tmdb.org/t/p/w500/pbrkL804c8yAv3zBZR4QPEafpAR.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/pbrkL804c8yAv3zBZR4QPEafpAR.jpg',
+          overview: 'The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.'
+        },
+        {
+          id: 438631,
+          title: 'Dune',
+          media_type: 'movie',
+          categoryTags: ['trending', 'movies'],
+          vote_average: 7.8,
+          release_date: '2021-09-15',
+          poster_url: 'https://image.tmdb.org/t/p/w500/v1tRXZ4JtD2Iv6fjkPvT4GiwslV.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/v1tRXZ4JtD2Iv6fjkPvT4GiwslV.jpg',
+          overview: 'Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, must travel to the most dangerous planet in the universe to ensure the future of his family and his people.'
+        },
+        {
+          id: 872585,
+          title: 'Oppenheimer',
+          media_type: 'movie',
+          categoryTags: ['trending', 'movies', 'top_rated'],
+          vote_average: 8.1,
+          release_date: '2023-07-19',
+          poster_url: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
+          overview: 'The story of J. Robert Oppenheimer\'s role in the development of the atomic bomb during World War II.'
+        },
+        {
+          id: 603,
+          title: 'The Matrix',
+          media_type: 'movie',
+          categoryTags: ['movies', 'top_rated'],
+          vote_average: 8.2,
+          release_date: '1999-03-31',
+          poster_url: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
+          overview: 'Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.'
+        },
+        {
+          id: 245891,
+          title: 'John Wick',
+          media_type: 'movie',
+          categoryTags: ['trending', 'movies'],
+          vote_average: 7.4,
+          release_date: '2014-10-22',
+          poster_url: 'https://image.tmdb.org/t/p/w500/fZn9cuBZHCxvnizXWlROQ0twPPV.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/fZn9cuBZHCxvnizXWlROQ0twPPV.jpg',
+          overview: 'Ex-hitman John Wick comes out of retirement to track down the gangsters that took everything from him.'
+        },
+        {
+          id: 293660,
+          title: 'Deadpool',
+          media_type: 'movie',
+          categoryTags: ['movies'],
+          vote_average: 7.6,
+          release_date: '2016-02-09',
+          poster_url: 'https://image.tmdb.org/t/p/w500/3E53WEZJqP6aM84D8CckXx4pIHw.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/3E53WEZJqP6aM84D8CckXx4pIHw.jpg',
+          overview: 'The origin story of former Special Forces operative turned mercenary Wade Wilson, who after being subjected to a rogue experiment adopts the alter ego Deadpool.'
+        },
+        {
+          id: 419430,
+          title: 'Get Out',
+          media_type: 'movie',
+          categoryTags: ['movies'],
+          vote_average: 7.6,
+          release_date: '2017-02-24',
+          poster_url: 'https://image.tmdb.org/t/p/w500/tFXcEccSQM3UuXAUucpB3G8zBv9.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/tFXcEccSQM3UuXAUucpB3G8zBv9.jpg',
+          overview: 'Chris and his girlfriend Rose go upstate to visit her parents for the weekend, where a series of increasingly disturbing discoveries lead him to a truth he never could have imagined.'
+        },
+        {
+          id: 496243,
+          title: 'Parasite',
+          media_type: 'movie',
+          categoryTags: ['trending', 'movies', 'top_rated'],
+          vote_average: 8.5,
+          release_date: '2019-05-30',
+          poster_url: 'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
+          overview: 'All unemployed, Ki-taek\'s family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident.'
+        },
+        {
+          id: 76341,
+          title: 'Mad Max: Fury Road',
+          media_type: 'movie',
+          categoryTags: ['movies'],
+          vote_average: 7.6,
+          release_date: '2015-05-13',
+          poster_url: 'https://image.tmdb.org/t/p/w500/hA2ple9q4qnWxMP3hCKO1Q3xOtr.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/hA2ple9q4qnWxMP3hCKO1Q3xOtr.jpg',
+          overview: 'An apocalyptic story set in the furthest reaches of our planet, in a stark desert landscape where humanity is broken, and most everyone is crazed fighting for the necessities of life.'
+        },
+        {
+          id: 807,
+          title: 'Se7en',
+          media_type: 'movie',
+          categoryTags: ['movies', 'top_rated'],
+          vote_average: 8.4,
+          release_date: '1995-09-22',
+          poster_url: 'https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EPCqVskdzU8.jpg',
+          backdrop_url: 'https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EPCqVskdzU8.jpg',
+          overview: 'Two homicide detectives are on a desperate hunt for a serial killer whose crimes are based on the seven deadly sins.'
+        },
+        {
+          id: 1396,
+          title: 'Breaking Bad',
+          media_type: 'tv',
+          categoryTags: ['trending', 'tv', 'top_rated'],
+          vote_average: 8.9,
+          release_date: '2008-01-20',
+          poster_url: buildDemoPosterSvg('Breaking Bad', 'TV SERIES · 2008', '#00f0ff'),
+          backdrop_url: buildDemoPosterSvg('Breaking Bad', 'TV SERIES · 2008', '#00f0ff'),
+          overview: 'A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family\'s future.'
+        },
+        {
+          id: 66732,
+          title: 'Stranger Things',
+          media_type: 'tv',
+          categoryTags: ['trending', 'tv'],
+          vote_average: 8.6,
+          release_date: '2016-07-15',
+          poster_url: buildDemoPosterSvg('Stranger Things', 'TV SERIES · 2016', '#ff1e42'),
+          backdrop_url: buildDemoPosterSvg('Stranger Things', 'TV SERIES · 2016', '#ff1e42'),
+          overview: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.'
+        },
+        {
+          id: 71446,
+          title: 'Money Heist',
+          media_type: 'tv',
+          categoryTags: ['tv'],
+          vote_average: 8.3,
+          release_date: '2017-05-02',
+          poster_url: buildDemoPosterSvg('Money Heist', 'TV SERIES · 2017', '#ff1e42'),
+          backdrop_url: buildDemoPosterSvg('Money Heist', 'TV SERIES · 2017', '#ff1e42'),
+          overview: 'To carry out the biggest heist in history, a mysterious man called The Professor recruits a band of eight robbers who have a single characteristic: none of them has anything to lose.'
+        },
+        {
+          id: 93405,
+          title: 'Squid Game',
+          media_type: 'tv',
+          categoryTags: ['tv', 'trending'],
+          vote_average: 7.8,
+          release_date: '2021-09-17',
+          poster_url: buildDemoPosterSvg('Squid Game', 'TV SERIES · 2021', '#00f0ff'),
+          backdrop_url: buildDemoPosterSvg('Squid Game', 'TV SERIES · 2021', '#00f0ff'),
+          overview: 'Hundreds of cash-strapped players accept a strange invitation to compete in children\'s games. Inside, a tempting prize awaits with deadly high stakes.'
+        },
+        {
+          id: 20453,
+          title: '3 Idiots',
+          media_type: 'movie',
+          categoryTags: ['bollywood', 'top_rated'],
+          vote_average: 8.0,
+          release_date: '2009-12-23',
+          poster_url: buildDemoPosterSvg('3 Idiots', 'BOLLYWOOD · 2009', '#00f0ff'),
+          backdrop_url: buildDemoPosterSvg('3 Idiots', 'BOLLYWOOD · 2009', '#00f0ff'),
+          overview: 'Two friends embark on a quest for a lost buddy, revisiting their college days and recalling the memories of their friend who inspired them to think differently.'
+        },
+        {
+          id: 872906,
+          title: 'Jawan',
+          media_type: 'movie',
+          categoryTags: ['bollywood', 'trending'],
+          vote_average: 7.2,
+          release_date: '2023-09-07',
+          poster_url: buildDemoPosterSvg('Jawan', 'BOLLYWOOD · 2023', '#ff1e42'),
+          backdrop_url: buildDemoPosterSvg('Jawan', 'BOLLYWOOD · 2023', '#ff1e42'),
+          overview: 'A high-octane action thriller outlining the emotional journey of a man who is set to rectify the wrongs in society.'
+        },
+        {
+          id: 360814,
+          title: 'Dangal',
+          media_type: 'movie',
+          categoryTags: ['bollywood', 'top_rated'],
+          vote_average: 7.9,
+          release_date: '2016-12-21',
+          poster_url: buildDemoPosterSvg('Dangal', 'BOLLYWOOD · 2016', '#00f0ff'),
+          backdrop_url: buildDemoPosterSvg('Dangal', 'BOLLYWOOD · 2016', '#00f0ff'),
+          overview: 'Former wrestler Mahavir Singh Phogat trains his daughters Geeta and Babita to become India\'s first world-class female wrestlers.'
+        },
+        {
+          id: 781732,
+          title: 'Animal',
+          media_type: 'movie',
+          categoryTags: ['bollywood'],
+          vote_average: 6.7,
+          release_date: '2023-12-01',
+          poster_url: buildDemoPosterSvg('Animal', 'BOLLYWOOD · 2023', '#ff1e42'),
+          backdrop_url: buildDemoPosterSvg('Animal', 'BOLLYWOOD · 2023', '#ff1e42'),
+          overview: 'The hardened son of a powerful industrialist returns home after years abroad and vows to take bloody revenge on those threatening his father\'s life.'
+        }
+      ];
+
+      const CATEGORY_META = {
+        trending: {
+          heading: 'Trending Now',
+          subtitle: 'Most watched movies and web series across the globe'
+        },
+        movies: {
+          heading: 'Popular Movies',
+          subtitle: 'Blockbuster feature films ready for instant HD streaming'
+        },
+        bollywood: {
+          heading: 'Bollywood & Hindi Cinema',
+          subtitle: 'Top Hindi action, drama, and blockbuster releases'
+        },
+        tv: {
+          heading: 'Web & TV Series',
+          subtitle: 'Binge-worthy television series and original shows'
+        },
+        top_rated: {
+          heading: 'Top Rated Classics',
+          subtitle: 'Critically acclaimed cinema ranked highest by audiences'
+        }
+      };
+
+      const state = {
+        items: [],
+        featuredItem: null,
+        activeCategory: 'trending',
+        searchQuery: '',
+        page: 1,
+        totalPages: 1,
+        isLoading: false,
+        activeItem: null,
+        activeServer: 1,
+        debounceTimer: null,
+        fetchController: null
+      };
+
+      // DOM Elements
+      const heroContent = document.getElementById('heroContent');
+      const catalogGridWrapper = document.getElementById('catalogGridWrapper');
+      const catalogHeading = document.getElementById('catalogHeading');
+      const catalogSubtitle = document.getElementById('catalogSubtitle');
+      const catalogCountLabel = document.getElementById('catalogCountLabel');
+      const loadMoreWrapper = document.getElementById('loadMoreWrapper');
+      const loadMoreBtn = document.getElementById('loadMoreBtn');
+      const loadMoreText = document.getElementById('loadMoreText');
+      const searchForm = document.getElementById('searchForm');
+      const searchInput = document.getElementById('searchInput');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
+      const brandHomeBtn = document.getElementById('brandHomeBtn');
+      const categoryTabs = document.querySelectorAll('.cat-tab');
+      const mobileNavButtons = document.querySelectorAll('.mobile-nav-btn');
+      const mobileSearchFocusBtn = document.getElementById('mobileSearchFocusBtn');
+
+      // Player Modal DOM
+      const playerModal = document.getElementById('playerModal');
+      const closePlayerBtn = document.getElementById('closePlayerBtn');
+      const playerIframe = document.getElementById('playerIframe');
+      const modalTitle = document.getElementById('modalTitle');
+      const modalMeta = document.getElementById('modalMeta');
+      const modalSynopsis = document.getElementById('modalSynopsis');
+      const modalDownloadLink = document.getElementById('modalDownloadLink');
+      const server1Btn = document.getElementById('server1Btn');
+      const server2Btn = document.getElementById('server2Btn');
+
+      // Details Modal DOM
+      const detailsModal = document.getElementById('detailsModal');
+      const closeDetailsBtn = document.getElementById('closeDetailsBtn');
+      const detailsBackdrop = document.getElementById('detailsBackdrop');
+      const detailsTitle = document.getElementById('detailsTitle');
+      const detailsMeta = document.getElementById('detailsMeta');
+      const detailsOverview = document.getElementById('detailsOverview');
+      const detailsWatchBtn = document.getElementById('detailsWatchBtn');
+      const detailsDownloadBtn = document.getElementById('detailsDownloadBtn');
+
+      function hasValidTmdbKey() {
+        return typeof TMDB_API_KEY === 'string' &&
+          TMDB_API_KEY.trim().length > 10 &&
+          TMDB_API_KEY.trim() !== 'YOUR_TMDB_API_KEY';
+      }
+
+      function escapeHtml(str) {
+        return String(str || '')
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      function normalizeTmdbItem(raw, fallbackType) {
+        const mediaType = raw.media_type === 'tv' || fallbackType === 'tv' || (!raw.title && raw.name) ? 'tv' : 'movie';
+        const title = raw.title || raw.name || 'Untitled';
+        const dateStr = raw.release_date || raw.first_air_date || '';
+        const year = dateStr ? dateStr.slice(0, 4) : '';
+        const rating = typeof raw.vote_average === 'number' && raw.vote_average > 0 ? raw.vote_average.toFixed(1) : 'N/A';
+        const poster = raw.poster_url || (raw.poster_path ? TMDB_IMG_W500 + raw.poster_path : '');
+        const backdrop = raw.backdrop_url || (raw.backdrop_path ? TMDB_IMG_ORIG + raw.backdrop_path : poster);
+
+        return {
+          id: raw.id,
+          title: title,
+          media_type: mediaType,
+          year: year,
+          rating: rating,
+          poster: poster,
+          backdrop: backdrop,
+          overview: raw.overview || 'Stream this title in crisp high definition across multiple servers.'
+        };
+      }
+
+      function getEmbedUrl(item, serverNum) {
+        const cleanId = encodeURIComponent(item.id);
+        if (serverNum === 2) {
+          return item.media_type === 'tv'
+            ? 'https://www.2embed.cc/embedtv/' + cleanId
+            : 'https://www.2embed.cc/embed/' + cleanId;
+        }
+        return item.media_type === 'tv'
+          ? 'https://vidsrc.xyz/embed/tv/' + cleanId
+          : 'https://vidsrc.xyz/embed/movie/' + cleanId;
+      }
+
+      function getDownloadUrl(item) {
+        return 'https://www.themoviedb.org/' + (item.media_type === 'tv' ? 'tv' : 'movie') + '/' + encodeURIComponent(item.id);
+      }
+
+      function updateCategoryUI() {
+        categoryTabs.forEach(function (btn) {
+          const isDesktop = btn.closest('nav') !== null;
+          const isActive = btn.getAttribute('data-category') === state.activeCategory && !state.searchQuery.trim();
+          if (isDesktop) {
+            btn.className = isActive
+              ? 'cat-tab whitespace-nowrap shrink-0 rounded-lg border border-cyan-400/50 bg-cyan-400/20 px-3.5 py-2 text-xs font-semibold text-cyan-200 shadow-sm transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+              : 'cat-tab whitespace-nowrap shrink-0 rounded-lg border border-transparent px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all duration-200 ease-cinema hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          } else {
+            btn.className = isActive
+              ? 'cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+              : 'cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 transition-all duration-200 ease-cinema hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          }
+          btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+
+        mobileNavButtons.forEach(function (btn) {
+          const isActive = btn.getAttribute('data-category') === state.activeCategory && !state.searchQuery.trim();
+          btn.className = isActive
+            ? 'mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-semibold text-neonCyan transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+            : 'mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+        });
+      }
+
+      function renderSkeletonGrid() {
+        let html = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+        for (let i = 0; i < 12; i++) {
+          html += '<div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>';
+        }
+        html += '</div>';
+        catalogGridWrapper.innerHTML = html;
+      }
+
+      function renderHero(item) {
+        if (!item) return;
+        state.featuredItem = item;
+        const typeLabel = item.media_type === 'tv' ? 'TV Series' : 'Movie';
+
+        heroContent.innerHTML =
+          '<div class="absolute inset-0 overflow-hidden bg-[#0b0c14]">' +
+            (item.backdrop
+              ? '<img src="' + escapeHtml(item.backdrop) + '" alt="' + escapeHtml(item.title) + ' backdrop" referrerpolicy="no-referrer" class="h-full w-full object-cover object-center opacity-55 scale-105 transition-opacity duration-500" onerror="this.style.display=\'none\'" />'
+              : '') +
+            '<div class="absolute inset-0 bg-gradient-to-t from-[#07070c] via-[#07070c]/75 to-[#07070c]/30"></div>' +
+            '<div class="absolute inset-0 bg-gradient-to-r from-[#07070c] via-[#07070c]/85 to-transparent"></div>' +
+          '</div>' +
+          '<div class="relative z-10 flex w-full flex-col gap-8 p-6 sm:p-10 lg:flex-row lg:items-end lg:justify-between">' +
+            '<div class="max-w-2xl">' +
+              '<div class="mb-3 inline-flex items-center gap-2 font-mono text-xs font-semibold tracking-wider text-neonCyan uppercase">' +
+                '<span>Featured #1</span>' +
+                '<span aria-hidden="true" class="text-slate-600">·</span>' +
+                '<span class="text-amber-300">★ ' + escapeHtml(item.rating) + ' Rating</span>' +
+              '</div>' +
+              '<h1 class="font-display text-3xl font-extrabold tracking-tight text-white sm:text-5xl" style="text-wrap: balance;">' +
+                escapeHtml(item.title) +
+              '</h1>' +
+              '<div class="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-xs tabular-nums text-slate-300 sm:text-sm">' +
+                '<span>' + escapeHtml(typeLabel) + '</span>' +
+                (item.year ? '<span aria-hidden="true" class="text-slate-500">·</span><span>' + escapeHtml(item.year) + '</span>' : '') +
+                '<span aria-hidden="true" class="text-slate-500">·</span>' +
+                '<span class="font-sans text-cyan-300">HD Multi-Server</span>' +
+              '</div>' +
+              '<p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-300 line-clamp-3 sm:text-base">' +
+                escapeHtml(item.overview) +
+              '</p>' +
+              '<div class="mt-6 flex flex-wrap items-center gap-3">' +
+                '<button type="button" id="heroWatchBtn" class="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white shadow-[0_0_24px_rgba(255,30,66,0.4)] transition-all duration-200 ease-cinema hover:bg-rose-500 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+                  '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v14l11-7-11-7z"/></svg>' +
+                  'Watch Now' +
+                '</button>' +
+                '<button type="button" id="heroDetailsBtn" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-xl transition-colors duration-200 hover:border-cyan-400/50 hover:bg-cyan-400/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+                  '<svg class="h-4 w-4 text-neonCyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>' +
+                  'Details' +
+                '</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="hidden shrink-0 lg:block">' +
+              '<div class="group relative h-64 w-44 overflow-hidden rounded-xl border border-white/15 bg-white/5 shadow-2xl shadow-black/80">' +
+                '<img src="' + escapeHtml(item.poster) + '" alt="' + escapeHtml(item.title) + ' poster" referrerpolicy="no-referrer" class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\');" />' +
+                '<div class="hidden flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-[#07070c] p-4 text-center">' +
+                  '<span class="font-display text-sm font-bold text-white">' + escapeHtml(item.title) + '</span>' +
+                  '<span class="mt-1 font-mono text-xs text-slate-400">' + escapeHtml(item.year) + '</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+
+        const heroWatchBtn = document.getElementById('heroWatchBtn');
+        const heroDetailsBtn = document.getElementById('heroDetailsBtn');
+        if (heroWatchBtn) {
+          heroWatchBtn.addEventListener('click', function () {
+            openPlayerModal(item);
+          });
+        }
+        if (heroDetailsBtn) {
+          heroDetailsBtn.addEventListener('click', function () {
+            openDetailsModal(item);
+          });
+        }
+      }
+
+      function createCardHtml(item, index) {
+        const typeLabel = item.media_type === 'tv' ? 'Series' : 'Movie';
+        return (
+          '<article data-item-index="' + index + '" tabindex="0" role="button" aria-label="Watch ' + escapeHtml(item.title) + '" class="catalog-card group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 ease-cinema hover:-translate-y-1 hover:border-cyan-400/45 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+            '<div class="relative aspect-[2/3] w-full overflow-hidden bg-slate-900">' +
+              '<img ' +
+                'src="' + escapeHtml(item.poster) + '" ' +
+                'alt="' + escapeHtml(item.title) + ' poster" ' +
+                'loading="lazy" ' +
+                'referrerpolicy="no-referrer" ' +
+                'class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" ' +
+                'onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\');" ' +
+              '/>' +
+              '<div class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#141728] to-[#07070c] p-4 text-center">' +
+                '<svg class="mb-2 h-8 w-8 text-neonCyan/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m10 8 6 4-6 4Z"/></svg>' +
+                '<span class="font-display text-sm font-bold text-white line-clamp-2">' + escapeHtml(item.title) + '</span>' +
+              '</div>' +
+              '<div class="absolute inset-0 bg-gradient-to-t from-[#07070c] via-[#07070c]/20 to-transparent opacity-70 transition-opacity duration-200 group-hover:opacity-90"></div>' +
+              '<div class="absolute inset-x-2.5 bottom-2.5 flex items-center justify-center opacity-100 sm:translate-y-2 sm:opacity-0 transition-all duration-200 ease-cinema group-hover:translate-y-0 group-hover:opacity-100">' +
+                '<span class="inline-flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-xl bg-crimson px-3 py-2 text-xs font-bold text-white shadow-lg shadow-crimson/30">' +
+                  '<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v14l11-7-11-7z"/></svg>' +
+                  'Watch Now' +
+                '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex flex-1 flex-col justify-between p-3">' +
+              '<h3 class="truncate font-display text-sm font-semibold text-white transition-colors group-hover:text-cyan-200" title="' + escapeHtml(item.title) + '">' +
+                escapeHtml(item.title) +
+              '</h3>' +
+              '<div class="mt-1.5 flex items-center gap-1.5 font-mono text-xs tabular-nums text-slate-400">' +
+                '<span class="font-semibold text-amber-300">★ ' + escapeHtml(item.rating) + '</span>' +
+                (item.year ? '<span aria-hidden="true">·</span><span>' + escapeHtml(item.year) + '</span>' : '') +
+                '<span aria-hidden="true">·</span>' +
+                '<span class="font-sans text-slate-400">' + escapeHtml(typeLabel) + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function renderCatalog(items) {
+        if (!items || items.length === 0) {
+          catalogCountLabel.textContent = '0 titles found';
+          loadMoreWrapper.classList.add('hidden');
+          loadMoreWrapper.classList.remove('flex');
+          catalogGridWrapper.innerHTML =
+            '<div class="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-16 text-center backdrop-blur-xl">' +
+              '<svg class="mb-3 h-10 w-10 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>' +
+              '<h3 class="font-display text-lg font-bold text-white">No titles matched your search</h3>' +
+              '<p class="mt-1 max-w-md text-sm text-slate-400">Try a different keyword or return to trending movies and series.</p>' +
+              '<button type="button" id="resetCatalogBtn" class="mt-5 min-h-[44px] rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+                'Reset View' +
+              '</button>' +
+            '</div>';
+
+          const resetBtn = document.getElementById('resetCatalogBtn');
+          if (resetBtn) {
+            resetBtn.addEventListener('click', resetToHome);
+          }
+          return;
+        }
+
+        catalogCountLabel.textContent = items.length + (items.length === 1 ? ' title' : ' titles');
+
+        const splitAt = items.length > 6 ? 6 : items.length;
+        const firstSection = items.slice(0, splitAt);
+        const restSection = items.slice(splitAt);
+
+        let html = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+        firstSection.forEach(function (item, i) {
+          html += createCardHtml(item, i);
+        });
+        html += '</div>';
+
+        html +=
+          '<!-- ADSTERRA NATIVE BANNER -->' +
+          '<div aria-label="Advertisement" class="my-8 flex min-h-[92px] w-full items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-4 py-4 text-center text-xs font-medium text-slate-500 backdrop-blur-xl">' +
+            '<!-- Paste Adsterra Native Banner Script Here -->' +
+            '<span>Adsterra Native Banner (Between Sections)</span>' +
+          '</div>';
+
+        if (restSection.length > 0) {
+          html += '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+          restSection.forEach(function (item, i) {
+            html += createCardHtml(item, splitAt + i);
+          });
+          html += '</div>';
+        }
+
+        catalogGridWrapper.innerHTML = html;
+
+        const cards = catalogGridWrapper.querySelectorAll('.catalog-card');
+        cards.forEach(function (card) {
+          function launch() {
+            const idx = parseInt(card.getAttribute('data-item-index'), 10);
+            if (!Number.isNaN(idx) && state.items[idx]) {
+              openPlayerModal(state.items[idx]);
+            }
+          }
+          card.addEventListener('click', launch);
+          card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              launch();
+            }
+          });
+        });
+
+        // Show Load More when additional pages exist
+        if (state.page < state.totalPages) {
+          loadMoreWrapper.classList.remove('hidden');
+          loadMoreWrapper.classList.add('flex');
+        } else {
+          loadMoreWrapper.classList.add('hidden');
+          loadMoreWrapper.classList.remove('flex');
+        }
+      }
+
+      function getDemoResults(category, query, page) {
+        const q = (query || '').trim().toLowerCase();
+        let filtered = DEMO_CATALOG.filter(function (item) {
+          if (q) {
+            return item.title.toLowerCase().includes(q) || item.overview.toLowerCase().includes(q);
+          }
+          return item.categoryTags.includes(category);
+        });
+
+        // In Demo Mode, show 12 items on page 1 and reveal remaining items on Load More if > 12
+        const pageSize = 12;
+        const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
+        const slice = filtered.slice(0, page * pageSize).map(function (raw) {
+          return normalizeTmdbItem(raw, raw.media_type);
+        });
+        return {
+          items: slice,
+          totalPages: totalPages
+        };
+      }
+
+      function buildTmdbEndpoint(category, query, page) {
+        const keyParam = 'api_key=' + encodeURIComponent(TMDB_API_KEY) + '&page=' + page;
+        if (query && query.trim()) {
+          return TMDB_BASE_URL + '/search/multi?' + keyParam + '&query=' + encodeURIComponent(query.trim());
+        }
+        switch (category) {
+          case 'movies':
+            return TMDB_BASE_URL + '/movie/popular?' + keyParam;
+          case 'bollywood':
+            return TMDB_BASE_URL + '/discover/movie?' + keyParam + '&with_original_language=hi&sort_by=popularity.desc';
+          case 'tv':
+            return TMDB_BASE_URL + '/tv/popular?' + keyParam;
+          case 'top_rated':
+            return TMDB_BASE_URL + '/movie/top_rated?' + keyParam;
+          case 'trending':
+          default:
+            return TMDB_BASE_URL + '/trending/all/week?' + keyParam;
+        }
+      }
+
+      async function loadCatalog(append) {
+        if (state.isLoading) return;
+        if (state.fetchController) {
+          state.fetchController.abort();
+        }
+        state.fetchController = new AbortController();
+        state.isLoading = true;
+
+        const q = state.searchQuery.trim();
+        const cat = state.activeCategory;
+
+        if (!append) {
+          state.page = 1;
+          renderSkeletonGrid();
+          catalogCountLabel.textContent = 'Loading...';
+          loadMoreWrapper.classList.add('hidden');
+          loadMoreWrapper.classList.remove('flex');
+        } else {
+          loadMoreBtn.disabled = true;
+          loadMoreText.textContent = 'Loading...';
+        }
+
+        if (q) {
+          catalogHeading.textContent = 'Search Results for "' + q + '"';
+          catalogSubtitle.textContent = 'Showing matching movies and web series';
+        } else {
+          const meta = CATEGORY_META[cat] || CATEGORY_META.trending;
+          catalogHeading.textContent = meta.heading;
+          catalogSubtitle.textContent = meta.subtitle;
+        }
+
+        // Smart Demo Mode when no TMDb API key is configured
+        if (!hasValidTmdbKey()) {
+          const demo = getDemoResults(cat, q, state.page);
+          state.items = demo.items;
+          state.totalPages = demo.totalPages;
+          state.isLoading = false;
+          loadMoreBtn.disabled = false;
+          loadMoreText.textContent = 'Load More Titles';
+
+          if (!append && !q && state.items[0]) {
+            renderHero(state.items[0]);
+          } else if (!state.featuredItem) {
+            renderHero(normalizeTmdbItem(DEMO_CATALOG[0], 'movie'));
+          }
+          renderCatalog(state.items);
+          return;
+        }
+
+        const url = buildTmdbEndpoint(cat, q, state.page);
+        const timeoutId = setTimeout(function () {
+          if (state.fetchController) {
+            state.fetchController.abort();
+          }
+        }, 7000);
+
+        try {
+          const res = await fetch(url, { signal: state.fetchController.signal });
+          clearTimeout(timeoutId);
+          if (!res.ok) {
+            throw new Error('TMDb HTTP ' + res.status);
+          }
+          const data = await res.json();
+          const fallbackType = cat === 'tv' ? 'tv' : 'movie';
+          const rawResults = Array.isArray(data.results) ? data.results : [];
+          const normalized = rawResults
+            .filter(function (r) {
+              return !r.media_type || r.media_type === 'movie' || r.media_type === 'tv';
+            })
+            .map(function (r) {
+              return normalizeTmdbItem(r, fallbackType);
+            });
+
+          state.totalPages = data.total_pages ? Math.min(data.total_pages, 50) : 1;
+          state.items = append ? state.items.concat(normalized) : normalized;
+
+          if (!append && !q && state.items[0]) {
+            renderHero(state.items[0]);
+          } else if (!state.featuredItem && state.items[0]) {
+            renderHero(state.items[0]);
+          }
+          renderCatalog(state.items);
+        } catch (err) {
+          clearTimeout(timeoutId);
+          const demo = getDemoResults(cat, q, state.page);
+          state.items = demo.items;
+          state.totalPages = demo.totalPages;
+          if (!state.featuredItem || (!append && !q && demo.items[0])) {
+            renderHero(demo.items[0] || normalizeTmdbItem(DEMO_CATALOG[0], 'movie'));
+          }
+          renderCatalog(state.items);
+        } finally {
+          state.isLoading = false;
+          loadMoreBtn.disabled = false;
+          loadMoreText.textContent = 'Load More Titles';
+        }
+      }
+
+      function updateServerButtons() {
+        if (state.activeServer === 1) {
+          server1Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          server2Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+        } else {
+          server1Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          server2Btn.className = 'min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+        }
+      }
+
+      function openPlayerModal(item) {
+        if (!item) return;
+        closeDetailsModal();
+        state.activeItem = item;
+        state.activeServer = 1;
+
+        const typeLabel = item.media_type === 'tv' ? 'TV Series' : 'Movie';
+        modalTitle.textContent = item.title + (item.year ? ' (' + item.year + ')' : '');
+        modalMeta.textContent = '★ ' + item.rating + ' · ' + typeLabel + ' · HD Stream';
+        modalSynopsis.textContent = item.overview;
+        modalDownloadLink.href = getDownloadUrl(item);
+
+        updateServerButtons();
+        playerIframe.src = getEmbedUrl(item, 1);
+
+        playerModal.classList.remove('hidden');
+        playerModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        closePlayerBtn.focus();
+      }
+
+      function closePlayerModal() {
+        playerModal.classList.add('hidden');
+        playerModal.classList.remove('flex');
+        playerIframe.src = 'about:blank';
+        document.body.style.overflow = '';
+        state.activeItem = null;
+      }
+
+      function openDetailsModal(item) {
+        if (!item) return;
+        const typeLabel = item.media_type === 'tv' ? 'TV Series' : 'Movie';
+        detailsBackdrop.style.display = '';
+        detailsBackdrop.src = item.backdrop || item.poster || '';
+        detailsBackdrop.alt = item.title + ' backdrop';
+        detailsTitle.textContent = item.title;
+        detailsMeta.textContent = ['★ ' + item.rating + ' Rating', item.year, typeLabel].filter(Boolean).join(' · ');
+        detailsOverview.textContent = item.overview;
+        detailsDownloadBtn.href = getDownloadUrl(item);
+
+        detailsWatchBtn.onclick = function () {
+          openPlayerModal(item);
+        };
+
+        detailsModal.classList.remove('hidden');
+        detailsModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        closeDetailsBtn.focus();
+      }
+
+      function closeDetailsModal() {
+        detailsModal.classList.add('hidden');
+        detailsModal.classList.remove('flex');
+        if (playerModal.classList.contains('hidden')) {
+          document.body.style.overflow = '';
+        }
+      }
+
+      function switchCategory(category) {
+        state.activeCategory = category;
+        state.searchQuery = '';
+        searchInput.value = '';
+        clearSearchBtn.classList.add('hidden');
+        updateCategoryUI();
+        loadCatalog(false);
+      }
+
+      function resetToHome() {
+        switchCategory('trending');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Event Listeners
+      categoryTabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          switchCategory(tab.getAttribute('data-category') || 'trending');
+        });
+      });
+
+      mobileNavButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          switchCategory(btn.getAttribute('data-category') || 'trending');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+
+      if (mobileSearchFocusBtn) {
+        mobileSearchFocusBtn.addEventListener('click', function () {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          setTimeout(function () {
+            searchInput.focus();
+          }, 150);
+        });
+      }
+
+      brandHomeBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        resetToHome();
+      });
+
+      searchInput.addEventListener('input', function () {
+        const val = searchInput.value;
+        state.searchQuery = val;
+        if (val.trim().length > 0) {
+          clearSearchBtn.classList.remove('hidden');
+        } else {
+          clearSearchBtn.classList.add('hidden');
+        }
+        updateCategoryUI();
+        clearTimeout(state.debounceTimer);
+        state.debounceTimer = setTimeout(function () {
+          loadCatalog(false);
+        }, 380);
+      });
+
+      searchForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        clearTimeout(state.debounceTimer);
+        state.searchQuery = searchInput.value;
+        updateCategoryUI();
+        loadCatalog(false);
+      });
+
+      clearSearchBtn.addEventListener('click', function () {
+        searchInput.value = '';
+        state.searchQuery = '';
+        clearSearchBtn.classList.add('hidden');
+        updateCategoryUI();
+        loadCatalog(false);
+        searchInput.focus();
+      });
+
+      loadMoreBtn.addEventListener('click', function () {
+        if (state.page < state.totalPages && !state.isLoading) {
+          state.page += 1;
+          loadCatalog(true);
+        }
+      });
+
+      server1Btn.addEventListener('click', function () {
+        if (!state.activeItem || state.activeServer === 1) return;
+        state.activeServer = 1;
+        updateServerButtons();
+        playerIframe.src = getEmbedUrl(state.activeItem, 1);
+      });
+
+      server2Btn.addEventListener('click', function () {
+        if (!state.activeItem || state.activeServer === 2) return;
+        state.activeServer = 2;
+        updateServerButtons();
+        playerIframe.src = getEmbedUrl(state.activeItem, 2);
+      });
+
+      closePlayerBtn.addEventListener('click', closePlayerModal);
+      closeDetailsBtn.addEventListener('click', closeDetailsModal);
+
+      playerModal.addEventListener('click', function (e) {
+        if (e.target === playerModal) {
+          closePlayerModal();
+        }
+      });
+
+      detailsModal.addEventListener('click', function (e) {
+        if (e.target === detailsModal) {
+          closeDetailsModal();
+        }
+      });
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          if (!playerModal.classList.contains('hidden')) {
+            closePlayerModal();
+          } else if (!detailsModal.classList.contains('hidden')) {
+            closeDetailsModal();
+          }
+        }
+      });
+
+      // Boot CineVerse
+      updateCategoryUI();
+      loadCatalog(false);
+    })();
+  </script>
+
+  <!-- ADSTERRA POPUNDER & SOCIAL BAR SCRIPT -->
+  <!-- Paste your Adsterra Popunder & Social Bar <script> tags right before </body> -->
+</body>
+</html>
