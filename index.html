@@ -3,10 +3,10 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-  <title>CineVerse — Stream Movies &amp; Web Series in HD</title>
-  <meta name="description" content="CineVerse — Modern cross-device movie and web series streaming hub with TMDb discovery, smart demo mode, and instant multi-server theatre playback." />
-  <meta property="og:title" content="CineVerse — Stream Movies & Web Series in HD" />
-  <meta property="og:description" content="Stream trending movies, Bollywood hits, and web series with instant multi-server playback." />
+  <title>CineVerse — Keyless Free HD Movie Streaming</title>
+  <meta name="description" content="CineVerse — 100% free and keyless cross-device HD movie streaming hub powered by public movie feeds with dark neon glassmorphism UI and multi-server playback." />
+  <meta property="og:title" content="CineVerse — Keyless Free HD Movie Streaming" />
+  <meta property="og:description" content="Stream trending HD movies with zero API keys, live search, and instant multi-server theatre playback." />
   <meta property="og:type" content="website" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="theme-color" content="#07070c" />
@@ -132,23 +132,26 @@
         <button type="button" data-category="trending" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
           Trending
         </button>
-        <button type="button" data-category="movies" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
-          Movies
-        </button>
-        <button type="button" data-category="bollywood" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
-          Bollywood
-        </button>
-        <button type="button" data-category="tv" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
-          TV Series
-        </button>
         <button type="button" data-category="top_rated" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
           Top Rated
         </button>
+        <button type="button" data-category="action" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Action
+        </button>
+        <button type="button" data-category="sci-fi" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Sci-Fi
+        </button>
+        <button type="button" data-category="comedy" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Comedy
+        </button>
+        <button type="button" data-category="thriller" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+          Thriller
+        </button>
       </nav>
 
-      <!-- Live Debounced Search Bar -->
+      <!-- Live Search Bar (Submits on Enter + supports instant clear) -->
       <form id="searchForm" class="relative w-full max-w-[200px] sm:max-w-xs" role="search">
-        <label for="searchInput" class="sr-only">Search movies and web series</label>
+        <label for="searchInput" class="sr-only">Search movies (press Enter)</label>
         <span class="pointer-events-none absolute inset-y-0 left-3 flex items-center text-slate-400">
           <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <circle cx="11" cy="11" r="8" />
@@ -158,7 +161,7 @@
         <input
           id="searchInput"
           type="search"
-          placeholder="Search titles..."
+          placeholder="Search movies (Enter)..."
           autocomplete="off"
           class="h-10 w-full rounded-xl border border-white/10 bg-white/5 pl-9 pr-9 text-sm text-white placeholder-slate-400 backdrop-blur-xl transition-all duration-200 focus:border-cyan-400/70 focus:bg-white/10 focus:outline-none focus:ring-2 focus:ring-cyan-400/30 sm:h-11"
         />
@@ -196,22 +199,25 @@
       <button type="button" data-category="trending" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
         Trending
       </button>
-      <button type="button" data-category="movies" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
-        Movies
-      </button>
-      <button type="button" data-category="bollywood" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
-        Bollywood
-      </button>
-      <button type="button" data-category="tv" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
-        TV Series
-      </button>
       <button type="button" data-category="top_rated" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
         Top Rated
       </button>
+      <button type="button" data-category="action" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Action
+      </button>
+      <button type="button" data-category="sci-fi" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Sci-Fi
+      </button>
+      <button type="button" data-category="comedy" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Comedy
+      </button>
+      <button type="button" data-category="thriller" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        Thriller
+      </button>
     </div>
 
-    <!-- Cinematic Hero Banner (#1 Trending Title) -->
-    <section id="heroSection" aria-label="Featured Title" class="relative mb-10 overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
+    <!-- Cinematic Hero Banner (#1 Trending Movie) -->
+    <section id="heroSection" aria-label="Featured Movie" class="relative mb-10 overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
       <div id="heroContent" class="relative flex min-h-[400px] items-end sm:min-h-[460px] lg:min-h-[500px]">
         <div class="w-full p-6 sm:p-10">
           <div class="mb-4 h-5 w-36 rounded skeleton-shimmer"></div>
@@ -231,10 +237,10 @@
       <div class="mb-6 flex flex-wrap items-end justify-between gap-4 border-b border-white/10 pb-4">
         <div>
           <h2 id="catalogHeading" class="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">
-            Trending Now
+            Trending Movies
           </h2>
           <p id="catalogSubtitle" class="mt-1 text-sm text-slate-400">
-            Watch the most popular movies and web series in high definition
+            100% free, keyless HD movie streaming powered by public feeds
           </p>
         </div>
         <div class="flex items-center gap-3 font-mono text-xs tabular-nums text-slate-400">
@@ -242,7 +248,7 @@
         </div>
       </div>
 
-      <!-- Movie & Series Grid Wrapper -->
+      <!-- Movie Grid Wrapper -->
       <div id="catalogGridWrapper">
         <div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">
           <div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>
@@ -267,7 +273,7 @@
           type="button"
           class="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-xl border border-cyan-400/40 bg-white/5 px-8 py-3 text-sm font-semibold text-white backdrop-blur-xl transition-all duration-200 ease-cinema hover:border-cyan-400 hover:bg-cyan-400/15 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400 disabled:cursor-not-allowed disabled:opacity-50"
         >
-          <span id="loadMoreText">Load More Titles</span>
+          <span id="loadMoreText">Load More Movies</span>
           <svg id="loadMoreIcon" class="h-4 w-4 text-neonCyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="m6 9 6 6 6-6" />
           </svg>
@@ -280,10 +286,10 @@
   <footer class="border-t border-white/10 bg-[#07070c]/95 py-8">
     <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-center text-xs text-slate-500 sm:flex-row sm:px-6 sm:text-left lg:px-8">
       <p class="font-medium text-slate-400">
-        CineVerse <span aria-hidden="true" class="mx-1.5">·</span> Movies &amp; Web Series Streaming Hub
+        CineVerse <span aria-hidden="true" class="mx-1.5">·</span> Keyless HD Movie Streaming Hub
       </p>
       <p>
-        Metadata powered by TMDb. Streams are embedded from third-party public providers.
+        Powered by public movie metadata feeds. No files are hosted on this server.
       </p>
     </div>
   </footer>
@@ -295,13 +301,13 @@
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
         <span>Trending</span>
       </button>
-      <button type="button" data-category="movies" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
-        <span>Movies</span>
+      <button type="button" data-category="top_rated" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>Top Rated</span>
       </button>
-      <button type="button" data-category="tv" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
-        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="20" height="15" x="2" y="7" rx="2" ry="2"/><polyline points="17 2 12 7 7 2"/></svg>
-        <span>Series</span>
+      <button type="button" data-category="action" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="M7 3v18"/><path d="M3 7.5h4"/><path d="M3 12h18"/><path d="M3 16.5h4"/><path d="M17 3v18"/><path d="M17 7.5h4"/><path d="M17 16.5h4"/></svg>
+        <span>Action</span>
       </button>
       <button type="button" id="mobileSearchFocusBtn" class="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">
         <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
@@ -310,7 +316,7 @@
     </div>
   </nav>
 
-  <!-- Instant Theatre Video Player Modal -->
+  <!-- Instant Keyless Theatre Video Player Modal -->
   <div
     id="playerModal"
     role="dialog"
@@ -391,7 +397,7 @@
         </a>
       </div>
 
-      <!-- Movie/Series Info & Modal Native Ad -->
+      <!-- Movie Info & Modal Native Ad -->
       <div class="space-y-4 border-t border-white/10 px-4 py-4 sm:px-6">
         <p id="modalSynopsis" class="text-sm leading-relaxed text-slate-300 line-clamp-3"></p>
 
@@ -404,7 +410,7 @@
     </div>
   </div>
 
-  <!-- Title Details Modal (Triggered by Hero "Details" Button) -->
+  <!-- Movie Details Modal (Triggered by Hero "Details" Button) -->
   <div
     id="detailsModal"
     role="dialog"
@@ -456,302 +462,210 @@
   </div>
 
   <script>
-    // =========================================================================
-    // CONFIGURATION: Paste your free TMDb v3 API Key below when ready.
-    // Leave as "YOUR_TMDB_API_KEY" to run in Smart Demo Mode with pre-loaded titles.
-    // =========================================================================
-    const TMDB_API_KEY = "YOUR_TMDB_API_KEY";
-
     (function () {
       'use strict';
 
-      const TMDB_BASE_URL = 'https://api.themoviedb.org/3';
-      const TMDB_IMG_W500 = 'https://image.tmdb.org/t/p/w500';
-      const TMDB_IMG_ORIG = 'https://image.tmdb.org/t/p/original';
+      // 100% Keyless Public YTS API Endpoint (Zero API Keys Required)
+      const YTS_API_URL = 'https://yts.mx/api/v2/list_movies.json';
+      const PAGE_LIMIT = 24;
 
-      // Helper to generate crisp SVG poster artwork for Demo Bollywood/TV titles without risking broken external URLs
-      function buildDemoPosterSvg(title, subtitle, accentHex) {
-        const safeTitle = String(title).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        const safeSub = String(subtitle).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-        const svg =
-          '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 600">' +
-            '<defs>' +
-              '<linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">' +
-                '<stop offset="0%" stop-color="#121424"/>' +
-                '<stop offset="100%" stop-color="#07070c"/>' +
-              '</linearGradient>' +
-              '<radialGradient id="glow" cx="50%" cy="35%" r="55%">' +
-                '<stop offset="0%" stop-color="' + accentHex + '" stop-opacity="0.35"/>' +
-                '<stop offset="100%" stop-color="#07070c" stop-opacity="0"/>' +
-              '</radialGradient>' +
-            '</defs>' +
-            '<rect width="400" height="600" fill="url(#bg)"/>' +
-            '<rect width="400" height="600" fill="url(#glow)"/>' +
-            '<rect x="20" y="20" width="360" height="560" rx="18" fill="none" stroke="rgba(255,255,255,0.12)" stroke-width="2"/>' +
-            '<text x="200" y="275" text-anchor="middle" fill="#ffffff" font-family="system-ui, sans-serif" font-size="30" font-weight="800">' + safeTitle + '</text>' +
-            '<text x="200" y="320" text-anchor="middle" fill="' + accentHex + '" font-family="monospace" font-size="16" font-weight="600">' + safeSub + '</text>' +
-          '</svg>';
-        return 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg);
-      }
-
-      // 12+ Realistic Demo Movies & Series (Smart Demo Mode)
-      const DEMO_CATALOG = [
+      // Graceful Fallback Catalog (used automatically if network/ISP blocks YTS API)
+      const FALLBACK_MOVIES = [
         {
-          id: 27205,
+          id: 9001,
           title: 'Inception',
-          media_type: 'movie',
-          categoryTags: ['trending', 'movies', 'top_rated'],
-          vote_average: 8.4,
-          release_date: '2010-07-16',
-          poster_url: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg',
-          overview: 'Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets, is offered a chance to regain his old life as payment for a task considered impossible: inception.'
+          year: 2010,
+          rating: 8.8,
+          runtime: 148,
+          genres: ['Action', 'Sci-Fi', 'Thriller'],
+          imdb_code: 'tt1375666',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg',
+          summary: 'A thief who steals corporate secrets through the use of dream-sharing technology is given the inverse task of planting an idea into the mind of a C.E.O.',
+          url: 'https://yts.mx/movies/inception-2010'
         },
         {
-          id: 155,
+          id: 9002,
           title: 'The Dark Knight',
-          media_type: 'movie',
-          categoryTags: ['trending', 'movies', 'top_rated'],
-          vote_average: 8.5,
-          release_date: '2008-07-16',
-          poster_url: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
-          overview: 'Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations that plague Gotham.'
+          year: 2008,
+          rating: 9.0,
+          runtime: 152,
+          genres: ['Action', 'Thriller'],
+          imdb_code: 'tt0468569',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg',
+          summary: 'When the menace known as the Joker wreaks havoc and chaos on the people of Gotham, Batman must accept one of the greatest psychological and physical tests of his ability to fight injustice.',
+          url: 'https://yts.mx/movies/the-dark-knight-2008'
         },
         {
-          id: 157336,
+          id: 9003,
           title: 'Interstellar',
-          media_type: 'movie',
-          categoryTags: ['trending', 'movies', 'top_rated'],
-          vote_average: 8.4,
-          release_date: '2014-11-05',
-          poster_url: 'https://image.tmdb.org/t/p/w500/pbrkL804c8yAv3zBZR4QPEafpAR.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/pbrkL804c8yAv3zBZR4QPEafpAR.jpg',
-          overview: 'The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.'
+          year: 2014,
+          rating: 8.7,
+          runtime: 169,
+          genres: ['Sci-Fi', 'Action'],
+          imdb_code: 'tt0816692',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/pbrkL804c8yAv3zBZR4QPEafpAR.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/pbrkL804c8yAv3zBZR4QPEafpAR.jpg',
+          summary: 'When Earth becomes uninhabitable in the future, a farmer and ex-NASA pilot is tasked to pilot a spacecraft, along with a team of researchers, to find a new planet for humans.',
+          url: 'https://yts.mx/movies/interstellar-2014'
         },
         {
-          id: 438631,
+          id: 9004,
           title: 'Dune',
-          media_type: 'movie',
-          categoryTags: ['trending', 'movies'],
-          vote_average: 7.8,
-          release_date: '2021-09-15',
-          poster_url: 'https://image.tmdb.org/t/p/w500/v1tRXZ4JtD2Iv6fjkPvT4GiwslV.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/v1tRXZ4JtD2Iv6fjkPvT4GiwslV.jpg',
-          overview: 'Paul Atreides, a brilliant and gifted young man born into a great destiny beyond his understanding, must travel to the most dangerous planet in the universe to ensure the future of his family and his people.'
+          year: 2021,
+          rating: 8.0,
+          runtime: 155,
+          genres: ['Sci-Fi', 'Action'],
+          imdb_code: 'tt1160419',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/v1tRXZ4JtD2Iv6fjkPvT4GiwslV.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/v1tRXZ4JtD2Iv6fjkPvT4GiwslV.jpg',
+          summary: 'Paul Atreides arrives on Arrakis after his father accepts the stewardship of the dangerous planet, navigating betrayal and ancient destiny amidst desert storms.',
+          url: 'https://yts.mx/movies/dune-2021'
         },
         {
-          id: 872585,
+          id: 9005,
           title: 'Oppenheimer',
-          media_type: 'movie',
-          categoryTags: ['trending', 'movies', 'top_rated'],
-          vote_average: 8.1,
-          release_date: '2023-07-19',
-          poster_url: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
-          overview: 'The story of J. Robert Oppenheimer\'s role in the development of the atomic bomb during World War II.'
+          year: 2023,
+          rating: 8.3,
+          runtime: 180,
+          genres: ['Thriller'],
+          imdb_code: 'tt15398776',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg',
+          summary: 'The story of American scientist J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.',
+          url: 'https://yts.mx/movies/oppenheimer-2023'
         },
         {
-          id: 603,
+          id: 9006,
           title: 'The Matrix',
-          media_type: 'movie',
-          categoryTags: ['movies', 'top_rated'],
-          vote_average: 8.2,
-          release_date: '1999-03-31',
-          poster_url: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
-          overview: 'Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.'
+          year: 1999,
+          rating: 8.7,
+          runtime: 136,
+          genres: ['Action', 'Sci-Fi'],
+          imdb_code: 'tt0133093',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg',
+          summary: 'When a beautiful stranger leads computer hacker Neo to a forbidding underworld, he discovers the shocking truth about the reality he lives in.',
+          url: 'https://yts.mx/movies/the-matrix-1999'
         },
         {
-          id: 245891,
+          id: 9007,
           title: 'John Wick',
-          media_type: 'movie',
-          categoryTags: ['trending', 'movies'],
-          vote_average: 7.4,
-          release_date: '2014-10-22',
-          poster_url: 'https://image.tmdb.org/t/p/w500/fZn9cuBZHCxvnizXWlROQ0twPPV.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/fZn9cuBZHCxvnizXWlROQ0twPPV.jpg',
-          overview: 'Ex-hitman John Wick comes out of retirement to track down the gangsters that took everything from him.'
+          year: 2014,
+          rating: 7.4,
+          runtime: 101,
+          genres: ['Action', 'Thriller'],
+          imdb_code: 'tt2911666',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/fZn9cuBZHCxvnizXWlROQ0twPPV.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/fZn9cuBZHCxvnizXWlROQ0twPPV.jpg',
+          summary: 'An ex-hitman comes out of retirement to track down the gangsters who killed his dog and took everything from him.',
+          url: 'https://yts.mx/movies/john-wick-2014'
         },
         {
-          id: 293660,
+          id: 9008,
           title: 'Deadpool',
-          media_type: 'movie',
-          categoryTags: ['movies'],
-          vote_average: 7.6,
-          release_date: '2016-02-09',
-          poster_url: 'https://image.tmdb.org/t/p/w500/3E53WEZJqP6aM84D8CckXx4pIHw.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/3E53WEZJqP6aM84D8CckXx4pIHw.jpg',
-          overview: 'The origin story of former Special Forces operative turned mercenary Wade Wilson, who after being subjected to a rogue experiment adopts the alter ego Deadpool.'
+          year: 2016,
+          rating: 8.0,
+          runtime: 108,
+          genres: ['Action', 'Comedy'],
+          imdb_code: 'tt1431045',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/3E53WEZJqP6aM84D8CckXx4pIHw.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/3E53WEZJqP6aM84D8CckXx4pIHw.jpg',
+          summary: 'A wisecracking mercenary gets experimented on and becomes immortal yet hideously scarred, and sets out to track down the man who ruined his looks.',
+          url: 'https://yts.mx/movies/deadpool-2016'
         },
         {
-          id: 419430,
+          id: 9009,
           title: 'Get Out',
-          media_type: 'movie',
-          categoryTags: ['movies'],
-          vote_average: 7.6,
-          release_date: '2017-02-24',
-          poster_url: 'https://image.tmdb.org/t/p/w500/tFXcEccSQM3UuXAUucpB3G8zBv9.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/tFXcEccSQM3UuXAUucpB3G8zBv9.jpg',
-          overview: 'Chris and his girlfriend Rose go upstate to visit her parents for the weekend, where a series of increasingly disturbing discoveries lead him to a truth he never could have imagined.'
+          year: 2017,
+          rating: 7.8,
+          runtime: 104,
+          genres: ['Thriller'],
+          imdb_code: 'tt5052448',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/tFXcEccSQM3UuXAUucpB3G8zBv9.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/tFXcEccSQM3UuXAUucpB3G8zBv9.jpg',
+          summary: 'A young African-American visits his white girlfriend\'s parents for the weekend, where his simmering uneasiness about their reception eventually reaches a boiling point.',
+          url: 'https://yts.mx/movies/get-out-2017'
         },
         {
-          id: 496243,
+          id: 9010,
           title: 'Parasite',
-          media_type: 'movie',
-          categoryTags: ['trending', 'movies', 'top_rated'],
-          vote_average: 8.5,
-          release_date: '2019-05-30',
-          poster_url: 'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
-          overview: 'All unemployed, Ki-taek\'s family takes peculiar interest in the wealthy and glamorous Parks for their livelihood until they get entangled in an unexpected incident.'
+          year: 2019,
+          rating: 8.5,
+          runtime: 132,
+          genres: ['Comedy', 'Thriller'],
+          imdb_code: 'tt6751668',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/7IiTTgloJzvGI1TAYymCfbfl3vT.jpg',
+          summary: 'Greed and class discrimination threaten the newly formed symbiotic relationship between the wealthy Park family and the destitute Kim clan.',
+          url: 'https://yts.mx/movies/parasite-2019'
         },
         {
-          id: 76341,
+          id: 9011,
           title: 'Mad Max: Fury Road',
-          media_type: 'movie',
-          categoryTags: ['movies'],
-          vote_average: 7.6,
-          release_date: '2015-05-13',
-          poster_url: 'https://image.tmdb.org/t/p/w500/hA2ple9q4qnWxMP3hCKO1Q3xOtr.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/hA2ple9q4qnWxMP3hCKO1Q3xOtr.jpg',
-          overview: 'An apocalyptic story set in the furthest reaches of our planet, in a stark desert landscape where humanity is broken, and most everyone is crazed fighting for the necessities of life.'
+          year: 2015,
+          rating: 8.1,
+          runtime: 120,
+          genres: ['Action', 'Sci-Fi'],
+          imdb_code: 'tt1392190',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/hA2ple9q4qnWxMP3hCKO1Q3xOtr.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/hA2ple9q4qnWxMP3hCKO1Q3xOtr.jpg',
+          summary: 'In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler in search for her homeland with the aid of a group of female prisoners and a drifter named Max.',
+          url: 'https://yts.mx/movies/mad-max-fury-road-2015'
         },
         {
-          id: 807,
+          id: 9012,
           title: 'Se7en',
-          media_type: 'movie',
-          categoryTags: ['movies', 'top_rated'],
-          vote_average: 8.4,
-          release_date: '1995-09-22',
-          poster_url: 'https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EPCqVskdzU8.jpg',
-          backdrop_url: 'https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EPCqVskdzU8.jpg',
-          overview: 'Two homicide detectives are on a desperate hunt for a serial killer whose crimes are based on the seven deadly sins.'
-        },
-        {
-          id: 1396,
-          title: 'Breaking Bad',
-          media_type: 'tv',
-          categoryTags: ['trending', 'tv', 'top_rated'],
-          vote_average: 8.9,
-          release_date: '2008-01-20',
-          poster_url: buildDemoPosterSvg('Breaking Bad', 'TV SERIES · 2008', '#00f0ff'),
-          backdrop_url: buildDemoPosterSvg('Breaking Bad', 'TV SERIES · 2008', '#00f0ff'),
-          overview: 'A high school chemistry teacher diagnosed with inoperable lung cancer turns to manufacturing and selling methamphetamine in order to secure his family\'s future.'
-        },
-        {
-          id: 66732,
-          title: 'Stranger Things',
-          media_type: 'tv',
-          categoryTags: ['trending', 'tv'],
-          vote_average: 8.6,
-          release_date: '2016-07-15',
-          poster_url: buildDemoPosterSvg('Stranger Things', 'TV SERIES · 2016', '#ff1e42'),
-          backdrop_url: buildDemoPosterSvg('Stranger Things', 'TV SERIES · 2016', '#ff1e42'),
-          overview: 'When a young boy vanishes, a small town uncovers a mystery involving secret experiments, terrifying supernatural forces, and one strange little girl.'
-        },
-        {
-          id: 71446,
-          title: 'Money Heist',
-          media_type: 'tv',
-          categoryTags: ['tv'],
-          vote_average: 8.3,
-          release_date: '2017-05-02',
-          poster_url: buildDemoPosterSvg('Money Heist', 'TV SERIES · 2017', '#ff1e42'),
-          backdrop_url: buildDemoPosterSvg('Money Heist', 'TV SERIES · 2017', '#ff1e42'),
-          overview: 'To carry out the biggest heist in history, a mysterious man called The Professor recruits a band of eight robbers who have a single characteristic: none of them has anything to lose.'
-        },
-        {
-          id: 93405,
-          title: 'Squid Game',
-          media_type: 'tv',
-          categoryTags: ['tv', 'trending'],
-          vote_average: 7.8,
-          release_date: '2021-09-17',
-          poster_url: buildDemoPosterSvg('Squid Game', 'TV SERIES · 2021', '#00f0ff'),
-          backdrop_url: buildDemoPosterSvg('Squid Game', 'TV SERIES · 2021', '#00f0ff'),
-          overview: 'Hundreds of cash-strapped players accept a strange invitation to compete in children\'s games. Inside, a tempting prize awaits with deadly high stakes.'
-        },
-        {
-          id: 20453,
-          title: '3 Idiots',
-          media_type: 'movie',
-          categoryTags: ['bollywood', 'top_rated'],
-          vote_average: 8.0,
-          release_date: '2009-12-23',
-          poster_url: buildDemoPosterSvg('3 Idiots', 'BOLLYWOOD · 2009', '#00f0ff'),
-          backdrop_url: buildDemoPosterSvg('3 Idiots', 'BOLLYWOOD · 2009', '#00f0ff'),
-          overview: 'Two friends embark on a quest for a lost buddy, revisiting their college days and recalling the memories of their friend who inspired them to think differently.'
-        },
-        {
-          id: 872906,
-          title: 'Jawan',
-          media_type: 'movie',
-          categoryTags: ['bollywood', 'trending'],
-          vote_average: 7.2,
-          release_date: '2023-09-07',
-          poster_url: buildDemoPosterSvg('Jawan', 'BOLLYWOOD · 2023', '#ff1e42'),
-          backdrop_url: buildDemoPosterSvg('Jawan', 'BOLLYWOOD · 2023', '#ff1e42'),
-          overview: 'A high-octane action thriller outlining the emotional journey of a man who is set to rectify the wrongs in society.'
-        },
-        {
-          id: 360814,
-          title: 'Dangal',
-          media_type: 'movie',
-          categoryTags: ['bollywood', 'top_rated'],
-          vote_average: 7.9,
-          release_date: '2016-12-21',
-          poster_url: buildDemoPosterSvg('Dangal', 'BOLLYWOOD · 2016', '#00f0ff'),
-          backdrop_url: buildDemoPosterSvg('Dangal', 'BOLLYWOOD · 2016', '#00f0ff'),
-          overview: 'Former wrestler Mahavir Singh Phogat trains his daughters Geeta and Babita to become India\'s first world-class female wrestlers.'
-        },
-        {
-          id: 781732,
-          title: 'Animal',
-          media_type: 'movie',
-          categoryTags: ['bollywood'],
-          vote_average: 6.7,
-          release_date: '2023-12-01',
-          poster_url: buildDemoPosterSvg('Animal', 'BOLLYWOOD · 2023', '#ff1e42'),
-          backdrop_url: buildDemoPosterSvg('Animal', 'BOLLYWOOD · 2023', '#ff1e42'),
-          overview: 'The hardened son of a powerful industrialist returns home after years abroad and vows to take bloody revenge on those threatening his father\'s life.'
+          year: 1995,
+          rating: 8.6,
+          runtime: 127,
+          genres: ['Thriller'],
+          imdb_code: 'tt0114369',
+          large_cover_image: 'https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EPCqVskdzU8.jpg',
+          background_image_original: 'https://image.tmdb.org/t/p/w500/6yoghtyTpznpBik8EPCqVskdzU8.jpg',
+          summary: 'Two detectives, a rookie and a veteran, hunt a serial killer who uses the seven deadly sins as his motives.',
+          url: 'https://yts.mx/movies/se7en-1995'
         }
       ];
 
       const CATEGORY_META = {
         trending: {
-          heading: 'Trending Now',
-          subtitle: 'Most watched movies and web series across the globe'
-        },
-        movies: {
-          heading: 'Popular Movies',
-          subtitle: 'Blockbuster feature films ready for instant HD streaming'
-        },
-        bollywood: {
-          heading: 'Bollywood & Hindi Cinema',
-          subtitle: 'Top Hindi action, drama, and blockbuster releases'
-        },
-        tv: {
-          heading: 'Web & TV Series',
-          subtitle: 'Binge-worthy television series and original shows'
+          heading: 'Trending Movies',
+          subtitle: 'Most downloaded HD movies right now — 100% keyless'
         },
         top_rated: {
-          heading: 'Top Rated Classics',
-          subtitle: 'Critically acclaimed cinema ranked highest by audiences'
+          heading: 'Top Rated Movies',
+          subtitle: 'Highest IMDb rated feature films ready to stream'
+        },
+        action: {
+          heading: 'Action Movies',
+          subtitle: 'High-octane action blockbusters in crisp HD'
+        },
+        'sci-fi': {
+          heading: 'Sci-Fi Movies',
+          subtitle: 'Futuristic worlds, space epics, and mind-bending cinema'
+        },
+        comedy: {
+          heading: 'Comedy Movies',
+          subtitle: 'Crowd-favorite comedies and dark satires'
+        },
+        thriller: {
+          heading: 'Thriller Movies',
+          subtitle: 'Edge-of-your-seat suspense and mystery films'
         }
       };
 
       const state = {
-        items: [],
-        featuredItem: null,
+        movies: [],
+        featuredMovie: null,
         activeCategory: 'trending',
         searchQuery: '',
         page: 1,
-        totalPages: 1,
+        hasMore: false,
         isLoading: false,
-        activeItem: null,
+        activeMovie: null,
         activeServer: 1,
-        debounceTimer: null,
         fetchController: null
       };
 
@@ -793,12 +707,6 @@
       const detailsWatchBtn = document.getElementById('detailsWatchBtn');
       const detailsDownloadBtn = document.getElementById('detailsDownloadBtn');
 
-      function hasValidTmdbKey() {
-        return typeof TMDB_API_KEY === 'string' &&
-          TMDB_API_KEY.trim().length > 10 &&
-          TMDB_API_KEY.trim() !== 'YOUR_TMDB_API_KEY';
-      }
-
       function escapeHtml(str) {
         return String(str || '')
           .replace(/&/g, '&amp;')
@@ -808,41 +716,46 @@
           .replace(/'/g, '&#39;');
       }
 
-      function normalizeTmdbItem(raw, fallbackType) {
-        const mediaType = raw.media_type === 'tv' || fallbackType === 'tv' || (!raw.title && raw.name) ? 'tv' : 'movie';
-        const title = raw.title || raw.name || 'Untitled';
-        const dateStr = raw.release_date || raw.first_air_date || '';
-        const year = dateStr ? dateStr.slice(0, 4) : '';
-        const rating = typeof raw.vote_average === 'number' && raw.vote_average > 0 ? raw.vote_average.toFixed(1) : 'N/A';
-        const poster = raw.poster_url || (raw.poster_path ? TMDB_IMG_W500 + raw.poster_path : '');
-        const backdrop = raw.backdrop_url || (raw.backdrop_path ? TMDB_IMG_ORIG + raw.backdrop_path : poster);
+      function normalizeYtsMovie(raw) {
+        const poster = raw.large_cover_image || raw.medium_cover_image || raw.small_cover_image || '';
+        const backdrop = raw.background_image_original || raw.background_image || poster;
+        const genres = Array.isArray(raw.genres) && raw.genres.length > 0 ? raw.genres : ['Movie'];
+        const rating = raw.rating ? Number(raw.rating).toFixed(1) : 'N/A';
 
         return {
           id: raw.id,
-          title: title,
-          media_type: mediaType,
-          year: year,
+          imdb_code: raw.imdb_code || '',
+          title: raw.title || raw.title_english || 'Untitled',
+          year: raw.year ? String(raw.year) : '',
           rating: rating,
+          runtime: raw.runtime ? raw.runtime + ' min' : 'HD',
+          genres: genres,
           poster: poster,
           backdrop: backdrop,
-          overview: raw.overview || 'Stream this title in crisp high definition across multiple servers.'
+          summary: raw.summary || raw.description_full || 'Stream this movie in crisp high definition across multiple keyless servers.',
+          torrents: Array.isArray(raw.torrents) ? raw.torrents : [],
+          url: raw.url || ''
         };
       }
 
-      function getEmbedUrl(item, serverNum) {
-        const cleanId = encodeURIComponent(item.id);
+      function getEmbedUrl(imdbCode, serverNum) {
+        const cleanCode = encodeURIComponent(imdbCode || '');
         if (serverNum === 2) {
-          return item.media_type === 'tv'
-            ? 'https://www.2embed.cc/embedtv/' + cleanId
-            : 'https://www.2embed.cc/embed/' + cleanId;
+          return 'https://www.2embed.cc/embed/' + cleanCode;
         }
-        return item.media_type === 'tv'
-          ? 'https://vidsrc.xyz/embed/tv/' + cleanId
-          : 'https://vidsrc.xyz/embed/movie/' + cleanId;
+        return 'https://vidsrc.xyz/embed/movie/' + cleanCode;
       }
 
-      function getDownloadUrl(item) {
-        return 'https://www.themoviedb.org/' + (item.media_type === 'tv' ? 'tv' : 'movie') + '/' + encodeURIComponent(item.id);
+      function getDownloadUrl(movie) {
+        if (Array.isArray(movie.torrents) && movie.torrents.length > 0) {
+          const preferred = movie.torrents.find(function (t) {
+            return t.quality === '1080p';
+          }) || movie.torrents[0];
+          if (preferred && preferred.url) {
+            return preferred.url;
+          }
+        }
+        return movie.url || ('https://yts.mx/browse-movies/' + encodeURIComponent(movie.imdb_code || movie.title || ''));
       }
 
       function updateCategoryUI() {
@@ -878,15 +791,15 @@
         catalogGridWrapper.innerHTML = html;
       }
 
-      function renderHero(item) {
-        if (!item) return;
-        state.featuredItem = item;
-        const typeLabel = item.media_type === 'tv' ? 'TV Series' : 'Movie';
+      function renderHero(movie) {
+        if (!movie) return;
+        state.featuredMovie = movie;
+        const genresText = movie.genres.slice(0, 3).join(' / ');
 
         heroContent.innerHTML =
           '<div class="absolute inset-0 overflow-hidden bg-[#0b0c14]">' +
-            (item.backdrop
-              ? '<img src="' + escapeHtml(item.backdrop) + '" alt="' + escapeHtml(item.title) + ' backdrop" referrerpolicy="no-referrer" class="h-full w-full object-cover object-center opacity-55 scale-105 transition-opacity duration-500" onerror="this.style.display=\'none\'" />'
+            (movie.backdrop
+              ? '<img src="' + escapeHtml(movie.backdrop) + '" alt="' + escapeHtml(movie.title) + ' backdrop" referrerpolicy="no-referrer" class="h-full w-full object-cover object-center opacity-55 scale-105 transition-opacity duration-500" onerror="this.style.display=\'none\'" />'
               : '') +
             '<div class="absolute inset-0 bg-gradient-to-t from-[#07070c] via-[#07070c]/75 to-[#07070c]/30"></div>' +
             '<div class="absolute inset-0 bg-gradient-to-r from-[#07070c] via-[#07070c]/85 to-transparent"></div>' +
@@ -896,19 +809,19 @@
               '<div class="mb-3 inline-flex items-center gap-2 font-mono text-xs font-semibold tracking-wider text-neonCyan uppercase">' +
                 '<span>Featured #1</span>' +
                 '<span aria-hidden="true" class="text-slate-600">·</span>' +
-                '<span class="text-amber-300">★ ' + escapeHtml(item.rating) + ' Rating</span>' +
+                '<span class="text-amber-300">★ ' + escapeHtml(movie.rating) + ' IMDb</span>' +
               '</div>' +
               '<h1 class="font-display text-3xl font-extrabold tracking-tight text-white sm:text-5xl" style="text-wrap: balance;">' +
-                escapeHtml(item.title) +
+                escapeHtml(movie.title) +
               '</h1>' +
               '<div class="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-xs tabular-nums text-slate-300 sm:text-sm">' +
-                '<span>' + escapeHtml(typeLabel) + '</span>' +
-                (item.year ? '<span aria-hidden="true" class="text-slate-500">·</span><span>' + escapeHtml(item.year) + '</span>' : '') +
+                (movie.year ? '<span>' + escapeHtml(movie.year) + '</span><span aria-hidden="true" class="text-slate-500">·</span>' : '') +
+                '<span>' + escapeHtml(movie.runtime) + '</span>' +
                 '<span aria-hidden="true" class="text-slate-500">·</span>' +
-                '<span class="font-sans text-cyan-300">HD Multi-Server</span>' +
+                '<span class="font-sans text-cyan-300">' + escapeHtml(genresText) + '</span>' +
               '</div>' +
               '<p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-300 line-clamp-3 sm:text-base">' +
-                escapeHtml(item.overview) +
+                escapeHtml(movie.summary) +
               '</p>' +
               '<div class="mt-6 flex flex-wrap items-center gap-3">' +
                 '<button type="button" id="heroWatchBtn" class="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white shadow-[0_0_24px_rgba(255,30,66,0.4)] transition-all duration-200 ease-cinema hover:bg-rose-500 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
@@ -923,10 +836,10 @@
             '</div>' +
             '<div class="hidden shrink-0 lg:block">' +
               '<div class="group relative h-64 w-44 overflow-hidden rounded-xl border border-white/15 bg-white/5 shadow-2xl shadow-black/80">' +
-                '<img src="' + escapeHtml(item.poster) + '" alt="' + escapeHtml(item.title) + ' poster" referrerpolicy="no-referrer" class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\');" />' +
+                '<img src="' + escapeHtml(movie.poster) + '" alt="' + escapeHtml(movie.title) + ' poster" referrerpolicy="no-referrer" class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\');" />' +
                 '<div class="hidden flex h-full w-full flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-[#07070c] p-4 text-center">' +
-                  '<span class="font-display text-sm font-bold text-white">' + escapeHtml(item.title) + '</span>' +
-                  '<span class="mt-1 font-mono text-xs text-slate-400">' + escapeHtml(item.year) + '</span>' +
+                  '<span class="font-display text-sm font-bold text-white">' + escapeHtml(movie.title) + '</span>' +
+                  '<span class="mt-1 font-mono text-xs text-slate-400">' + escapeHtml(movie.year) + '</span>' +
                 '</div>' +
               '</div>' +
             '</div>' +
@@ -936,24 +849,24 @@
         const heroDetailsBtn = document.getElementById('heroDetailsBtn');
         if (heroWatchBtn) {
           heroWatchBtn.addEventListener('click', function () {
-            openPlayerModal(item);
+            openPlayerModal(movie);
           });
         }
         if (heroDetailsBtn) {
           heroDetailsBtn.addEventListener('click', function () {
-            openDetailsModal(item);
+            openDetailsModal(movie);
           });
         }
       }
 
-      function createCardHtml(item, index) {
-        const typeLabel = item.media_type === 'tv' ? 'Series' : 'Movie';
+      function createCardHtml(movie, index) {
+        const primaryGenre = movie.genres[0] || 'Movie';
         return (
-          '<article data-item-index="' + index + '" tabindex="0" role="button" aria-label="Watch ' + escapeHtml(item.title) + '" class="catalog-card group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 ease-cinema hover:-translate-y-1 hover:border-cyan-400/45 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+          '<article data-movie-index="' + index + '" tabindex="0" role="button" aria-label="Watch ' + escapeHtml(movie.title) + '" class="catalog-card group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 ease-cinema hover:-translate-y-1 hover:border-cyan-400/45 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
             '<div class="relative aspect-[2/3] w-full overflow-hidden bg-slate-900">' +
               '<img ' +
-                'src="' + escapeHtml(item.poster) + '" ' +
-                'alt="' + escapeHtml(item.title) + ' poster" ' +
+                'src="' + escapeHtml(movie.poster) + '" ' +
+                'alt="' + escapeHtml(movie.title) + ' poster" ' +
                 'loading="lazy" ' +
                 'referrerpolicy="no-referrer" ' +
                 'class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" ' +
@@ -961,7 +874,7 @@
               '/>' +
               '<div class="hidden absolute inset-0 flex flex-col items-center justify-center bg-gradient-to-br from-[#141728] to-[#07070c] p-4 text-center">' +
                 '<svg class="mb-2 h-8 w-8 text-neonCyan/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m10 8 6 4-6 4Z"/></svg>' +
-                '<span class="font-display text-sm font-bold text-white line-clamp-2">' + escapeHtml(item.title) + '</span>' +
+                '<span class="font-display text-sm font-bold text-white line-clamp-2">' + escapeHtml(movie.title) + '</span>' +
               '</div>' +
               '<div class="absolute inset-0 bg-gradient-to-t from-[#07070c] via-[#07070c]/20 to-transparent opacity-70 transition-opacity duration-200 group-hover:opacity-90"></div>' +
               '<div class="absolute inset-x-2.5 bottom-2.5 flex items-center justify-center opacity-100 sm:translate-y-2 sm:opacity-0 transition-all duration-200 ease-cinema group-hover:translate-y-0 group-hover:opacity-100">' +
@@ -972,30 +885,30 @@
               '</div>' +
             '</div>' +
             '<div class="flex flex-1 flex-col justify-between p-3">' +
-              '<h3 class="truncate font-display text-sm font-semibold text-white transition-colors group-hover:text-cyan-200" title="' + escapeHtml(item.title) + '">' +
-                escapeHtml(item.title) +
+              '<h3 class="truncate font-display text-sm font-semibold text-white transition-colors group-hover:text-cyan-200" title="' + escapeHtml(movie.title) + '">' +
+                escapeHtml(movie.title) +
               '</h3>' +
               '<div class="mt-1.5 flex items-center gap-1.5 font-mono text-xs tabular-nums text-slate-400">' +
-                '<span class="font-semibold text-amber-300">★ ' + escapeHtml(item.rating) + '</span>' +
-                (item.year ? '<span aria-hidden="true">·</span><span>' + escapeHtml(item.year) + '</span>' : '') +
+                '<span class="font-semibold text-amber-300">★ ' + escapeHtml(movie.rating) + '</span>' +
+                (movie.year ? '<span aria-hidden="true">·</span><span>' + escapeHtml(movie.year) + '</span>' : '') +
                 '<span aria-hidden="true">·</span>' +
-                '<span class="font-sans text-slate-400">' + escapeHtml(typeLabel) + '</span>' +
+                '<span class="truncate font-sans text-slate-400">' + escapeHtml(primaryGenre) + '</span>' +
               '</div>' +
             '</div>' +
           '</article>'
         );
       }
 
-      function renderCatalog(items) {
-        if (!items || items.length === 0) {
-          catalogCountLabel.textContent = '0 titles found';
+      function renderCatalog(movies) {
+        if (!movies || movies.length === 0) {
+          catalogCountLabel.textContent = '0 movies found';
           loadMoreWrapper.classList.add('hidden');
           loadMoreWrapper.classList.remove('flex');
           catalogGridWrapper.innerHTML =
             '<div class="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-16 text-center backdrop-blur-xl">' +
               '<svg class="mb-3 h-10 w-10 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>' +
-              '<h3 class="font-display text-lg font-bold text-white">No titles matched your search</h3>' +
-              '<p class="mt-1 max-w-md text-sm text-slate-400">Try a different keyword or return to trending movies and series.</p>' +
+              '<h3 class="font-display text-lg font-bold text-white">No movies matched your search</h3>' +
+              '<p class="mt-1 max-w-md text-sm text-slate-400">Try another movie title or return to trending releases.</p>' +
               '<button type="button" id="resetCatalogBtn" class="mt-5 min-h-[44px] rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
                 'Reset View' +
               '</button>' +
@@ -1008,15 +921,15 @@
           return;
         }
 
-        catalogCountLabel.textContent = items.length + (items.length === 1 ? ' title' : ' titles');
+        catalogCountLabel.textContent = movies.length + (movies.length === 1 ? ' movie' : ' movies');
 
-        const splitAt = items.length > 6 ? 6 : items.length;
-        const firstSection = items.slice(0, splitAt);
-        const restSection = items.slice(splitAt);
+        const splitAt = movies.length > 6 ? 6 : movies.length;
+        const firstSection = movies.slice(0, splitAt);
+        const restSection = movies.slice(splitAt);
 
         let html = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
-        firstSection.forEach(function (item, i) {
-          html += createCardHtml(item, i);
+        firstSection.forEach(function (movie, i) {
+          html += createCardHtml(movie, i);
         });
         html += '</div>';
 
@@ -1029,8 +942,8 @@
 
         if (restSection.length > 0) {
           html += '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
-          restSection.forEach(function (item, i) {
-            html += createCardHtml(item, splitAt + i);
+          restSection.forEach(function (movie, i) {
+            html += createCardHtml(movie, splitAt + i);
           });
           html += '</div>';
         }
@@ -1040,9 +953,9 @@
         const cards = catalogGridWrapper.querySelectorAll('.catalog-card');
         cards.forEach(function (card) {
           function launch() {
-            const idx = parseInt(card.getAttribute('data-item-index'), 10);
-            if (!Number.isNaN(idx) && state.items[idx]) {
-              openPlayerModal(state.items[idx]);
+            const idx = parseInt(card.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && state.movies[idx]) {
+              openPlayerModal(state.movies[idx]);
             }
           }
           card.addEventListener('click', launch);
@@ -1054,8 +967,7 @@
           });
         });
 
-        // Show Load More when additional pages exist
-        if (state.page < state.totalPages) {
+        if (state.hasMore) {
           loadMoreWrapper.classList.remove('hidden');
           loadMoreWrapper.classList.add('flex');
         } else {
@@ -1064,51 +976,57 @@
         }
       }
 
-      function getDemoResults(category, query, page) {
+      function filterFallbackMovies(category, query) {
         const q = (query || '').trim().toLowerCase();
-        let filtered = DEMO_CATALOG.filter(function (item) {
+        let list = FALLBACK_MOVIES.filter(function (movie) {
           if (q) {
-            return item.title.toLowerCase().includes(q) || item.overview.toLowerCase().includes(q);
+            return (
+              movie.title.toLowerCase().includes(q) ||
+              movie.summary.toLowerCase().includes(q) ||
+              movie.genres.join(' ').toLowerCase().includes(q) ||
+              String(movie.year).includes(q)
+            );
           }
-          return item.categoryTags.includes(category);
+          if (category === 'trending' || category === 'top_rated') {
+            return true;
+          }
+          return movie.genres.some(function (g) {
+            return g.toLowerCase() === category.toLowerCase();
+          });
         });
 
-        // In Demo Mode, show 12 items on page 1 and reveal remaining items on Load More if > 12
-        const pageSize = 12;
-        const totalPages = Math.max(1, Math.ceil(filtered.length / pageSize));
-        const slice = filtered.slice(0, page * pageSize).map(function (raw) {
-          return normalizeTmdbItem(raw, raw.media_type);
-        });
-        return {
-          items: slice,
-          totalPages: totalPages
-        };
+        if (category === 'top_rated' && !q) {
+          list = list.slice().sort(function (a, b) {
+            return b.rating - a.rating;
+          });
+        }
+        return list.map(normalizeYtsMovie);
       }
 
-      function buildTmdbEndpoint(category, query, page) {
-        const keyParam = 'api_key=' + encodeURIComponent(TMDB_API_KEY) + '&page=' + page;
-        if (query && query.trim()) {
-          return TMDB_BASE_URL + '/search/multi?' + keyParam + '&query=' + encodeURIComponent(query.trim());
+      function buildYtsEndpoint(category, query, page) {
+        const q = (query || '').trim();
+        if (q) {
+          return YTS_API_URL + '?query_term=' + encodeURIComponent(q) + '&limit=' + PAGE_LIMIT + '&page=' + page;
         }
         switch (category) {
-          case 'movies':
-            return TMDB_BASE_URL + '/movie/popular?' + keyParam;
-          case 'bollywood':
-            return TMDB_BASE_URL + '/discover/movie?' + keyParam + '&with_original_language=hi&sort_by=popularity.desc';
-          case 'tv':
-            return TMDB_BASE_URL + '/tv/popular?' + keyParam;
           case 'top_rated':
-            return TMDB_BASE_URL + '/movie/top_rated?' + keyParam;
+            return YTS_API_URL + '?sort_by=rating&minimum_rating=7&limit=' + PAGE_LIMIT + '&page=' + page;
+          case 'action':
+          case 'sci-fi':
+          case 'comedy':
+          case 'thriller':
+            return YTS_API_URL + '?genre=' + encodeURIComponent(category) + '&sort_by=download_count&limit=' + PAGE_LIMIT + '&page=' + page;
           case 'trending':
           default:
-            return TMDB_BASE_URL + '/trending/all/week?' + keyParam;
+            return YTS_API_URL + '?sort_by=download_count&limit=' + PAGE_LIMIT + '&page=' + page;
         }
       }
 
-      async function loadCatalog(append) {
-        if (state.isLoading) return;
-        if (state.fetchController) {
-          state.fetchController.abort();
+      async function loadMovies(append) {
+        if (state.isLoading && !append) {
+          if (state.fetchController) {
+            state.fetchController.abort();
+          }
         }
         state.fetchController = new AbortController();
         state.isLoading = true;
@@ -1129,77 +1047,79 @@
 
         if (q) {
           catalogHeading.textContent = 'Search Results for "' + q + '"';
-          catalogSubtitle.textContent = 'Showing matching movies and web series';
+          catalogSubtitle.textContent = 'Live keyless results from the public YTS movie index';
         } else {
           const meta = CATEGORY_META[cat] || CATEGORY_META.trending;
           catalogHeading.textContent = meta.heading;
           catalogSubtitle.textContent = meta.subtitle;
         }
 
-        // Smart Demo Mode when no TMDb API key is configured
-        if (!hasValidTmdbKey()) {
-          const demo = getDemoResults(cat, q, state.page);
-          state.items = demo.items;
-          state.totalPages = demo.totalPages;
-          state.isLoading = false;
-          loadMoreBtn.disabled = false;
-          loadMoreText.textContent = 'Load More Titles';
-
-          if (!append && !q && state.items[0]) {
-            renderHero(state.items[0]);
-          } else if (!state.featuredItem) {
-            renderHero(normalizeTmdbItem(DEMO_CATALOG[0], 'movie'));
-          }
-          renderCatalog(state.items);
-          return;
-        }
-
-        const url = buildTmdbEndpoint(cat, q, state.page);
+        const apiUrl = buildYtsEndpoint(cat, q, state.page);
         const timeoutId = setTimeout(function () {
           if (state.fetchController) {
             state.fetchController.abort();
           }
-        }, 7000);
+        }, 6500);
 
         try {
-          const res = await fetch(url, { signal: state.fetchController.signal });
+          const response = await fetch(apiUrl, { signal: state.fetchController.signal });
           clearTimeout(timeoutId);
-          if (!res.ok) {
-            throw new Error('TMDb HTTP ' + res.status);
+
+          if (!response.ok) {
+            throw new Error('YTS HTTP ' + response.status);
           }
-          const data = await res.json();
-          const fallbackType = cat === 'tv' ? 'tv' : 'movie';
-          const rawResults = Array.isArray(data.results) ? data.results : [];
-          const normalized = rawResults
-            .filter(function (r) {
-              return !r.media_type || r.media_type === 'movie' || r.media_type === 'tv';
+
+          const payload = await response.json();
+          const data = payload && payload.data ? payload.data : {};
+          const rawMovies = Array.isArray(data.movies) ? data.movies : [];
+          const normalized = rawMovies
+            .filter(function (m) {
+              return m && m.imdb_code;
             })
-            .map(function (r) {
-              return normalizeTmdbItem(r, fallbackType);
-            });
+            .map(normalizeYtsMovie);
 
-          state.totalPages = data.total_pages ? Math.min(data.total_pages, 50) : 1;
-          state.items = append ? state.items.concat(normalized) : normalized;
-
-          if (!append && !q && state.items[0]) {
-            renderHero(state.items[0]);
-          } else if (!state.featuredItem && state.items[0]) {
-            renderHero(state.items[0]);
+          // If search yielded zero matches cleanly
+          if (q && normalized.length === 0 && !append) {
+            state.movies = [];
+            state.hasMore = false;
+            renderCatalog([]);
+            return;
           }
-          renderCatalog(state.items);
+
+          if (!append && normalized.length === 0) {
+            throw new Error('Empty movie catalog');
+          }
+
+          const totalCount = Number(data.movie_count) || normalized.length;
+          state.movies = append ? state.movies.concat(normalized) : normalized;
+          state.hasMore = state.movies.length < totalCount && normalized.length === PAGE_LIMIT;
+
+          if (!append && !q && state.movies[0]) {
+            renderHero(state.movies[0]);
+          } else if (!state.featuredMovie && state.movies[0]) {
+            renderHero(state.movies[0]);
+          }
+
+          renderCatalog(state.movies);
         } catch (err) {
           clearTimeout(timeoutId);
-          const demo = getDemoResults(cat, q, state.page);
-          state.items = demo.items;
-          state.totalPages = demo.totalPages;
-          if (!state.featuredItem || (!append && !q && demo.items[0])) {
-            renderHero(demo.items[0] || normalizeTmdbItem(DEMO_CATALOG[0], 'movie'));
+          // Graceful fallback if network/sandbox blocks yts.mx
+          if (!append) {
+            const fallbackList = filterFallbackMovies(cat, q);
+            state.movies = fallbackList;
+            state.hasMore = false;
+            if (!state.featuredMovie || (!q && fallbackList[0])) {
+              renderHero(fallbackList[0] || normalizeYtsMovie(FALLBACK_MOVIES[0]));
+            }
+            renderCatalog(fallbackList);
+          } else {
+            state.hasMore = false;
+            renderCatalog(state.movies);
           }
-          renderCatalog(state.items);
         } finally {
           state.isLoading = false;
           loadMoreBtn.disabled = false;
-          loadMoreText.textContent = 'Load More Titles';
+          loadMoreText.textContent = 'Load More Movies';
         }
       }
 
@@ -1213,20 +1133,20 @@
         }
       }
 
-      function openPlayerModal(item) {
-        if (!item) return;
+      function openPlayerModal(movie) {
+        if (!movie) return;
         closeDetailsModal();
-        state.activeItem = item;
+        state.activeMovie = movie;
         state.activeServer = 1;
 
-        const typeLabel = item.media_type === 'tv' ? 'TV Series' : 'Movie';
-        modalTitle.textContent = item.title + (item.year ? ' (' + item.year + ')' : '');
-        modalMeta.textContent = '★ ' + item.rating + ' · ' + typeLabel + ' · HD Stream';
-        modalSynopsis.textContent = item.overview;
-        modalDownloadLink.href = getDownloadUrl(item);
+        const genreText = movie.genres.slice(0, 3).join(', ');
+        modalTitle.textContent = movie.title + (movie.year ? ' (' + movie.year + ')' : '');
+        modalMeta.textContent = ['★ ' + movie.rating + ' IMDb', movie.runtime, genreText].filter(Boolean).join(' · ');
+        modalSynopsis.textContent = movie.summary;
+        modalDownloadLink.href = getDownloadUrl(movie);
 
         updateServerButtons();
-        playerIframe.src = getEmbedUrl(item, 1);
+        playerIframe.src = getEmbedUrl(movie.imdb_code, 1);
 
         playerModal.classList.remove('hidden');
         playerModal.classList.add('flex');
@@ -1239,22 +1159,22 @@
         playerModal.classList.remove('flex');
         playerIframe.src = 'about:blank';
         document.body.style.overflow = '';
-        state.activeItem = null;
+        state.activeMovie = null;
       }
 
-      function openDetailsModal(item) {
-        if (!item) return;
-        const typeLabel = item.media_type === 'tv' ? 'TV Series' : 'Movie';
+      function openDetailsModal(movie) {
+        if (!movie) return;
+        const genreText = movie.genres.slice(0, 3).join(', ');
         detailsBackdrop.style.display = '';
-        detailsBackdrop.src = item.backdrop || item.poster || '';
-        detailsBackdrop.alt = item.title + ' backdrop';
-        detailsTitle.textContent = item.title;
-        detailsMeta.textContent = ['★ ' + item.rating + ' Rating', item.year, typeLabel].filter(Boolean).join(' · ');
-        detailsOverview.textContent = item.overview;
-        detailsDownloadBtn.href = getDownloadUrl(item);
+        detailsBackdrop.src = movie.backdrop || movie.poster || '';
+        detailsBackdrop.alt = movie.title + ' backdrop';
+        detailsTitle.textContent = movie.title;
+        detailsMeta.textContent = ['★ ' + movie.rating + ' IMDb', movie.year, movie.runtime, genreText].filter(Boolean).join(' · ');
+        detailsOverview.textContent = movie.summary;
+        detailsDownloadBtn.href = getDownloadUrl(movie);
 
         detailsWatchBtn.onclick = function () {
-          openPlayerModal(item);
+          openPlayerModal(movie);
         };
 
         detailsModal.classList.remove('hidden');
@@ -1277,7 +1197,7 @@
         searchInput.value = '';
         clearSearchBtn.classList.add('hidden');
         updateCategoryUI();
-        loadCatalog(false);
+        loadMovies(false);
       }
 
       function resetToHome() {
@@ -1313,27 +1233,27 @@
         resetToHome();
       });
 
+      // Toggle Clear button visibility while typing
       searchInput.addEventListener('input', function () {
         const val = searchInput.value;
-        state.searchQuery = val;
         if (val.trim().length > 0) {
           clearSearchBtn.classList.remove('hidden');
         } else {
           clearSearchBtn.classList.add('hidden');
+          if (state.searchQuery) {
+            state.searchQuery = '';
+            updateCategoryUI();
+            loadMovies(false);
+          }
         }
-        updateCategoryUI();
-        clearTimeout(state.debounceTimer);
-        state.debounceTimer = setTimeout(function () {
-          loadCatalog(false);
-        }, 380);
       });
 
+      // Dynamic search query triggered on pressing Enter
       searchForm.addEventListener('submit', function (e) {
         e.preventDefault();
-        clearTimeout(state.debounceTimer);
-        state.searchQuery = searchInput.value;
+        state.searchQuery = searchInput.value.trim();
         updateCategoryUI();
-        loadCatalog(false);
+        loadMovies(false);
       });
 
       clearSearchBtn.addEventListener('click', function () {
@@ -1341,29 +1261,29 @@
         state.searchQuery = '';
         clearSearchBtn.classList.add('hidden');
         updateCategoryUI();
-        loadCatalog(false);
+        loadMovies(false);
         searchInput.focus();
       });
 
       loadMoreBtn.addEventListener('click', function () {
-        if (state.page < state.totalPages && !state.isLoading) {
+        if (state.hasMore && !state.isLoading) {
           state.page += 1;
-          loadCatalog(true);
+          loadMovies(true);
         }
       });
 
       server1Btn.addEventListener('click', function () {
-        if (!state.activeItem || state.activeServer === 1) return;
+        if (!state.activeMovie || state.activeServer === 1) return;
         state.activeServer = 1;
         updateServerButtons();
-        playerIframe.src = getEmbedUrl(state.activeItem, 1);
+        playerIframe.src = getEmbedUrl(state.activeMovie.imdb_code, 1);
       });
 
       server2Btn.addEventListener('click', function () {
-        if (!state.activeItem || state.activeServer === 2) return;
+        if (!state.activeMovie || state.activeServer === 2) return;
         state.activeServer = 2;
         updateServerButtons();
-        playerIframe.src = getEmbedUrl(state.activeItem, 2);
+        playerIframe.src = getEmbedUrl(state.activeMovie.imdb_code, 2);
       });
 
       closePlayerBtn.addEventListener('click', closePlayerModal);
@@ -1391,9 +1311,10 @@
         }
       });
 
-      // Boot CineVerse
+      // Boot CineVerse Keyless Engine
       updateCategoryUI();
-      loadCatalog(false);
+      renderHero(normalizeYtsMovie(FALLBACK_MOVIES[0]));
+      loadMovies(false);
     })();
   </script>
 
