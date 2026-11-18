@@ -1992,3 +1992,1909 @@
         }
         return null;
       }
+async function hydrateMissingRecentMovies() {
+        const missing = state.recentIds.filter(function (id) {
+          return !resolveRecentMovieById(id);
+        });
+        if (missing.length === 0) return;
+
+        let updated = false;
+        await Promise.all(missing.map(async function (id) {
+          const isImdb = /^tt\d{6,9}$/i.test(id);
+          if (isImdb) {
+            try {
+              const cmRes = await fetch(CINEMETA_META_URL + '/meta/movie/' + encodeURIComponent(id) + '.json');
+              if (cmRes.ok) {
+                const cmJson = await cmRes.json();
+                if (cmJson && cmJson.meta && cmJson.meta.name) {
+                  state.recentCache[id] = normalizeYtsMovie(cmJson.meta);
+                  updated = true;
+                  return;
+                }
+              }
+            } catch (err) {
+              // Fall through to YTS mirrors
+            }
+          }
+          const param = isImdb ? ('imdb_id=' + encodeURIComponent(id)) : ('movie_id=' + encodeURIComponent(id));
+          try {
+            const json = await fetchYtsJson('/movie_details.json?' + param, null);
+            const rawMovie = json && json.data && json.data.movie;
+            if (rawMovie && rawMovie.id) {
+              state.recentCache[id] = normalizeYtsMovie(rawMovie);
+              updated = true;
+            }
+          } catch (err) {
+            // Skip unavailable titles gracefully
+          }
+        }));
+
+        if (updated) {
+          persistRecentWatched();
+          renderRecentlyWatchedSection();
+        }
+      }
+
+      function recordRecentlyWatched(movie) {
+        if (!movie) return;
+        const normalized = normalizeYtsMovie(movie);
+        const movieId = getMovieKey(normalized);
+        if (!movieId) return;
+
+        state.recentIds = [movieId].concat(
+          state.recentIds.filter(function (existingId) {
+            return existingId !== movieId;
+          })
+        ).slice(0, MAX_RECENT_ITEMS);
+
+        state.recentCache[movieId] = normalized;
+        persistRecentWatched();
+        renderRecentlyWatchedSection();
+      }
+
+      function clearRecentlyWatched() {
+        state.recentIds = [];
+        state.recentCache = {};
+        try {
+          localStorage.removeItem(RECENT_IDS_STORAGE_KEY);
+          localStorage.removeItem(RECENT_CACHE_STORAGE_KEY);
+        } catch (err) {
+          // Ignore storage errors
+        }
+        renderRecentlyWatchedSection();
+      }
+
+      function renderRecentlyWatchedSection() {
+        const resolvedMovies = state.recentIds
+          .map(resolveRecentMovieById)
+          .filter(Boolean);
+
+        if (resolvedMovies.length === 0) {
+          recentlyWatchedSection.classList.add('hidden');
+          recentlyWatchedTrack.innerHTML = '';
+          return;
+        }
+
+        recentlyWatchedSection.classList.remove('hidden');
+        recentlyWatchedSubtitle.textContent = resolvedMovies.length + (resolvedMovies.length === 1 ? ' recently watched title' : ' recently watched titles') + ' · Saved on this device';
+
+        let html = '';
+        resolvedMovies.forEach(function (movie, i) {
+          html += '<div class="w-[155px] shrink-0 snap-start sm:w-[175px] md:w-[185px]">' + createCardHtml(movie, i, 'recent') + '</div>';
+        });
+
+        recentlyWatchedTrack.innerHTML = html;
+
+        const recentCards = recentlyWatchedTrack.querySelectorAll('.catalog-card');
+        recentCards.forEach(function (card) {
+          function launch() {
+            const idx = parseInt(card.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && resolvedMovies[idx]) {
+              openPlayerModal(resolvedMovies[idx]);
+            }
+          }
+          card.addEventListener('click', launch);
+          card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              launch();
+            }
+          });
+        });
+
+        const recentHearts = recentlyWatchedTrack.querySelectorAll('.watchlist-heart-btn');
+        recentHearts.forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const idx = parseInt(btn.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && resolvedMovies[idx]) {
+              toggleMovieInWatchlist(resolvedMovies[idx]);
+            }
+          });
+          btn.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+            }
+          });
+        });
+      }
+
+      function updateCategoryUI() {
+        categoryTabs.forEach(function (btn) {
+          const isDesktop = btn.closest('nav') !== null;
+          const isActive = btn.getAttribute('data-category') === state.activeCategory && !state.searchQuery.trim();
+          if (isDesktop) {
+            btn.className = isActive
+              ? 'cat-tab whitespace-nowrap shrink-0 rounded-lg border border-cyan-400/50 bg-cyan-400/20 px-3.5 py-2 text-xs font-semibold text-cyan-200 shadow-sm transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+              : 'cat-tab whitespace-nowrap shrink-0 rounded-lg border border-transparent px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all duration-200 ease-cinema hover:bg-white/5 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          } else {
+            btn.className = isActive
+              ? 'cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-4 py-2 text-xs font-semibold text-cyan-200 transition-all duration-200 ease-cinema focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+              : 'cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-4 py-2 text-xs font-semibold text-slate-300 transition-all duration-200 ease-cinema hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          }
+          btn.setAttribute('aria-pressed', isActive ? 'true' : 'false');
+        });
+
+        mobileNavButtons.forEach(function (btn) {
+          const isActive = btn.getAttribute('data-category') === state.activeCategory && !state.searchQuery.trim();
+          btn.className = isActive
+            ? 'mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-semibold text-neonCyan transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+            : 'mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-slate-400 transition-colors hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+        });
+      }
+
+      function renderSkeletonGrid() {
+        let html = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+        for (let i = 0; i < 12; i++) {
+          html += '<div class="aspect-[2/3] rounded-xl border border-white/10 bg-white/5 skeleton-shimmer"></div>';
+        }
+        html += '</div>';
+        catalogFirstGrid.innerHTML = html;
+        catalogMiddleGrid.innerHTML = '';
+        catalogMiddleGrid.classList.add('hidden');
+        midCatalogAdSection2.classList.add('hidden');
+        midCatalogAdSection2.classList.remove('flex');
+        catalogRestGrid.innerHTML = '';
+        catalogRestGrid.classList.add('hidden');
+      }
+
+      function renderHero(movie) {
+        if (!movie) return;
+        state.featuredMovie = movie;
+        const genresText = movie.genres.slice(0, 3).join(' / ');
+
+        heroContent.innerHTML =
+          '<div class="absolute inset-0 overflow-hidden bg-[#0b0c14]">' +
+            (movie.backdrop
+              ? '<img src="' + escapeHtml(movie.backdrop) + '" alt="' + escapeHtml(movie.title) + ' backdrop" referrerpolicy="no-referrer" class="h-full w-full object-cover object-center opacity-55 scale-105 transition-opacity duration-500" onerror="this.style.display=\'none\'" />'
+              : '') +
+            '<div class="absolute inset-0 bg-gradient-to-t from-[#07070c] via-[#07070c]/75 to-[#07070c]/30"></div>' +
+            '<div class="absolute inset-0 bg-gradient-to-r from-[#07070c] via-[#07070c]/85 to-transparent"></div>' +
+          '</div>' +
+          '<div class="relative z-10 flex w-full flex-col gap-8 p-6 sm:p-10 lg:flex-row lg:items-end lg:justify-between">' +
+            '<div class="max-w-2xl">' +
+              '<div class="mb-3 inline-flex items-center gap-2 font-mono text-xs font-semibold tracking-wider text-neonCyan uppercase">' +
+                '<span>Featured #1</span>' +
+                '<span aria-hidden="true" class="text-slate-600">·</span>' +
+                '<span class="text-amber-300">★ ' + escapeHtml(movie.rating) + ' IMDb</span>' +
+              '</div>' +
+              '<h1 class="font-display text-3xl font-extrabold tracking-tight text-white sm:text-5xl" style="text-wrap: balance;">' +
+                escapeHtml(movie.title) +
+              '</h1>' +
+              '<div class="mt-3 flex flex-wrap items-center gap-x-2.5 gap-y-1 font-mono text-xs tabular-nums text-slate-300 sm:text-sm">' +
+                (movie.year ? '<span>' + escapeHtml(movie.year) + '</span><span aria-hidden="true" class="text-slate-500">·</span>' : '') +
+                '<span>' + escapeHtml(movie.runtime) + '</span>' +
+                '<span aria-hidden="true" class="text-slate-500">·</span>' +
+                '<span class="font-sans text-cyan-300">' + escapeHtml(genresText) + '</span>' +
+              '</div>' +
+              '<p class="mt-4 max-w-xl text-sm leading-relaxed text-slate-300 line-clamp-3 sm:text-base">' +
+                escapeHtml(movie.summary) +
+              '</p>' +
+              '<div class="mt-6 flex flex-wrap items-center gap-3">' +
+                '<button type="button" id="heroWatchBtn" class="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white shadow-[0_0_24px_rgba(255,30,66,0.4)] transition-all duration-200 ease-cinema hover:bg-rose-500 active:scale-[0.98] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+                  '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v14l11-7-11-7z"/></svg>' +
+                  'Watch Now' +
+                '</button>' +
+                '<button type="button" id="heroDetailsBtn" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white backdrop-blur-xl transition-colors duration-200 hover:border-cyan-400/50 hover:bg-cyan-400/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+                  '<svg class="h-4 w-4 text-neonCyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4"/><path d="M12 8h.01"/></svg>' +
+                  'Details' +
+                '</button>' +
+                '<button type="button" id="heroWatchlistBtn" data-movie-key="' + escapeHtml(getMovieKey(movie)) + '" class="watchlist-heart-btn inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-5 py-3 text-sm font-semibold text-white backdrop-blur-xl transition-colors duration-200 hover:border-crimson/50 hover:bg-crimson/15 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+                  '<svg class="h-4 w-4 text-crimson" viewBox="0 0 24 24" fill="' + (isInWatchlist(movie) ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>' +
+                  '<span class="hero-wl-label">' + (isInWatchlist(movie) ? 'Saved' : 'Watchlist') + '</span>' +
+                '</button>' +
+              '</div>' +
+            '</div>' +
+            '<div class="hidden shrink-0 lg:block">' +
+              '<div class="group relative h-64 w-44 overflow-hidden rounded-xl border border-white/15 bg-white/5 shadow-2xl shadow-black/80">' +
+                '<img src="' + escapeHtml(movie.poster) + '" alt="' + escapeHtml(movie.title) + ' poster" referrerpolicy="no-referrer" class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\'); this.nextElementSibling.classList.add(\'flex\');" />' +
+                '<div class="hidden h-full w-full flex-col items-center justify-center bg-gradient-to-br from-slate-800 to-[#07070c] p-4 text-center">' +
+                  '<span class="font-display text-sm font-bold text-white">' + escapeHtml(movie.title) + '</span>' +
+                  '<span class="mt-1 font-mono text-xs text-slate-400">' + escapeHtml(movie.year) + '</span>' +
+                '</div>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+
+        const heroWatchBtn = document.getElementById('heroWatchBtn');
+        const heroDetailsBtn = document.getElementById('heroDetailsBtn');
+        const heroWatchlistBtn = document.getElementById('heroWatchlistBtn');
+        if (heroWatchBtn) {
+          heroWatchBtn.addEventListener('click', function () {
+            openPlayerModal(movie);
+          });
+        }
+        if (heroDetailsBtn) {
+          heroDetailsBtn.addEventListener('click', function () {
+            openDetailsModal(movie);
+          });
+        }
+        if (heroWatchlistBtn) {
+          applyHeartBtnAppearance(heroWatchlistBtn, isInWatchlist(movie));
+          heroWatchlistBtn.addEventListener('click', function () {
+            toggleMovieInWatchlist(movie);
+          });
+        }
+      }
+
+      function createCardHtml(movie, index, listSource) {
+        const primaryGenre = movie.genres[0] || 'Movie';
+        const saved = isInWatchlist(movie);
+        const key = getMovieKey(movie);
+        const heartClasses = saved
+          ? 'watchlist-heart-btn absolute right-2 top-2 z-10 flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-crimson/60 bg-crimson/25 text-crimson backdrop-blur-md shadow-lg transition-all duration-150 hover:scale-105 hover:bg-crimson/35 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+          : 'watchlist-heart-btn absolute right-2 top-2 z-10 flex h-10 w-10 min-h-[40px] min-w-[40px] items-center justify-center rounded-xl border border-white/15 bg-black/55 text-white/85 backdrop-blur-md transition-all duration-150 hover:scale-105 hover:border-crimson/50 hover:bg-crimson/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+
+        return (
+          '<article data-movie-index="' + index + '" data-list-source="' + (listSource || 'catalog') + '" data-imdb-code="' + escapeHtml(movie.imdb_code || '') + '" tabindex="0" role="button" aria-label="Watch ' + escapeHtml(movie.title) + '" class="catalog-card group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all duration-300 ease-cinema hover:-translate-y-1 hover:border-cyan-400/45 hover:bg-white/[0.08] focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+            '<div class="relative aspect-[2/3] w-full overflow-hidden bg-slate-900">' +
+              '<button type="button" data-movie-index="' + index + '" data-movie-key="' + escapeHtml(key) + '" aria-pressed="' + (saved ? 'true' : 'false') + '" aria-label="' + (saved ? 'Remove from Watchlist' : 'Save to Watchlist') + '" title="' + (saved ? 'Remove from Watchlist' : 'Save to Watchlist') + '" class="' + heartClasses + '">' +
+                '<svg class="h-4 w-4" viewBox="0 0 24 24" fill="' + (saved ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+                  '<path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z" />' +
+                '</svg>' +
+              '</button>' +
+              '<img ' +
+                'src="' + escapeHtml(movie.poster) + '" ' +
+                'alt="' + escapeHtml(movie.title) + ' poster" ' +
+                'loading="lazy" ' +
+                'referrerpolicy="no-referrer" ' +
+                'class="h-full w-full object-cover transition-transform duration-300 ease-cinema group-hover:scale-105" ' +
+                'onerror="this.style.display=\'none\'; this.nextElementSibling.classList.remove(\'hidden\'); this.nextElementSibling.classList.add(\'flex\');" ' +
+              '/>' +
+              '<div class="hidden absolute inset-0 flex-col items-center justify-center bg-gradient-to-br from-[#141728] to-[#07070c] p-4 text-center">' +
+                '<svg class="mb-2 h-8 w-8 text-neonCyan/60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m10 8 6 4-6 4Z"/></svg>' +
+                '<span class="font-display text-sm font-bold text-white line-clamp-2">' + escapeHtml(movie.title) + '</span>' +
+              '</div>' +
+              '<div class="absolute inset-0 bg-gradient-to-t from-[#07070c] via-[#07070c]/20 to-transparent opacity-70 transition-opacity duration-200 group-hover:opacity-90"></div>' +
+              '<div class="absolute inset-x-2.5 bottom-2.5 flex items-center justify-center opacity-100 sm:translate-y-2 sm:opacity-0 transition-all duration-200 ease-cinema group-hover:translate-y-0 group-hover:opacity-100">' +
+                '<span class="inline-flex min-h-[40px] w-full items-center justify-center gap-1.5 rounded-xl bg-crimson px-3 py-2 text-xs font-bold text-white shadow-lg shadow-crimson/30">' +
+                  '<svg class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.14v14l11-7-11-7z"/></svg>' +
+                  'Watch Now' +
+                '</span>' +
+              '</div>' +
+            '</div>' +
+            '<div class="flex flex-1 flex-col justify-between p-3">' +
+              '<h3 class="truncate font-display text-sm font-semibold text-white transition-colors group-hover:text-cyan-200" title="' + escapeHtml(movie.title) + '">' +
+                escapeHtml(movie.title) +
+              '</h3>' +
+              '<div class="mt-1.5 flex items-center gap-1.5 font-mono text-xs tabular-nums text-slate-400">' +
+                '<span class="font-semibold text-amber-300">★ ' + escapeHtml(movie.rating) + '</span>' +
+                (movie.year ? '<span aria-hidden="true">·</span><span>' + escapeHtml(movie.year) + '</span>' : '') +
+                '<span aria-hidden="true">·</span>' +
+                '<span class="truncate font-sans text-slate-400">' + escapeHtml(primaryGenre) + '</span>' +
+              '</div>' +
+            '</div>' +
+          '</article>'
+        );
+      }
+
+      function bindCatalogCardEvents(containerEl) {
+        if (!containerEl) return;
+        const cards = containerEl.querySelectorAll('.catalog-card');
+        cards.forEach(function (card) {
+          function launch() {
+            const idx = parseInt(card.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && state.movies[idx]) {
+              openPlayerModal(state.movies[idx]);
+            }
+          }
+          card.addEventListener('click', launch);
+          card.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              launch();
+            }
+          });
+        });
+
+        const heartButtons = containerEl.querySelectorAll('.watchlist-heart-btn');
+        heartButtons.forEach(function (btn) {
+          btn.addEventListener('click', function (e) {
+            e.stopPropagation();
+            const idx = parseInt(btn.getAttribute('data-movie-index'), 10);
+            if (!Number.isNaN(idx) && state.movies[idx]) {
+              toggleMovieInWatchlist(state.movies[idx]);
+            }
+          });
+          btn.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.stopPropagation();
+            }
+          });
+        });
+      }
+
+      function renderCatalog(movies) {
+        if (!movies || movies.length === 0) {
+          catalogCountLabel.textContent = '0 movies found';
+          loadMoreWrapper.classList.add('hidden');
+          loadMoreWrapper.classList.remove('flex');
+          midCatalogAdSection.classList.add('hidden');
+          midCatalogAdSection2.classList.add('hidden');
+          midCatalogAdSection2.classList.remove('flex');
+          catalogMiddleGrid.innerHTML = '';
+          catalogMiddleGrid.classList.add('hidden');
+          catalogRestGrid.innerHTML = '';
+          catalogRestGrid.classList.add('hidden');
+          catalogFirstGrid.innerHTML =
+            '<div class="flex flex-col items-center justify-center rounded-2xl border border-white/10 bg-white/5 px-6 py-16 text-center backdrop-blur-xl">' +
+              '<svg class="mb-3 h-10 w-10 text-slate-500" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" aria-hidden="true"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>' +
+              '<h3 class="font-display text-lg font-bold text-white">No movies matched your search</h3>' +
+              '<p class="mt-1 max-w-md text-sm text-slate-400">Try another movie title or return to trending releases.</p>' +
+              '<button type="button" id="resetCatalogBtn" class="mt-5 min-h-[44px] rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2.5 text-xs font-semibold text-cyan-200 transition-colors hover:bg-cyan-400/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400">' +
+                'Reset View' +
+              '</button>' +
+            '</div>';
+
+          const resetBtn = document.getElementById('resetCatalogBtn');
+          if (resetBtn) {
+            resetBtn.addEventListener('click', resetToHome);
+          }
+          return;
+        }
+
+        catalogCountLabel.textContent = movies.length + (movies.length === 1 ? ' movie' : ' movies');
+
+        const firstEnd = movies.length > 6 ? 6 : movies.length;
+        const middleEnd = movies.length > 18 ? 18 : movies.length;
+
+        const firstSection = movies.slice(0, firstEnd);
+        const middleSection = movies.slice(firstEnd, middleEnd);
+        const restSection = movies.slice(middleEnd);
+
+        let firstHtml = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+        firstSection.forEach(function (movie, i) {
+          firstHtml += createCardHtml(movie, i);
+        });
+        firstHtml += '</div>';
+
+        catalogFirstGrid.innerHTML = firstHtml;
+        bindCatalogCardEvents(catalogFirstGrid);
+
+        midCatalogAdSection.classList.remove('hidden');
+
+        if (middleSection.length > 0) {
+          let middleHtml = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+          middleSection.forEach(function (movie, i) {
+            middleHtml += createCardHtml(movie, firstEnd + i);
+          });
+          middleHtml += '</div>';
+          catalogMiddleGrid.innerHTML = middleHtml;
+          catalogMiddleGrid.classList.remove('hidden');
+          bindCatalogCardEvents(catalogMiddleGrid);
+        } else {
+          catalogMiddleGrid.innerHTML = '';
+          catalogMiddleGrid.classList.add('hidden');
+        }
+
+        if (restSection.length > 0) {
+          midCatalogAdSection2.classList.remove('hidden');
+          midCatalogAdSection2.classList.add('flex');
+          let restHtml = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+          restSection.forEach(function (movie, i) {
+            restHtml += createCardHtml(movie, middleEnd + i);
+          });
+          restHtml += '</div>';
+          catalogRestGrid.innerHTML = restHtml;
+          catalogRestGrid.classList.remove('hidden');
+          bindCatalogCardEvents(catalogRestGrid);
+        } else {
+          midCatalogAdSection2.classList.add('hidden');
+          midCatalogAdSection2.classList.remove('flex');
+          catalogRestGrid.innerHTML = '';
+          catalogRestGrid.classList.add('hidden');
+        }
+
+        if (state.hasMore) {
+          loadMoreWrapper.classList.remove('hidden');
+          loadMoreWrapper.classList.add('flex');
+        } else {
+          loadMoreWrapper.classList.add('hidden');
+          loadMoreWrapper.classList.remove('flex');
+        }
+      }
+
+      function filterFallbackMovies(category, query) {
+        const q = (query || '').trim().toLowerCase();
+        let list = FALLBACK_MOVIES.filter(function (movie) {
+          if (q) {
+            return (
+              movie.title.toLowerCase().includes(q) ||
+              movie.summary.toLowerCase().includes(q) ||
+              movie.genres.join(' ').toLowerCase().includes(q) ||
+              String(movie.year).includes(q)
+            );
+          }
+          if (category === 'trending' || category === 'top_rated') {
+            return true;
+          }
+          return movie.genres.some(function (g) {
+            const gl = g.toLowerCase();
+            const cl = category.toLowerCase();
+            return gl === cl || (cl === 'south' && gl.includes('south'));
+          });
+        });
+
+        if (category === 'top_rated' && !q) {
+          list = list.slice().sort(function (a, b) {
+            return b.rating - a.rating;
+          });
+        }
+        return list.map(normalizeYtsMovie);
+      }
+
+      function buildYtsListQuery(category, query, page) {
+        const q = (query || '').trim();
+        if (q) {
+          return '/list_movies.json?query_term=' + encodeURIComponent(q) + '&limit=' + PAGE_LIMIT + '&page=' + page;
+        }
+        switch (category) {
+          case 'top_rated':
+            return '/list_movies.json?sort_by=rating&minimum_rating=7&limit=' + PAGE_LIMIT + '&page=' + page;
+          case 'action':
+          case 'sci-fi':
+          case 'comedy':
+          case 'thriller':
+          case 'horror':
+          case 'animation':
+          case 'drama':
+            return '/list_movies.json?genre=' + encodeURIComponent(category) + '&sort_by=download_count&limit=' + PAGE_LIMIT + '&page=' + page;
+          case 'trending':
+          default:
+            return '/list_movies.json?sort_by=download_count&limit=' + PAGE_LIMIT + '&page=' + page;
+        }
+      }
+
+      function buildCinemetaEndpoint(category, query, skip) {
+        const q = (query || '').trim();
+        if (q) {
+          return CINEMETA_META_URL + '/catalog/movie/top/search=' + encodeURIComponent(q) + '.json';
+        }
+        const meta = CATEGORY_META[category] || CATEGORY_META.trending;
+        const catalogName = category === 'top_rated' ? 'imdbRating' : 'top';
+        const parts = [];
+        if (meta.cinemetaGenre && catalogName === 'top') {
+          parts.push('genre=' + encodeURIComponent(meta.cinemetaGenre));
+        }
+        if (skip > 0) {
+          parts.push('skip=' + skip);
+        }
+        const extra = parts.length > 0 ? ('/' + parts.join('&')) : '';
+        return CINEMETA_CATALOG_URL + '/' + catalogName + '/catalog/movie/' + catalogName + extra + '.json';
+      }
+
+      function deduplicateMovies(list) {
+        const seen = new Set();
+        const result = [];
+        list.forEach(function (movie) {
+          if (!movie || !movie.title) return;
+          const key = sanitizeImdbCode(movie.imdb_code) || (movie.title.toLowerCase().trim() + '_' + (movie.year || ''));
+          if (seen.has(key)) return;
+          seen.add(key);
+          result.push(movie);
+        });
+        return result;
+      }
+
+      function interleaveMovies(listA, listB) {
+        const merged = [];
+        const maxLen = Math.max(listA.length, listB.length);
+        for (let i = 0; i < maxLen; i++) {
+          if (i < listA.length) merged.push(listA[i]);
+          if (i < listB.length) merged.push(listB[i]);
+        }
+        return deduplicateMovies(merged);
+      }
+
+      async function fetchWithTimeout(url, externalSignal, timeoutMs) {
+        const localController = new AbortController();
+        const ms = timeoutMs || 15000;
+        const timer = setTimeout(function () {
+          localController.abort();
+        }, ms);
+
+        function onExternalAbort() {
+          localController.abort();
+        }
+        if (externalSignal) {
+          if (externalSignal.aborted) {
+            clearTimeout(timer);
+            throw new Error('Aborted');
+          }
+          externalSignal.addEventListener('abort', onExternalAbort, { once: true });
+        }
+
+        try {
+          const res = await fetch(url, { signal: localController.signal });
+          if (!res.ok) {
+            throw new Error('HTTP ' + res.status);
+          }
+          return await res.json();
+        } finally {
+          clearTimeout(timer);
+          if (externalSignal) {
+            externalSignal.removeEventListener('abort', onExternalAbort);
+          }
+        }
+      }
+
+      async function fetchYtsJson(pathAndQuery, externalSignal) {
+        let lastError = null;
+        for (let i = 0; i < YTS_MIRRORS.length; i++) {
+          if (externalSignal && externalSignal.aborted) {
+            throw new Error('Aborted');
+          }
+          const url = YTS_MIRRORS[i] + pathAndQuery;
+          try {
+            const payload = await fetchWithTimeout(url, externalSignal, 12000);
+            if (payload && payload.data) {
+              return payload;
+            }
+          } catch (err) {
+            lastError = err;
+            if (externalSignal && externalSignal.aborted) {
+              throw err;
+            }
+          }
+        }
+        throw lastError || new Error('All YTS mirrors failed');
+      }
+
+      function mapCinemetaMetas(cmData) {
+        const cmMetas = cmData && Array.isArray(cmData.metas) ? cmData.metas : [];
+        const mapped = cmMetas
+          .filter(function (m) {
+            return m && (m.name || m.title) && sanitizeImdbCode(m.imdb_id || m.id) && (m.poster || m.background);
+          })
+          .map(normalizeYtsMovie);
+        return { rawCount: cmMetas.length, movies: mapped };
+      }
+
+      function buildWikidataSparql(langKey, offset, limit) {
+        const safeOffset = Math.max(0, Number(offset) || 0);
+        const safeLimit = Math.max(10, Number(limit) || 45);
+        let langTriple = '?film wdt:P364 wd:Q9610.';
+        let minLinks = 2;
+        let minYear = 1998;
+
+        if (langKey === 'hindi') {
+          langTriple = '?film wdt:P364 wd:Q1568.';
+          minLinks = 10;
+          minYear = 2010;
+        } else if (langKey === 'south') {
+          langTriple = 'VALUES ?lang { wd:Q5885 wd:Q8097 wd:Q36236 } ?film wdt:P364 ?lang.';
+          minLinks = 8;
+          minYear = 2014;
+        }
+
+        const sparql =
+          'SELECT DISTINCT ?imdb ?filmLabel WHERE { ' +
+            '?film wdt:P31 wd:Q11424; wdt:P345 ?imdb; wikibase:sitelinks ?links. ' +
+            langTriple + ' ' +
+            'FILTER(?links >= ' + minLinks + ') ' +
+            'FILTER EXISTS { ?film wdt:P577 ?d. FILTER(?d >= "' + minYear + '-01-01T00:00:00Z"^^xsd:dateTime) } ' +
+            'SERVICE wikibase:label { bd:serviceParam wikibase:language "en,bn". } ' +
+          '} LIMIT ' + safeLimit + ' OFFSET ' + safeOffset;
+
+        return WIKIDATA_SPARQL_URL + '?format=json&query=' + encodeURIComponent(sparql);
+      }
+
+      async function fetchRegionalMovies(langKey, offset, limit, externalSignal, maxTotalMs) {
+        const labelMap = {
+          bangla: 'Bangla',
+          hindi: 'Hindi',
+          south: 'South Indian'
+        };
+        const langLabel = labelMap[langKey] || 'Movie';
+        const url = buildWikidataSparql(langKey, offset, limit);
+        const wdData = await fetchWithTimeout(url, externalSignal, maxTotalMs || 9000);
+        const bindings = wdData && wdData.results && Array.isArray(wdData.results.bindings)
+          ? wdData.results.bindings
+          : [];
+
+        const seenImdb = new Set();
+        const candidates = [];
+        bindings.forEach(function (b) {
+          const imdb = sanitizeImdbCode(b && b.imdb && b.imdb.value);
+          const rawTitle = String((b && b.filmLabel && b.filmLabel.value) || '').trim();
+          if (!imdb || seenImdb.has(imdb)) return;
+          if (!rawTitle || /^Q\d+$/i.test(rawTitle)) return;
+          seenImdb.add(imdb);
+          candidates.push({ imdb: imdb, title: rawTitle });
+        });
+
+        const enrichedPrimary = [];
+        const enrichedFallback = [];
+
+        await Promise.allSettled(candidates.map(async function (item) {
+          try {
+            const metaJson = await fetchWithTimeout(
+              CINEMETA_META_URL + '/meta/movie/' + encodeURIComponent(item.imdb) + '.json',
+              externalSignal,
+              3200
+            );
+            if (metaJson && metaJson.meta && (metaJson.meta.name || metaJson.meta.title)) {
+              const normalized = normalizeYtsMovie(metaJson.meta);
+              if (!normalized.genres || normalized.genres.length === 0 || normalized.genres[0] === 'Movie') {
+                normalized.genres = [langLabel];
+              } else if (!normalized.genres.includes(langLabel)) {
+                normalized.genres = [langLabel].concat(normalized.genres);
+              }
+              if (normalized.poster) {
+                enrichedPrimary.push(normalized);
+                return;
+              }
+            }
+          } catch (err) {
+            // Fall back to Metahub IMDb poster CDN cleanly
+          }
+
+          enrichedFallback.push(normalizeYtsMovie({
+            id: item.imdb,
+            imdb_code: item.imdb,
+            title: item.title,
+            genres: [langLabel],
+            poster: METAHUB_POSTER_URL + '/' + encodeURIComponent(item.imdb) + '/img',
+            summary: 'Stream ' + item.title + ' (' + langLabel + ') in HD across 5 keyless servers.'
+          }));
+        }));
+
+        return {
+          rawCount: bindings.length,
+          movies: enrichedPrimary.concat(enrichedFallback)
+        };
+      }
+
+      async function loadMovies(append) {
+        if (state.isLoading && !append) {
+          if (state.fetchController) {
+            state.fetchController.abort();
+          }
+        }
+        const controller = new AbortController();
+        state.fetchController = controller;
+        state.isLoading = true;
+
+        const q = state.searchQuery.trim();
+        const cat = state.activeCategory;
+        const isRegionalTab = !q && (cat === 'bangla' || cat === 'hindi' || cat === 'south');
+
+        if (!append) {
+          state.page = 1;
+          state.cinemetaSkip = 0;
+          state.regionalOffset = 0;
+          renderSkeletonGrid();
+          catalogCountLabel.textContent = 'Loading...';
+          loadMoreWrapper.classList.add('hidden');
+          loadMoreWrapper.classList.remove('flex');
+        } else {
+          loadMoreBtn.disabled = true;
+          loadMoreText.textContent = 'Loading...';
+        }
+
+        if (q) {
+          catalogHeading.textContent = 'Search Results for "' + q + '"';
+          catalogSubtitle.textContent = 'Global Bangla, Hindi, South Indian & English results via Cinemeta & YTS';
+        } else {
+          const meta = CATEGORY_META[cat] || CATEGORY_META.trending;
+          catalogHeading.textContent = meta.heading;
+          catalogSubtitle.textContent = meta.subtitle;
+        }
+
+        try {
+          if (isRegionalTab) {
+            const batchLimit = 45;
+            const regionalResult = await fetchRegionalMovies(cat, state.regionalOffset, batchLimit, controller.signal, 10000);
+            if (controller.signal.aborted) return;
+
+            state.regionalOffset += batchLimit;
+            const batchMovies = regionalResult.movies || [];
+            if (!append && batchMovies.length === 0) {
+              throw new Error('Empty regional catalog');
+            }
+
+            state.movies = append
+              ? deduplicateMovies(state.movies.concat(batchMovies))
+              : batchMovies;
+            state.hasMore = regionalResult.rawCount >= 30;
+
+            if (!append && state.movies.length > 0) {
+              const heroCandidate = state.movies.find(function (m) {
+                return m.backdrop && m.summary && m.summary.length > 40;
+              }) || state.movies[0];
+              renderHero(heroCandidate);
+            }
+
+            renderCatalog(state.movies);
+            renderRecentlyWatchedSection();
+            return;
+          }
+
+          const cinemetaUrl1 = buildCinemetaEndpoint(cat, q, state.cinemetaSkip);
+          const fetchSecondCinemetaBatch = !append && !q;
+          const cinemetaUrl2 = fetchSecondCinemetaBatch ? buildCinemetaEndpoint(cat, q, state.cinemetaSkip + 50) : '';
+          const ytsQueryPath = buildYtsListQuery(cat, q, state.page);
+
+          const requests = [
+            fetchWithTimeout(cinemetaUrl1, controller.signal, 15000),
+            fetchYtsJson(ytsQueryPath, controller.signal)
+          ];
+          if (fetchSecondCinemetaBatch) {
+            requests.push(fetchWithTimeout(cinemetaUrl2, controller.signal, 15000));
+          }
+          // On the default All Movies homepage, mix live Hindi & Bangla hits right alongside global movies
+          const mixRegionalOnHome = !append && !q && cat === 'trending';
+          if (mixRegionalOnHome) {
+            requests.push(fetchRegionalMovies('hindi', 0, 18, controller.signal, 5500));
+            requests.push(fetchRegionalMovies('bangla', 0, 18, controller.signal, 5500));
+          }
+
+          const results = await Promise.allSettled(requests);
+          if (controller.signal.aborted) return;
+
+          let cinemetaMovies = [];
+          let ytsMovies = [];
+          let hindiMix = [];
+          let banglaMix = [];
+          let ytsTotalCount = 0;
+          let anySucceeded = false;
+
+          if (results[0].status === 'fulfilled') {
+            anySucceeded = true;
+            const cmBatch1 = mapCinemetaMetas(results[0].value);
+            cinemetaMovies = cinemetaMovies.concat(cmBatch1.movies);
+            state.cinemetaSkip += cmBatch1.rawCount;
+          }
+
+          if (results[1].status === 'fulfilled') {
+            anySucceeded = true;
+            const ytsPayload = results[1].value;
+            const data = ytsPayload && ytsPayload.data ? ytsPayload.data : {};
+            ytsTotalCount = Number(data.movie_count) || 0;
+            const rawMovies = Array.isArray(data.movies) ? data.movies : [];
+            ytsMovies = rawMovies.filter(Boolean).map(normalizeYtsMovie);
+          }
+
+          if (fetchSecondCinemetaBatch && results[2] && results[2].status === 'fulfilled') {
+            anySucceeded = true;
+            const cmBatch2 = mapCinemetaMetas(results[2].value);
+            cinemetaMovies = cinemetaMovies.concat(cmBatch2.movies);
+            state.cinemetaSkip += cmBatch2.rawCount;
+          }
+
+          if (mixRegionalOnHome) {
+            if (results[3] && results[3].status === 'fulfilled' && Array.isArray(results[3].value.movies)) {
+              hindiMix = results[3].value.movies;
+            }
+            if (results[4] && results[4].status === 'fulfilled' && Array.isArray(results[4].value.movies)) {
+              banglaMix = results[4].value.movies;
+            }
+          }
+
+          if (!anySucceeded && hindiMix.length === 0 && banglaMix.length === 0) {
+            throw new Error('All public movie feeds failed');
+          }
+
+          // Interleave Global + Hindi + Bangla + YTS for multi-language variety from row 1
+          const regionalMix = interleaveMovies(hindiMix, banglaMix);
+          const globalMix = interleaveMovies(cinemetaMovies, ytsMovies);
+          const combinedBatch = regionalMix.length > 0
+            ? interleaveMovies(globalMix, regionalMix)
+            : globalMix;
+
+          if (q && combinedBatch.length === 0 && !append) {
+            state.movies = [];
+            state.hasMore = false;
+            renderCatalog([]);
+            return;
+          }
+
+          if (!append && combinedBatch.length === 0) {
+            throw new Error('Empty movie catalog');
+          }
+
+          state.movies = append
+            ? deduplicateMovies(state.movies.concat(combinedBatch))
+            : combinedBatch;
+
+          const canLoadMoreYts = ytsMovies.length >= PAGE_LIMIT && (ytsTotalCount === 0 || state.movies.length < ytsTotalCount);
+          const canLoadMoreCinemeta = !q && cinemetaMovies.length >= 20;
+          state.hasMore = canLoadMoreYts || canLoadMoreCinemeta;
+
+          if (!append && !q && state.movies.length > 0) {
+            const heroCandidate = state.movies.find(function (m) {
+              return m.backdrop && m.summary && m.summary.length > 40;
+            }) || state.movies[0];
+            renderHero(heroCandidate);
+          } else if (!state.featuredMovie && state.movies[0]) {
+            renderHero(state.movies[0]);
+          }
+
+          renderCatalog(state.movies);
+          renderRecentlyWatchedSection();
+        } catch (err) {
+          if (controller.signal.aborted) return;
+          // Graceful fallback if network/sandbox blocks all external feeds
+          if (!append) {
+            const fallbackList = filterFallbackMovies(cat, q);
+            state.movies = fallbackList;
+            state.hasMore = false;
+            if (!state.featuredMovie || (!q && fallbackList[0])) {
+              renderHero(fallbackList[0] || normalizeYtsMovie(FALLBACK_MOVIES[0]));
+            }
+            renderCatalog(fallbackList);
+          } else {
+            state.hasMore = false;
+            renderCatalog(state.movies);
+          }
+        } finally {
+          if (state.fetchController === controller) {
+            state.isLoading = false;
+            loadMoreBtn.disabled = false;
+            loadMoreText.textContent = 'Load More Movies';
+          }
+        }
+      }
+
+      function loadAutoServerPreference() {
+        try {
+          const saved = localStorage.getItem(AUTO_SERVER_STORAGE_KEY);
+          if (saved === 'false') {
+            state.isAutoServerEnabled = false;
+            return;
+          }
+        } catch (err) {
+          // Ignore storage access errors
+        }
+        state.isAutoServerEnabled = true;
+      }
+
+      function persistAutoServerPreference() {
+        try {
+          localStorage.setItem(AUTO_SERVER_STORAGE_KEY, state.isAutoServerEnabled ? 'true' : 'false');
+        } catch (err) {
+          // Ignore storage access errors
+        }
+      }
+
+      function getNetworkProfile() {
+        const conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+        const effectiveType = (conn && conn.effectiveType) ? String(conn.effectiveType).toLowerCase() : '';
+        const downlink = (conn && typeof conn.downlink === 'number' && !Number.isNaN(conn.downlink)) ? conn.downlink : null;
+        const rtt = (conn && typeof conn.rtt === 'number' && !Number.isNaN(conn.rtt)) ? conn.rtt : null;
+        const saveData = Boolean(conn && conn.saveData);
+        const online = typeof navigator.onLine === 'boolean' ? navigator.onLine : true;
+
+        if (!online) {
+          return {
+            tier: 'offline',
+            effectiveType: effectiveType || 'offline',
+            downlink: downlink,
+            rtt: rtt,
+            saveData: saveData,
+            online: false,
+            probeTimeoutMs: 2500,
+            settleTimeoutMs: 6500,
+            label: 'Offline'
+          };
+        }
+
+        const isSlow = saveData ||
+          effectiveType === 'slow-2g' ||
+          effectiveType === '2g' ||
+          (downlink !== null && downlink > 0 && downlink < 1.2) ||
+          (rtt !== null && rtt >= 450);
+
+        if (isSlow) {
+          return {
+            tier: 'slow',
+            effectiveType: effectiveType || '2g',
+            downlink: downlink,
+            rtt: rtt,
+            saveData: saveData,
+            online: true,
+            probeTimeoutMs: 4200,
+            settleTimeoutMs: 8500,
+            label: saveData ? 'Data Saver' : (effectiveType ? effectiveType.toUpperCase() : 'Slow Net')
+          };
+        }
+
+        const isMedium = effectiveType === '3g' ||
+          (downlink !== null && downlink > 0 && downlink < 3.5) ||
+          (rtt !== null && rtt >= 200);
+
+        if (isMedium) {
+          return {
+            tier: 'medium',
+            effectiveType: effectiveType || '3g',
+            downlink: downlink,
+            rtt: rtt,
+            saveData: saveData,
+            online: true,
+            probeTimeoutMs: 3200,
+            settleTimeoutMs: 6500,
+            label: effectiveType ? effectiveType.toUpperCase() : '3G Net'
+          };
+        }
+
+        return {
+          tier: 'fast',
+          effectiveType: effectiveType || '4g',
+          downlink: downlink,
+          rtt: rtt,
+          saveData: saveData,
+          online: true,
+          probeTimeoutMs: 2400,
+          settleTimeoutMs: 5000,
+          label: effectiveType ? effectiveType.toUpperCase() : 'Fast Net'
+        };
+      }
+
+
+
+     function getServerHealthRecord(serverId) {
+        if (!state.serverHealth[serverId]) {
+          state.serverHealth[serverId] = {
+            status: 'unknown',
+            latencyMs: null,
+            checkedAt: 0,
+            failCount: 0
+          };
+        }
+        return state.serverHealth[serverId];
+      }
+
+      async function probeSingleServer(server, timeoutMs) {
+        if (!server || !server.origin) {
+          return { id: server ? server.id : 0, status: 'fail', latencyMs: 9999 };
+        }
+        const record = getServerHealthRecord(server.id);
+        const controller = new AbortController();
+        const ms = timeoutMs || 2800;
+        const timer = setTimeout(function () {
+          controller.abort();
+        }, ms);
+        const startTime = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+
+        try {
+          await fetch(server.origin + '/', {
+            method: 'GET',
+            mode: 'no-cors',
+            cache: 'no-store',
+            credentials: 'omit',
+            signal: controller.signal
+          });
+          const endTime = (typeof performance !== 'undefined' && performance.now) ? performance.now() : Date.now();
+          const latency = Math.max(15, Math.round(endTime - startTime));
+          record.status = 'ok';
+          record.latencyMs = latency;
+          record.checkedAt = Date.now();
+          record.failCount = 0;
+          return { id: server.id, status: 'ok', latencyMs: latency };
+        } catch (err) {
+          record.status = 'fail';
+          record.latencyMs = null;
+          record.checkedAt = Date.now();
+          record.failCount = (record.failCount || 0) + 1;
+          return { id: server.id, status: 'fail', latencyMs: null };
+        } finally {
+          clearTimeout(timer);
+        }
+      }
+
+      function probeAllServers(force) {
+        const now = Date.now();
+        if (!force && state.lastServerProbeAt && (now - state.lastServerProbeAt) < SERVER_PROBE_CACHE_TTL_MS) {
+          return Promise.resolve(state.serverHealth);
+        }
+        if (state.serverProbePromise) {
+          return state.serverProbePromise;
+        }
+
+        const profile = getNetworkProfile();
+        if (networkServerStatusBadge) {
+          networkServerStatusBadge.textContent = profile.label + ' · Testing 5 mirrors...';
+        }
+
+        state.serverProbePromise = Promise.allSettled(
+          EMBED_SERVERS.map(function (srv) {
+            return probeSingleServer(srv, profile.probeTimeoutMs);
+          })
+        ).then(function () {
+          state.lastServerProbeAt = Date.now();
+          state.serverProbePromise = null;
+          updateServerButtons(Boolean(state.activeMovie && sanitizeImdbCode(state.activeMovie.imdb_code)));
+          updateNetworkServerStatusUI();
+          return state.serverHealth;
+        }).catch(function () {
+          state.serverProbePromise = null;
+          return state.serverHealth;
+        });
+
+        return state.serverProbePromise;
+      }
+
+      function getRankedServerIds() {
+        const profile = getNetworkProfile();
+        const isSlowNet = profile.tier === 'slow' || profile.tier === 'medium';
+
+        return EMBED_SERVERS.slice().sort(function (a, b) {
+          const recA = getServerHealthRecord(a.id);
+          const recB = getServerHealthRecord(b.id);
+
+          const baseWeightA = isSlowNet ? a.weightSlow : a.weightFast;
+          const baseWeightB = isSlowNet ? b.weightSlow : b.weightFast;
+
+          let scoreA = baseWeightA * (isSlowNet ? 180 : 140);
+          let scoreB = baseWeightB * (isSlowNet ? 180 : 140);
+
+          if (recA.status === 'fail') scoreA += 10000 + ((recA.failCount || 1) * 1500);
+          else if (recA.status === 'ok' && recA.latencyMs !== null) scoreA += recA.latencyMs;
+          else scoreA += 1200;
+
+          if (recB.status === 'fail') scoreB += 10000 + ((recB.failCount || 1) * 1500);
+          else if (recB.status === 'ok' && recB.latencyMs !== null) scoreB += recB.latencyMs;
+          else scoreB += 1200;
+
+          return scoreA - scoreB;
+        }).map(function (s) {
+          return s.id;
+        });
+      }
+
+      function getBestAvailableServerId(excludeIds) {
+        const excluded = Array.isArray(excludeIds) ? excludeIds : [];
+        const ranked = getRankedServerIds();
+        const pick = ranked.find(function (id) {
+          return !excluded.includes(id);
+        });
+        return pick || null;
+      }
+
+      function updateAutoServerUI() {
+        if (!autoServerToggleBtn) return;
+        const on = Boolean(state.isAutoServerEnabled);
+        autoServerToggleBtn.setAttribute('aria-pressed', on ? 'true' : 'false');
+        autoServerToggleBtn.className = on
+          ? 'inline-flex min-h-[34px] items-center gap-1.5 rounded-lg border border-emerald-400/50 bg-emerald-400/15 px-2.5 py-1 text-[11px] font-bold text-emerald-200 transition-all duration-150 hover:bg-emerald-400/25 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400'
+          : 'inline-flex min-h-[34px] items-center gap-1.5 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-300 transition-all duration-150 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+        autoServerToggleBtn.innerHTML =
+          '<span class="h-2 w-2 rounded-full ' + (on ? 'bg-emerald-400' : 'bg-slate-500') + '"></span>' +
+          '<span>Auto Switch: ' + (on ? 'ON' : 'OFF') + '</span>';
+      }
+
+      function updateNetworkServerStatusUI() {
+        const profile = getNetworkProfile();
+        const activeMeta = EMBED_SERVERS.find(function (s) { return s.id === state.activeServer; }) || EMBED_SERVERS[0];
+        const activeHealth = getServerHealthRecord(activeMeta.id);
+
+        if (networkServerStatusBadge) {
+          const speedNote = profile.downlink ? (' · ' + profile.downlink.toFixed(1) + ' Mbps') : '';
+          let mirrorNote = 'Server ' + activeMeta.id + ' (' + activeMeta.name + ')';
+          if (activeHealth.status === 'ok' && activeHealth.latencyMs !== null) {
+            mirrorNote += ' · ' + activeHealth.latencyMs + 'ms';
+          } else if (activeHealth.status === 'fail') {
+            mirrorNote += ' · Blocked/Slow';
+          }
+          networkServerStatusBadge.textContent = profile.label + speedNote + ' · ' + mirrorNote;
+        }
+
+        if (playerServerHint) {
+          if (!state.isAutoServerEnabled) {
+            playerServerHint.innerHTML =
+              'Auto Switch is <strong class="text-slate-200">OFF</strong>. Tap <strong class="text-cyan-300">Server 1–5</strong> or <strong class="text-amber-300">Next Server ↻</strong> manually if the screen stays blank.';
+          } else if (state.autoSwitchReason) {
+            playerServerHint.innerHTML =
+              'Auto-switched to <strong class="text-emerald-300">Server ' + activeMeta.id + ' (' + escapeHtml(activeMeta.name) + ')</strong> (' + escapeHtml(state.autoSwitchReason) + '). If needed, tap another server anytime.';
+          } else {
+            playerServerHint.innerHTML =
+              'Auto Switch is <strong class="text-emerald-300">ON (' + escapeHtml(profile.label) + ')</strong>: automatically picks the fastest working mirror for your mobile internet and switches if blocked or blank.';
+          }
+        }
+      }
+
+      function toggleAutoServer(forceState) {
+        state.isAutoServerEnabled = typeof forceState === 'boolean' ? forceState : !state.isAutoServerEnabled;
+        persistAutoServerPreference();
+        updateAutoServerUI();
+        updateNetworkServerStatusUI();
+      }
+
+      function clearPlayerLoadTimer() {
+        if (state.playerLoadTimer) {
+          clearTimeout(state.playerLoadTimer);
+          state.playerLoadTimer = null;
+        }
+      }
+
+      function clearAutoSwitchTimer() {
+        if (state.autoSwitchTimer) {
+          clearTimeout(state.autoSwitchTimer);
+          state.autoSwitchTimer = null;
+        }
+      }
+
+      function updateServerButtons(hasValidStream) {
+        const disabled = hasValidStream === false;
+        serverButtons.forEach(function (btn, idx) {
+          if (!btn) return;
+          const serverNum = idx + 1;
+          const health = getServerHealthRecord(serverNum);
+          btn.disabled = disabled;
+
+          if (health.status === 'ok' && health.latencyMs !== null) {
+            btn.title = 'Reachable (~' + health.latencyMs + 'ms on your network)';
+          } else if (health.status === 'fail') {
+            btn.title = 'Slow or blocked on your current network';
+          } else {
+            btn.title = 'Click to switch to Server ' + serverNum;
+          }
+
+          if (disabled) {
+            btn.className = 'min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-500 opacity-50 cursor-not-allowed focus:outline-none';
+          } else if (state.activeServer === serverNum) {
+            btn.className = 'min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border border-cyan-400/60 bg-cyan-400/20 px-3.5 py-2 text-xs font-semibold text-cyan-200 shadow-sm transition-all duration-150 focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          } else if (health.status === 'fail') {
+            btn.className = 'min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border border-rose-500/35 bg-rose-500/10 px-3.5 py-2 text-xs font-semibold text-rose-200/80 transition-all duration-150 hover:bg-rose-500/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          } else if (health.status === 'ok') {
+            btn.className = 'min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border border-emerald-400/30 bg-emerald-400/10 px-3.5 py-2 text-xs font-semibold text-emerald-100 transition-all duration-150 hover:bg-emerald-400/20 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          } else {
+            btn.className = 'min-h-[42px] whitespace-nowrap shrink-0 rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-300 transition-all duration-150 hover:bg-white/10 hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-cyan-400';
+          }
+        });
+        if (nextServerBtn) {
+          nextServerBtn.disabled = disabled;
+        }
+      }
+
+      function autoSwitchToNextServer(movie, failedServerNum, reason, requestId) {
+        if (requestId !== state.streamRequestId) return;
+        if (!state.activeMovie || playerModal.classList.contains('hidden')) return;
+
+        if (!state.autoTriedServers.includes(failedServerNum)) {
+          state.autoTriedServers.push(failedServerNum);
+        }
+
+        const failedRec = getServerHealthRecord(failedServerNum);
+        failedRec.status = 'fail';
+        failedRec.failCount = (failedRec.failCount || 0) + 1;
+        failedRec.checkedAt = Date.now();
+
+        const nextServerId = getBestAvailableServerId(state.autoTriedServers);
+        if (!nextServerId) {
+          clearPlayerLoadTimer();
+          clearAutoSwitchTimer();
+          updateServerButtons(true);
+          updateNetworkServerStatusUI();
+          playerIframe.onload = null;
+          playerIframe.onerror = null;
+          playerIframe.src = 'about:blank';
+          playerIframe.classList.add('hidden');
+          playerLoadingOverlay.classList.add('hidden');
+          playerLoadingOverlay.classList.remove('flex');
+          playerFallbackDownloadBtn.href = getDownloadUrl(movie);
+          if (playerFallbackHeading) {
+            playerFallbackHeading.textContent = 'Mirrors Blocked or Unreachable';
+          }
+          playerFallbackMessage.textContent =
+            'All 5 streaming mirrors failed to respond on your current network (' + reason + '). You can tap "Try Next Server ↻", switch WiFi/Mobile Data, or use the download option below.';
+          if (playerFallbackRetryServerBtn) {
+            playerFallbackRetryServerBtn.classList.remove('hidden');
+            playerFallbackRetryServerBtn.classList.add('inline-flex');
+          }
+          playerFallbackOverlay.classList.remove('hidden');
+          playerFallbackOverlay.classList.add('flex');
+          return;
+        }
+
+        const failedMeta = EMBED_SERVERS.find(function (s) { return s.id === failedServerNum; }) || EMBED_SERVERS[0];
+        state.activeServer = nextServerId;
+        state.autoSwitchReason = 'Server ' + failedMeta.id + ' ' + reason;
+        loadEmbedStream(movie, nextServerId, { isAutoRetry: true, requestId: ++state.streamRequestId });
+      }
+
+      function loadEmbedStream(movie, serverNum, options) {
+        clearPlayerLoadTimer();
+        clearAutoSwitchTimer();
+        const requestId = (options && options.requestId) ? options.requestId : (++state.streamRequestId);
+        const validImdb = sanitizeImdbCode(movie && movie.imdb_code);
+        const embedUrl = getEmbedUrl(validImdb, serverNum);
+        const downloadUrl = getDownloadUrl(movie);
+
+        if (!embedUrl) {
+          updateServerButtons(false);
+          updateNetworkServerStatusUI();
+          playerIframe.onload = null;
+          playerIframe.onerror = null;
+          playerIframe.src = 'about:blank';
+          playerIframe.classList.add('hidden');
+          playerLoadingOverlay.classList.add('hidden');
+          playerLoadingOverlay.classList.remove('flex');
+          playerFallbackDownloadBtn.href = downloadUrl;
+          if (playerFallbackHeading) {
+            playerFallbackHeading.textContent = 'Stream Unavailable for This Title';
+          }
+          if (playerFallbackRetryServerBtn) {
+            playerFallbackRetryServerBtn.classList.add('hidden');
+            playerFallbackRetryServerBtn.classList.remove('inline-flex');
+          }
+          playerFallbackMessage.textContent =
+            'A valid IMDb code (e.g., tt1375666) is missing for "' + ((movie && movie.title) || 'this title') + '", so embedded streaming cannot load. Use the direct download option below.';
+          playerFallbackOverlay.classList.remove('hidden');
+          playerFallbackOverlay.classList.add('flex');
+          return;
+        }
+
+        if (!state.autoTriedServers.includes(serverNum)) {
+          state.autoTriedServers.push(serverNum);
+        }
+
+        updateServerButtons(true);
+        updateNetworkServerStatusUI();
+        playerFallbackOverlay.classList.add('hidden');
+        playerFallbackOverlay.classList.remove('flex');
+        playerIframe.classList.remove('hidden');
+
+        const serverMeta = EMBED_SERVERS.find(function (s) { return s.id === serverNum; }) || EMBED_SERVERS[0];
+        const profile = getNetworkProfile();
+
+        if (options && options.isAutoRetry && state.autoSwitchReason) {
+          playerLoadingText.textContent = 'Auto-switching to Server ' + serverMeta.id + ' (' + serverMeta.name + ') — ' + state.autoSwitchReason + '...';
+        } else {
+          playerLoadingText.textContent = 'Connecting to Server ' + serverMeta.id + ' (' + serverMeta.name + ')...';
+        }
+        playerLoadingOverlay.classList.remove('hidden');
+        playerLoadingOverlay.classList.add('flex');
+
+        let iframeOnloadFired = false;
+        let liveProbeResult = null;
+        const loadStartedAt = Date.now();
+
+        playerIframe.onload = function () {
+          if (requestId !== state.streamRequestId) return;
+          iframeOnloadFired = true;
+          clearPlayerLoadTimer();
+          // If the iframe finishes suspiciously fast (<180ms) AND the parallel reachability probe failed, treat it as an ISP block/blank error frame
+          if ((Date.now() - loadStartedAt) < 180 && liveProbeResult && liveProbeResult.status === 'fail' && state.isAutoServerEnabled) {
+            autoSwitchToNextServer(movie, serverNum, 'blocked or blank frame', requestId);
+            return;
+          }
+          if (liveProbeResult && liveProbeResult.status === 'ok') {
+            clearAutoSwitchTimer();
+          }
+          playerLoadingOverlay.classList.add('hidden');
+          playerLoadingOverlay.classList.remove('flex');
+        };
+
+        playerIframe.onerror = function () {
+          if (requestId !== state.streamRequestId) return;
+          if (state.isAutoServerEnabled) {
+            autoSwitchToNextServer(movie, serverNum, 'failed to load', requestId);
+          }
+        };
+
+        // Parallel reachability probe so a blocked/dead mirror switches automatically before staying blank
+        probeSingleServer(serverMeta, Math.min(profile.probeTimeoutMs + 400, 3800)).then(function (probeResult) {
+          if (requestId !== state.streamRequestId) return;
+          liveProbeResult = probeResult;
+          updateServerButtons(true);
+          updateNetworkServerStatusUI();
+
+          if (probeResult && probeResult.status !== 'ok') {
+            if (state.isAutoServerEnabled) {
+              autoSwitchToNextServer(movie, serverNum, 'unreachable on ' + profile.label, requestId);
+            }
+          } else if (iframeOnloadFired) {
+            clearAutoSwitchTimer();
+          }
+        });
+
+        // Adaptive spinner timeout while cross-origin stream initializes
+        state.playerLoadTimer = setTimeout(function () {
+          if (requestId !== state.streamRequestId) return;
+          playerLoadingOverlay.classList.add('hidden');
+          playerLoadingOverlay.classList.remove('flex');
+        }, Math.min(profile.probeTimeoutMs + 600, 3400));
+
+        // Watchdog timer prevents endless blank screen when an embed hangs without settling
+        state.autoSwitchTimer = setTimeout(function () {
+          if (requestId !== state.streamRequestId) return;
+          if (!iframeOnloadFired && state.isAutoServerEnabled) {
+            autoSwitchToNextServer(movie, serverNum, 'timed out on ' + profile.label, requestId);
+          }
+        }, profile.settleTimeoutMs);
+
+        playerIframe.src = embedUrl;
+      }
+
+      async function openPlayerModal(rawMovie) {
+        if (!rawMovie) return;
+        const movie = normalizeYtsMovie(rawMovie);
+        closeDetailsModal();
+        recordRecentlyWatched(movie);
+        clearPlayerLoadTimer();
+        clearAutoSwitchTimer();
+
+        const modalRequestId = ++state.streamRequestId;
+        state.activeMovie = movie;
+        state.autoTriedServers = [];
+        state.autoSwitchReason = '';
+
+        const genreText = movie.genres.slice(0, 3).join(', ');
+        const imdbBadge = movie.imdb_code ? movie.imdb_code.toUpperCase() : '';
+        modalTitle.textContent = movie.title + (movie.year ? ' (' + movie.year + ')' : '');
+        modalMeta.textContent = ['★ ' + movie.rating + ' IMDb', movie.runtime, genreText, imdbBadge].filter(Boolean).join(' · ');
+        modalSynopsis.textContent = movie.summary;
+        modalDownloadLink.href = getDownloadUrl(movie);
+
+        playerModal.classList.remove('hidden');
+        playerModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        closePlayerBtn.focus();
+
+        updateAutoServerUI();
+        updateNetworkServerStatusUI();
+
+        if (!sanitizeImdbCode(movie.imdb_code)) {
+          state.activeServer = 1;
+          loadEmbedStream(movie, 1, { requestId: modalRequestId });
+          return;
+        }
+
+        if (state.isAutoServerEnabled) {
+          const isProbeFresh = state.lastServerProbeAt && (Date.now() - state.lastServerProbeAt) < SERVER_PROBE_CACHE_TTL_MS;
+          if (!isProbeFresh) {
+            playerFallbackOverlay.classList.add('hidden');
+            playerFallbackOverlay.classList.remove('flex');
+            playerIframe.classList.remove('hidden');
+            playerLoadingText.textContent = 'Checking fastest server for your mobile network...';
+            playerLoadingOverlay.classList.remove('hidden');
+            playerLoadingOverlay.classList.add('flex');
+
+            await Promise.race([
+              probeAllServers(false),
+              new Promise(function (resolve) { setTimeout(resolve, 650); })
+            ]);
+
+            if (modalRequestId !== state.streamRequestId || !state.activeMovie || playerModal.classList.contains('hidden')) {
+              return;
+            }
+          }
+
+          const bestServer = getBestAvailableServerId([]) || 1;
+          state.activeServer = bestServer;
+          loadEmbedStream(movie, bestServer, { requestId: modalRequestId });
+        } else {
+          const manualServer = state.activeServer || 1;
+          state.activeServer = manualServer;
+          loadEmbedStream(movie, manualServer, { requestId: modalRequestId });
+        }
+      }
+
+      function closePlayerModal() {
+        state.streamRequestId += 1;
+        clearPlayerLoadTimer();
+        clearAutoSwitchTimer();
+        playerModal.classList.add('hidden');
+        playerModal.classList.remove('flex');
+        playerIframe.onload = null;
+        playerIframe.onerror = null;
+        playerIframe.src = 'about:blank';
+        playerIframe.classList.remove('hidden');
+        playerLoadingOverlay.classList.add('hidden');
+        playerLoadingOverlay.classList.remove('flex');
+        playerFallbackOverlay.classList.add('hidden');
+        playerFallbackOverlay.classList.remove('flex');
+        document.body.style.overflow = '';
+        state.activeMovie = null;
+        state.autoTriedServers = [];
+        state.autoSwitchReason = '';
+      }
+
+      function openDetailsModal(movie) {
+        if (!movie) return;
+        const genreText = movie.genres.slice(0, 3).join(', ');
+        detailsBackdrop.style.display = '';
+        detailsBackdrop.src = movie.backdrop || movie.poster || '';
+        detailsBackdrop.alt = movie.title + ' backdrop';
+        detailsTitle.textContent = movie.title;
+        detailsMeta.textContent = ['★ ' + movie.rating + ' IMDb', movie.year, movie.runtime, genreText].filter(Boolean).join(' · ');
+        detailsOverview.textContent = movie.summary;
+        detailsDownloadBtn.href = getDownloadUrl(movie);
+
+        detailsWatchBtn.onclick = function () {
+          openPlayerModal(movie);
+        };
+
+        detailsModal.classList.remove('hidden');
+        detailsModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+        closeDetailsBtn.focus();
+      }
+
+      function closeDetailsModal() {
+        detailsModal.classList.add('hidden');
+        detailsModal.classList.remove('flex');
+        if (playerModal.classList.contains('hidden')) {
+          document.body.style.overflow = '';
+        }
+      }
+
+      function switchCategory(category) {
+        state.activeCategory = category;
+        state.searchQuery = '';
+        searchInput.value = '';
+        clearSearchBtn.classList.add('hidden');
+        clearSearchBtn.classList.remove('flex');
+        updateCategoryUI();
+        loadMovies(false);
+      }
+
+      function resetToHome() {
+        switchCategory('trending');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      // Event Listeners
+      categoryTabs.forEach(function (tab) {
+        tab.addEventListener('click', function () {
+          switchCategory(tab.getAttribute('data-category') || 'trending');
+        });
+      });
+
+      mobileNavButtons.forEach(function (btn) {
+        btn.addEventListener('click', function () {
+          switchCategory(btn.getAttribute('data-category') || 'trending');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+      });
+
+      if (mobileSearchFocusBtn) {
+        mobileSearchFocusBtn.addEventListener('click', function () {
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          setTimeout(function () {
+            searchInput.focus();
+          }, 150);
+        });
+      }
+
+      if (watchlistToggleBtn) {
+        watchlistToggleBtn.addEventListener('click', function () {
+          toggleWatchlistPanel();
+        });
+      }
+
+      if (mobileWatchlistBtn) {
+        mobileWatchlistBtn.addEventListener('click', function () {
+          toggleWatchlistPanel();
+        });
+      }
+
+      if (closeWatchlistBtn) {
+        closeWatchlistBtn.addEventListener('click', function () {
+          toggleWatchlistPanel(false);
+        });
+      }
+
+      if (clearWatchlistBtn) {
+        clearWatchlistBtn.addEventListener('click', function () {
+          state.watchlist = [];
+          persistWatchlist();
+          updateWatchlistUI();
+          syncAllHeartButtons();
+          renderWatchlistSection();
+        });
+      }
+
+      brandHomeBtn.addEventListener('click', function (e) {
+        e.preventDefault();
+        resetToHome();
+      });
+
+      // Real-time debounced search + Clear button visibility
+      searchInput.addEventListener('input', function () {
+        const val = searchInput.value.trim();
+        if (state.searchDebounceTimer) {
+          clearTimeout(state.searchDebounceTimer);
+          state.searchDebounceTimer = null;
+        }
+
+        if (val.length > 0) {
+          clearSearchBtn.classList.remove('hidden');
+          clearSearchBtn.classList.add('flex');
+          state.searchDebounceTimer = setTimeout(function () {
+            if (state.searchQuery !== val) {
+              state.searchQuery = val;
+              updateCategoryUI();
+              loadMovies(false);
+            }
+          }, 420);
+        } else {
+          clearSearchBtn.classList.add('hidden');
+          clearSearchBtn.classList.remove('flex');
+          if (state.searchQuery) {
+            state.searchQuery = '';
+            updateCategoryUI();
+            loadMovies(false);
+          }
+        }
+      });
+
+      // Immediate search query triggered on pressing Enter
+      searchForm.addEventListener('submit', function (e) {
+        e.preventDefault();
+        if (state.searchDebounceTimer) {
+          clearTimeout(state.searchDebounceTimer);
+          state.searchDebounceTimer = null;
+        }
+        state.searchQuery = searchInput.value.trim();
+        updateCategoryUI();
+        loadMovies(false);
+      });
+
+      clearSearchBtn.addEventListener('click', function () {
+        if (state.searchDebounceTimer) {
+          clearTimeout(state.searchDebounceTimer);
+          state.searchDebounceTimer = null;
+        }
+        searchInput.value = '';
+        state.searchQuery = '';
+        clearSearchBtn.classList.add('hidden');
+        clearSearchBtn.classList.remove('flex');
+        updateCategoryUI();
+        loadMovies(false);
+        searchInput.focus();
+      });
+
+      loadMoreBtn.addEventListener('click', function () {
+        if (state.hasMore && !state.isLoading) {
+          state.page += 1;
+          loadMovies(true);
+        }
+      });
+
+      serverButtons.forEach(function (btn, idx) {
+        if (!btn) return;
+        const serverNum = idx + 1;
+        btn.addEventListener('click', function () {
+          if (!state.activeMovie) return;
+          state.autoSwitchReason = '';
+          state.autoTriedServers = [serverNum];
+          state.activeServer = serverNum;
+          loadEmbedStream(state.activeMovie, serverNum);
+        });
+      });
+
+      function switchToNextAvailableServer() {
+        if (!state.activeMovie) return;
+        state.autoSwitchReason = '';
+        const ranked = getRankedServerIds();
+        let nextNum = ranked.find(function (id) {
+          return id !== state.activeServer && !state.autoTriedServers.includes(id);
+        });
+        if (!nextNum) {
+          nextNum = (state.activeServer % EMBED_SERVERS.length) + 1;
+          state.autoTriedServers = [nextNum];
+        } else {
+          state.autoTriedServers.push(nextNum);
+        }
+        state.activeServer = nextNum;
+        loadEmbedStream(state.activeMovie, nextNum);
+      }
+
+      if (nextServerBtn) {
+        nextServerBtn.addEventListener('click', switchToNextAvailableServer);
+      }
+
+      if (playerFallbackRetryServerBtn) {
+        playerFallbackRetryServerBtn.addEventListener('click', switchToNextAvailableServer);
+      }
+
+      if (autoServerToggleBtn) {
+        autoServerToggleBtn.addEventListener('click', function () {
+          toggleAutoServer();
+        });
+      }
+
+      if (reprobeServersBtn) {
+        reprobeServersBtn.addEventListener('click', function () {
+          state.autoTriedServers = [];
+          state.autoSwitchReason = '';
+          probeAllServers(true).then(function () {
+            if (state.activeMovie && !playerModal.classList.contains('hidden') && state.isAutoServerEnabled) {
+              const bestId = getBestAvailableServerId([]) || state.activeServer;
+              state.activeServer = bestId;
+              loadEmbedStream(state.activeMovie, bestId);
+            }
+          });
+        });
+      }
+
+      closePlayerBtn.addEventListener('click', closePlayerModal);
+      closeDetailsBtn.addEventListener('click', closeDetailsModal);
+
+      playerModal.addEventListener('click', function (e) {
+        if (e.target === playerModal) {
+          closePlayerModal();
+        }
+      });
+
+      detailsModal.addEventListener('click', function (e) {
+        if (e.target === detailsModal) {
+          closeDetailsModal();
+        }
+      });
+
+      // Global Click-to-Ad Interstitial Controller (shows Adsterra ad on button clicks)
+      const AD_GATE_ENABLED = true;
+      const AD_COOLDOWN_MS = 0;
+      const AD_COUNTDOWN_SECONDS = 2;
+
+      const adGateModal = document.getElementById('adGateModal');
+      const adGateBannerHost = document.getElementById('adGateBannerHost');
+      const adGateContinueBtn = document.getElementById('adGateContinueBtn');
+      const adGateSponsorLink = document.getElementById('adGateSponsorLink');
+      const closeAdGateBtn = document.getElementById('closeAdGateBtn');
+
+      let pendingAdTarget = null;
+      let bypassedAdTarget = null;
+      let adCountdownTimer = null;
+      let lastAdShownAt = 0;
+
+      document.addEventListener('keydown', function (e) {
+        if (e.key === 'Escape') {
+          if (!adGateModal.classList.contains('hidden')) {
+            closeAdGate(false);
+          } else if (!playerModal.classList.contains('hidden')) {
+            closePlayerModal();
+          } else if (!detailsModal.classList.contains('hidden')) {
+            closeDetailsModal();
+          }
+        }
+      });
+
+      function mountIsolatedAdSlot(hostEl, key, width, height, title) {
+        if (!hostEl) return;
+        hostEl.innerHTML = '';
+        const adFrame = document.createElement('iframe');
+        adFrame.width = String(width);
+        adFrame.height = String(height);
+        adFrame.scrolling = 'no';
+        adFrame.frameBorder = '0';
+        adFrame.title = title || 'Sponsored Advertisement';
+        adFrame.style.width = width + 'px';
+        adFrame.style.height = height + 'px';
+        adFrame.style.border = '0';
+        adFrame.style.overflow = 'hidden';
+        adFrame.srcdoc =
+          '<!doctype html><html><body style="margin:0;padding:0;background:#07070c;display:flex;align-items:center;justify-content:center;overflow:hidden;">' +
+          '<script>atOptions={"key":"' + key + '","format":"iframe","height":' + height + ',"width":' + width + ',"params":{}};<\/script>' +
+          '<script src="https://bancadeltempoidea.org/22/' + key + '"><\/script>' +
+          '</body></html>';
+        hostEl.appendChild(adFrame);
+      }
+
+      function mountIsolatedAdsterraBanner() {
+        mountIsolatedAdSlot(adGateBannerHost, '3718a952be1db5143b7d31fc9bbf8754', 300, 250, 'Sponsored Interstitial');
+      }
+
+      function initExtraAdPlacements() {
+        const isDesktopMd = window.innerWidth >= 768;
+        const isTabletSm = window.innerWidth >= 640;
+        const isWideRail = window.innerWidth >= 1680;
+
+        if (!isTabletSm) {
+          mountIsolatedAdSlot(preCatalogMobileAdHost, '0ef045a017a4a8ceefe2e2e41edd97bf', 320, 50, 'Catalog Top Mobile Ad');
+        }
+
+        if (isDesktopMd) {
+          mountIsolatedAdSlot(midCatalogAd2Desktop, 'c2b4970d7cb0453bec012d925f0b5e83', 728, 90, 'Catalog Secondary Banner');
+          mountIsolatedAdSlot(preFooterAdDesktop, 'c2b4970d7cb0453bec012d925f0b5e83', 728, 90, 'Pre-Footer Banner');
+        } else {
+          mountIsolatedAdSlot(midCatalogAd2Mobile, '3718a952be1db5143b7d31fc9bbf8754', 300, 250, 'Catalog Secondary Mobile Ad');
+          mountIsolatedAdSlot(preFooterAdMobile, '3718a952be1db5143b7d31fc9bbf8754', 300, 250, 'Pre-Footer Mobile Ad');
+          mountIsolatedAdSlot(mobileStickyAdHost, '0ef045a017a4a8ceefe2e2e41edd97bf', 320, 50, 'Mobile Sticky Ad');
+        }
+
+        if (isWideRail) {
+          mountIsolatedAdSlot(leftSkyscraperAdHost, 'cc9991cc9c78650c439f5705ab17d8e0', 160, 300, 'Left Skyscraper Ad');
+        }
+
+        if (isTabletSm) {
+          mountIsolatedAdSlot(playerTopAdDesktop, '315c8f1c62bb9aa1c227fd0e285f9f30', 468, 60, 'Player Top Banner');
+        } else {
+          mountIsolatedAdSlot(playerTopAdMobile, '0ef045a017a4a8ceefe2e2e41edd97bf', 320, 50, 'Player Top Mobile Banner');
+        }
+
+        mountIsolatedAdSlot(detailsAdHost, '0ef045a017a4a8ceefe2e2e41edd97bf', 320, 50, 'Movie Details Ad');
+      }
+
+      if (mobileStickyAdDismissBtn && mobileStickyAdBar) {
+        mobileStickyAdDismissBtn.addEventListener('click', function () {
+          mobileStickyAdBar.classList.add('hidden');
+          document.body.classList.remove('pb-32');
+          document.body.classList.add('pb-16');
+        });
+      }
+
+      function clearAdCountdown() {
+        if (adCountdownTimer) {
+          clearInterval(adCountdownTimer);
+          adCountdownTimer = null;
+        }
+      }
+
+      function closeAdGate(proceedWithAction) {
+        clearAdCountdown();
+        const targetToRun = proceedWithAction ? pendingAdTarget : null;
+        pendingAdTarget = null;
+        adGateModal.classList.add('hidden');
+        adGateModal.classList.remove('flex');
+        adGateBannerHost.innerHTML = '';
+
+        if (playerModal.classList.contains('hidden') && detailsModal.classList.contains('hidden')) {
+          document.body.style.overflow = '';
+        }
+
+        if (targetToRun && document.contains(targetToRun)) {
+          bypassedAdTarget = targetToRun;
+          targetToRun.click();
+          bypassedAdTarget = null;
+        }
+      }
+
+      function openAdGateForTarget(targetEl) {
+        clearAdCountdown();
+        pendingAdTarget = targetEl;
+        lastAdShownAt = Date.now();
+
+        mountIsolatedAdsterraBanner();
+
+        let remaining = AD_COUNTDOWN_SECONDS;
+        adGateContinueBtn.disabled = true;
+        adGateContinueBtn.textContent = 'Continue in ' + remaining + 's...';
+
+        adGateModal.classList.remove('hidden');
+        adGateModal.classList.add('flex');
+        document.body.style.overflow = 'hidden';
+
+        adCountdownTimer = setInterval(function () {
+          remaining -= 1;
+          if (remaining <= 0) {
+            clearAdCountdown();
+            adGateContinueBtn.disabled = false;
+            adGateContinueBtn.textContent = 'Continue to Action';
+          } else {
+            adGateContinueBtn.textContent = 'Continue in ' + remaining + 's...';
+          }
+        }, 1000);
+      }
+
+      if (adGateContinueBtn) {
+        adGateContinueBtn.addEventListener('click', function () {
+          if (!adGateContinueBtn.disabled) {
+            closeAdGate(true);
+          }
+        });
+      }
+
+      if (adGateSponsorLink) {
+        adGateSponsorLink.addEventListener('click', function () {
+          // Clicking the sponsor link opens the Direct Link in a new tab and immediately unlocks the pending action
+          setTimeout(function () {
+            closeAdGate(true);
+          }, 50);
+        });
+      }
+
+      if (closeAdGateBtn) {
+        closeAdGateBtn.addEventListener('click', function () {
+          closeAdGate(false);
+        });
+      }
+
+      if (adGateModal) {
+        adGateModal.addEventListener('click', function (e) {
+          if (e.target === adGateModal && !adGateContinueBtn.disabled) {
+            closeAdGate(true);
+          }
+        });
+      }
+
+      // Intercept clicks on interactive buttons & movie cards in capture phase
+      document.addEventListener('click', function (e) {
+        if (!AD_GATE_ENABLED) return;
+        if (e.target && e.target.closest && e.target.closest('[data-ad-skip="true"]')) return;
+        if (!adGateModal.classList.contains('hidden')) return;
+
+        const actionable = e.target && e.target.closest
+          ? e.target.closest('.watchlist-heart-btn, button, .catalog-card, #modalDownloadLink, #detailsDownloadBtn, #playerFallbackDownloadBtn')
+          : null;
+
+        if (!actionable) return;
+        if (actionable === bypassedAdTarget) return;
+        if (actionable.disabled) return;
+
+        if (AD_COOLDOWN_MS > 0 && Date.now() - lastAdShownAt < AD_COOLDOWN_MS) {
+          return;
+        }
+
+        e.preventDefault();
+        e.stopPropagation();
+        e.stopImmediatePropagation();
+        openAdGateForTarget(actionable);
+      }, true);
+
+      if (recentPrevBtn) {
+        recentPrevBtn.addEventListener('click', function () {
+          recentlyWatchedTrack.scrollBy({ left: -360, behavior: 'smooth' });
+        });
+      }
+
+      if (recentNextBtn) {
+        recentNextBtn.addEventListener('click', function () {
+          recentlyWatchedTrack.scrollBy({ left: 360, behavior: 'smooth' });
+        });
+      }
+
+      if (clearRecentBtn) {
+        clearRecentBtn.addEventListener('click', clearRecentlyWatched);
+      }
+
+      // Listen to mobile network / WiFi changes to automatically re-probe mirrors
+      const networkConnectionApi = navigator.connection || navigator.mozConnection || navigator.webkitConnection || null;
+      if (networkConnectionApi && typeof networkConnectionApi.addEventListener === 'function') {
+        networkConnectionApi.addEventListener('change', function () {
+          updateNetworkServerStatusUI();
+          probeAllServers(true);
+        });
+      }
+      window.addEventListener('online', function () {
+        updateNetworkServerStatusUI();
+        probeAllServers(true);
+      });
+
+      // Boot CineVerse Keyless Engine, Watchlist, Recently Watched Carousel & Isolated Ads
+      state.watchlist = loadWatchlistFromStorage();
+      loadRecentWatchedFromStorage();
+      loadAutoServerPreference();
+      updateWatchlistUI();
+      updateCategoryUI();
+      updateAutoServerUI();
+      updateNetworkServerStatusUI();
+      renderRecentlyWatchedSection();
+      hydrateMissingRecentMovies();
+      renderHero(normalizeYtsMovie(FALLBACK_MOVIES[0]));
+      initExtraAdPlacements();
+      loadMovies(false);
+      setTimeout(function () {
+        probeAllServers(false);
+      }, 900);
+    })();
+  </script>
+
+  <!-- ADSTERRA POPUNDER & SOCIAL BAR SCRIPTS -->
+  <script data-cfasync="false" src="https://bancadeltempoidea.org/14/ff69d6ef609bff4f703a28aa9e31da4d"></script>
+  <script data-cfasync="false" src="https://aarems.org/1/9cb8b9327a7a9fe942da1600c9abccab"></script>
+</body>
+</html>
