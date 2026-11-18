@@ -8,6 +8,7 @@
   <meta property="og:title" content="CineVerse — Keyless Free HD Movie Streaming" />
   <meta property="og:description" content="Stream trending HD movies with zero API keys, live search, and instant multi-server theatre playback." />
   <meta property="og:type" content="website" />
+  <meta name="twitter:card" content="summary_large_image" />
   <meta name="theme-color" content="#07070c" />
 
   <!-- Google Fonts -->
@@ -32,6 +33,9 @@
             sans: ['Plus Jakarta Sans', 'sans-serif'],
             mono: ['JetBrains Mono', 'monospace'],
           },
+          transitionTimingFunction: {
+            cinema: 'cubic-bezier(0.16, 1, 0.3, 1)',
+          },
         },
       },
     };
@@ -44,13 +48,16 @@
     ::-webkit-scrollbar { width: 8px; height: 8px; }
     ::-webkit-scrollbar-track { background: #07070c; }
     ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.14); border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: rgba(0, 240, 255, 0.45); }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     @keyframes shimmer { 0% { background-position: -200% 0; } 100% { background-position: 200% 0; } }
     .skeleton-shimmer { background: linear-gradient(90deg, rgba(255, 255, 255, 0.03) 25%, rgba(255, 255, 255, 0.09) 50%, rgba(255, 255, 255, 0.03) 75%); background-size: 200% 100%; animation: shimmer 1.4s infinite linear; }
+    .rating-slider { -webkit-appearance: none; appearance: none; height: 6px; border-radius: 9999px; background: linear-gradient(to right, #00f0ff 0%, #00f0ff var(--slider-progress, 0%), rgba(255, 255, 255, 0.14) var(--slider-progress, 0%), rgba(255, 255, 255, 0.14) 100%); outline: none; cursor: pointer; }
+    .rating-slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 9999px; background: #00f0ff; border: 2px solid #07070c; box-shadow: 0 0 12px rgba(0, 240, 255, 0.65); cursor: pointer; transition: transform 0.15s ease; }
   </style>
 </head>
-<body class="min-h-screen bg-[#07070c] text-slate-100 antialiased cinema-ambient pb-32 md:pb-0">
+<body class="min-h-screen bg-[#07070c] text-slate-100 antialiased cinema-ambient pb-32 md:pb-0 selection:bg-cyan-400/30 selection:text-cyan-100">
 
   <!-- Sticky Navbar -->
   <header class="sticky top-0 z-40 border-b border-white/10 bg-[#07070c]/85 backdrop-blur-xl">
@@ -64,9 +71,12 @@
         </span>
       </a>
 
-      <!-- Category Tabs -->
       <nav aria-label="Categories" class="hidden min-w-0 flex-1 items-center gap-1 overflow-x-auto no-scrollbar rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-xl lg:flex">
         <button type="button" data-category="trending" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold">All Movies</button>
+        <button type="button" data-category="bangla" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold">Bangla</button>
+        <button type="button" data-category="hindi" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold">Hindi</button>
+        <button type="button" data-category="south" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold">South Indian</button>
+        <button type="button" data-category="top_rated" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold">Top Rated</button>
         <button type="button" data-category="action" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold">Action</button>
         <button type="button" data-category="sci-fi" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold">Sci-Fi</button>
         <button type="button" data-category="comedy" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold">Comedy</button>
@@ -76,7 +86,6 @@
         <button type="button" data-category="drama" class="cat-tab whitespace-nowrap shrink-0 rounded-lg px-2.5 py-2 text-xs font-semibold">Drama</button>
       </nav>
 
-      <!-- Search & Watchlist -->
       <div class="flex items-center gap-2 sm:gap-3">
         <form id="searchForm" class="relative w-full max-w-[165px] sm:max-w-xs" role="search">
           <label for="searchInput" class="sr-only">Search movies</label>
@@ -84,12 +93,13 @@
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
           </span>
           <input id="searchInput" type="search" placeholder="Search movies..." autocomplete="off" class="h-10 w-full rounded-xl border border-white/10 bg-white/5 pl-9 pr-9 sm:pr-16 text-sm text-white placeholder-slate-400 backdrop-blur-xl focus:outline-none focus:ring-2 focus:ring-cyan-400/30 sm:h-11" />
+          <kbd id="searchShortcutHint" aria-hidden="true" class="pointer-events-none hidden sm:inline-flex absolute inset-y-0 right-2.5 my-auto h-6 items-center gap-0.5 rounded-md border border-white/15 bg-white/5 px-1.5 font-mono text-[10px] text-slate-400">Ctrl K</kbd>
           <button id="clearSearchBtn" type="button" data-ad-skip="true" aria-label="Clear search" class="hidden absolute inset-y-0 right-1 my-auto h-8 w-8 items-center justify-center rounded-lg text-slate-400 hover:text-white">
             <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
           </button>
         </form>
 
-        <button id="watchlistToggleBtn" type="button" aria-expanded="false" class="inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-semibold text-slate-200 backdrop-blur-xl hover:border-crimson/50 hover:bg-crimson/15 sm:h-11 sm:px-4">
+        <button id="watchlistToggleBtn" type="button" aria-expanded="false" aria-controls="watchlistSection" class="inline-flex h-10 shrink-0 items-center gap-2 whitespace-nowrap rounded-xl border border-white/10 bg-white/5 px-3 text-xs font-semibold text-slate-200 backdrop-blur-xl hover:border-crimson/50 hover:bg-crimson/15 hover:text-white sm:h-11 sm:px-4">
           <svg class="h-4 w-4 text-crimson" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
           <span class="hidden sm:inline">Watchlist</span>
           <span id="watchlistCountBadge" class="font-mono tabular-nums text-cyan-300">(0)</span>
@@ -115,6 +125,22 @@
       </div>
     </section>
 
+    <!-- Mobile Category Tabs -->
+    <div class="mb-5 flex items-center gap-2 overflow-x-auto pb-1 no-scrollbar lg:hidden" role="tablist" aria-label="Browse categories">
+      <button type="button" data-category="trending" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">All Movies</button>
+      <button type="button" data-category="bangla" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Bangla</button>
+      <button type="button" data-category="hindi" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Hindi</button>
+      <button type="button" data-category="south" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">South Indian</button>
+      <button type="button" data-category="top_rated" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Top Rated</button>
+      <button type="button" data-category="action" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Action</button>
+      <button type="button" data-category="sci-fi" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Sci-Fi</button>
+      <button type="button" data-category="comedy" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Comedy</button>
+      <button type="button" data-category="thriller" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Thriller</button>
+      <button type="button" data-category="horror" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Horror</button>
+      <button type="button" data-category="animation" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Animation</button>
+      <button type="button" data-category="drama" class="cat-tab min-h-[44px] whitespace-nowrap shrink-0 rounded-xl border px-4 py-2 text-xs font-semibold">Drama</button>
+    </div>
+
     <!-- Cinematic Hero -->
     <section id="heroSection" aria-label="Featured Movie" class="relative mb-10 overflow-hidden rounded-2xl border border-white/10 bg-white/5 backdrop-blur-xl">
       <div id="heroContent" class="relative flex min-h-[400px] items-end sm:min-h-[460px] lg:min-h-[500px]">
@@ -132,75 +158,298 @@
       <div class="mb-5 flex flex-wrap items-center justify-between gap-4 border-b border-white/10 pb-4">
         <div>
           <h2 id="watchlistHeading" class="font-display text-2xl font-bold tracking-tight text-white">My Watchlist</h2>
-          <p class="mt-1 text-sm text-slate-400">Movies saved locally in your browser</p>
+          <p id="watchlistSubtitle" class="mt-1 text-sm text-slate-400">Movies saved locally in your browser</p>
         </div>
-        <button id="closeWatchlistBtn" type="button" data-ad-skip="true" class="min-h-[40px] rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white">Hide Watchlist</button>
+        <div class="flex flex-wrap items-center gap-2.5">
+          <button id="clearWatchlistBtn" type="button" class="hidden min-h-[40px] rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-300 hover:border-crimson/50 hover:bg-crimson/15 hover:text-white">Clear All</button>
+          <button id="closeWatchlistBtn" type="button" data-ad-skip="true" class="min-h-[40px] rounded-xl border border-white/10 bg-white/5 px-3.5 py-2 text-xs font-semibold text-slate-300 hover:bg-white/10 hover:text-white">Hide Watchlist</button>
+        </div>
       </div>
       <div id="watchlistGridWrapper"></div>
     </section>
 
     <!-- Main Catalog -->
     <section aria-labelledby="catalogHeading">
+      <!-- Recently Watched -->
+      <div id="recentlyWatchedSection" aria-labelledby="recentlyWatchedHeading" class="mb-8 hidden rounded-2xl border border-white/10 bg-white/[0.03] p-4 backdrop-blur-xl sm:p-6">
+        <div class="mb-4 flex flex-wrap items-center justify-between gap-3 border-b border-white/10 pb-3">
+          <div class="flex items-center gap-2.5">
+            <span class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg border border-cyan-400/35 bg-cyan-400/15 text-neonCyan">
+              <svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+            </span>
+            <div>
+              <h2 id="recentlyWatchedHeading" class="font-display text-lg font-bold tracking-tight text-white sm:text-xl">Recently Watched</h2>
+              <p id="recentlyWatchedSubtitle" class="text-xs text-slate-400">Your watched history</p>
+            </div>
+          </div>
+          <div class="flex flex-wrap items-center gap-2">
+            <button id="recentAutoScrollBtn" type="button" data-ad-skip="true" aria-pressed="true" class="inline-flex min-h-[36px] items-center gap-1.5 rounded-xl border border-cyan-400/45 bg-cyan-400/15 px-3 py-1.5 text-xs font-semibold text-cyan-200">
+              <span id="recentAutoScrollDot" class="h-2 w-2 rounded-full bg-neonCyan"></span>
+              <span id="recentAutoScrollLabel">Auto: On</span>
+            </button>
+            <button id="recentPrevBtn" type="button" data-ad-skip="true" class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:border-cyan-400/45 hover:bg-cyan-400/15 hover:text-white"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+            <button id="recentNextBtn" type="button" data-ad-skip="true" class="flex h-9 w-9 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:border-cyan-400/45 hover:bg-cyan-400/15 hover:text-white"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+            <button id="clearRecentBtn" type="button" data-ad-skip="true" class="min-h-[36px] rounded-xl border border-white/10 bg-white/5 px-3 py-1.5 text-xs font-semibold text-slate-300 hover:border-crimson/50 hover:bg-crimson/15 hover:text-white">Clear</button>
+          </div>
+        </div>
+        <div id="recentlyWatchedTrack" class="flex gap-3.5 overflow-x-auto pb-2 scroll-smooth snap-x snap-mandatory no-scrollbar sm:gap-4"></div>
+      </div>
+
       <div class="mb-6 flex flex-col gap-4 border-b border-white/10 pb-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
           <h2 id="catalogHeading" class="font-display text-2xl font-bold tracking-tight text-white sm:text-3xl">Trending Movies</h2>
-          <p class="mt-1 text-sm text-slate-400">100% free, keyless HD movie streaming</p>
+          <p id="catalogSubtitle" class="mt-1 text-sm text-slate-400">100% free, keyless HD movie streaming</p>
         </div>
-        <div class="flex items-center gap-3 font-mono text-xs tabular-nums text-slate-400">
-          <span id="catalogCountLabel">Loading catalog...</span>
+
+        <div class="flex flex-wrap items-center justify-between gap-3 sm:justify-end">
+          <div class="flex items-center gap-2 rounded-xl border border-white/10 bg-white/[0.04] px-3 py-1.5 backdrop-blur-xl">
+            <label for="catalogSortSelect" class="text-xs font-semibold text-slate-300 whitespace-nowrap">Sort</label>
+            <select id="catalogSortSelect" data-ad-skip="true" class="rounded-lg border border-white/10 bg-[#0d0e17] px-2.5 py-1 text-xs font-semibold text-white focus:outline-none">
+              <option value="default">Featured</option>
+              <option value="rating_desc">Top Rated</option>
+              <option value="year_desc">Newest First</option>
+              <option value="title_asc">Title A–Z</option>
+            </select>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-3 rounded-xl border border-white/10 bg-white/[0.04] px-3.5 py-2 backdrop-blur-xl">
+            <label for="minRatingSlider" class="flex items-center gap-1.5 text-xs font-semibold text-slate-300 whitespace-nowrap">
+              <svg class="h-3.5 w-3.5 text-amber-300" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg>
+              <span>Min IMDb</span>
+            </label>
+            <div class="flex items-center gap-2.5">
+              <input id="minRatingSlider" type="range" min="0" max="9" step="0.5" value="0" data-ad-skip="true" class="rating-slider w-28 sm:w-36" />
+              <span id="minRatingValueBadge" class="inline-flex min-w-[60px] items-center justify-center rounded-lg border border-white/10 bg-black/40 px-2 py-1 font-mono text-xs font-semibold tabular-nums text-slate-300">All</span>
+            </div>
+            <button id="resetRatingFilterBtn" type="button" data-ad-skip="true" class="hidden rounded-lg border border-white/10 bg-white/5 px-2 py-1 text-[11px] font-semibold text-slate-300 hover:border-cyan-400/50 hover:bg-cyan-400/15 hover:text-white">Reset</button>
+          </div>
+
+          <div class="flex items-center gap-3 font-mono text-xs tabular-nums text-slate-400">
+            <span id="catalogCountLabel">Loading catalog...</span>
+          </div>
         </div>
       </div>
 
       <div id="catalogFirstGrid" aria-busy="true"></div>
       
       <!-- Mid Catalog Ad -->
-      <div class="my-8 flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-xl">
-        <div class="flex md:hidden justify-center my-4 overflow-hidden">
+      <div id="midCatalogAdSection" class="my-8 flex flex-col items-center justify-center gap-3 rounded-2xl border border-white/10 bg-white/5 px-4 py-4 backdrop-blur-xl">
+        <div id="midCatalogAd2Mobile" class="flex md:hidden justify-center my-4 overflow-hidden">
           <script>atOptions = {'key' : '3718a952be1db5143b7d31fc9bbf8754','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};</script>
           <script src="https://bancadeltempoidea.org/22/3718a952be1db5143b7d31fc9bbf8754"></script>
         </div>
-        <div class="hidden md:flex justify-center my-4 overflow-hidden">
+        <div id="midCatalogAd2Desktop" class="hidden md:flex justify-center my-4 overflow-hidden">
           <script>atOptions = {'key' : 'c2b4970d7cb0453bec012d925f0b5e83','format' : 'iframe','height' : 90,'width' : 728,'params' : {}};</script>
           <script src="https://bancadeltempoidea.org/22/c2b4970d7cb0453bec012d925f0b5e83"></script>
         </div>
       </div>
 
       <div id="catalogMiddleGrid" class="hidden"></div>
+      <div id="catalogRestGrid" class="hidden"></div>
+
+      <!-- Pre-Footer Ad -->
+      <div class="my-8 flex flex-col items-center justify-center gap-3 rounded-2xl border border-cyan-400/15 bg-white/[0.04] px-4 py-4 backdrop-blur-xl">
+        <div id="preFooterAdMobile" class="flex md:hidden justify-center my-4 overflow-hidden">
+          <script>atOptions = {'key' : '3718a952be1db5143b7d31fc9bbf8754','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};</script>
+          <script src="https://bancadeltempoidea.org/22/3718a952be1db5143b7d31fc9bbf8754"></script>
+        </div>
+        <div id="preFooterAdDesktop" class="hidden md:flex justify-center my-4 overflow-hidden">
+          <script>atOptions = {'key' : 'c2b4970d7cb0453bec012d925f0b5e83','format' : 'iframe','height' : 90,'width' : 728,'params' : {}};</script>
+          <script src="https://bancadeltempoidea.org/22/c2b4970d7cb0453bec012d925f0b5e83"></script>
+        </div>
+      </div>
+
+      <div id="loadMoreWrapper" class="mt-10 hidden justify-center">
+        <button id="loadMoreBtn" type="button" class="inline-flex min-h-[48px] items-center justify-center gap-2.5 rounded-xl border border-cyan-400/40 bg-white/5 px-8 py-3 text-sm font-semibold text-white backdrop-blur-xl transition-all hover:border-cyan-400 hover:bg-cyan-400/15">
+          <span id="loadMoreText">Load More Movies</span>
+          <svg id="loadMoreIcon" class="h-4 w-4 text-neonCyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+        </button>
+      </div>
     </section>
   </main>
 
+  <!-- Left Skyscraper Rail -->
+  <aside aria-label="Left Advertisement" class="fixed left-4 top-24 z-20 hidden min-[1680px]:flex flex-col items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-xl">
+    <div id="leftSkyscraperAdHost" class="flex h-[300px] w-[160px] items-center justify-center overflow-hidden rounded-lg bg-black/30">
+      <script>atOptions = {'key' : 'cc9991cc9c78650c439f5705ab17d8e0','format' : 'iframe','height' : 300,'width' : 160,'params' : {}};</script>
+      <script src="https://bancadeltempoidea.org/22/cc9991cc9c78650c439f5705ab17d8e0"></script>
+    </div>
+  </aside>
+
+  <!-- Right Skyscraper Rail -->
+  <aside aria-label="Right Advertisement" class="fixed right-4 top-24 z-20 hidden min-[1680px]:flex flex-col items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/5 p-1 backdrop-blur-xl">
+    <div class="flex justify-center my-2 overflow-hidden">
+      <script>atOptions = {'key' : '99dc71909f0735675e80e3d1e008ef2f','format' : 'iframe','height' : 600,'width' : 160,'params' : {}};</script>
+      <script src="https://bancadeltempoidea.org/22/99dc71909f0735675e80e3d1e008ef2f"></script>
+    </div>
+  </aside>
+
   <!-- Footer -->
   <footer class="border-t border-white/10 bg-[#07070c]/95 py-8">
-    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-center text-xs text-slate-500 sm:flex-row sm:px-6">
-      <p class="font-medium text-slate-400">CineVerse <span class="mx-1.5">·</span> Keyless HD Movie Streaming Hub</p>
-      <p>Powered by public movie metadata feeds.</p>
+    <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-center text-xs text-slate-500 sm:flex-row sm:px-6 sm:text-left lg:px-8">
+      <p class="font-medium text-slate-400">CineVerse <span aria-hidden="true" class="mx-1.5">·</span> Keyless HD Movie Streaming Hub</p>
+      <p>Powered by public movie metadata feeds. No files are hosted on this server.</p>
     </div>
   </footer>
 
+  <!-- Mobile Sticky Ad Bar -->
+  <div id="mobileStickyAdBar" aria-label="Mobile Sticky Advertisement" class="fixed bottom-14 left-0 right-0 z-30 flex items-center justify-center border-t border-white/10 bg-[#07070c]/95 py-1 backdrop-blur-xl md:hidden">
+    <div id="mobileStickyAdHost" class="flex h-[50px] w-[320px] items-center justify-center overflow-hidden rounded-lg bg-black/40">
+      <script>atOptions = {'key' : '0ef045a017a4a8ceefe2e2e41edd97bf','format' : 'iframe','height' : 50,'width' : 320,'params' : {}};</script>
+      <script src="https://bancadeltempoidea.org/22/0ef045a017a4a8ceefe2e2e41edd97bf"></script>
+    </div>
+    <button id="mobileStickyAdDismissBtn" type="button" data-ad-skip="true" aria-label="Hide bottom ad" class="absolute right-1.5 top-1 flex h-6 w-6 items-center justify-center rounded-full border border-white/15 bg-black/70 text-[11px] font-bold text-slate-300 hover:bg-crimson/80 hover:text-white">×</button>
+  </div>
+
+  <!-- Mobile Bottom Nav -->
+  <nav aria-label="Mobile Navigation" class="fixed bottom-0 left-0 right-0 z-30 border-t border-white/10 bg-[#07070c]/90 backdrop-blur-xl md:hidden">
+    <div class="grid h-14 grid-cols-5 items-center">
+      <button type="button" data-category="trending" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/></svg>
+        <span>All</span>
+      </button>
+      <button type="button" data-category="bangla" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect width="18" height="18" x="3" y="3" rx="2"/><path d="m10 8 6 4-6 4Z"/></svg>
+        <span>Bangla</span>
+      </button>
+      <button type="button" data-category="hindi" class="mobile-nav-btn flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium transition-colors">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+        <span>Hindi</span>
+      </button>
+      <button type="button" id="mobileWatchlistBtn" class="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-slate-400 transition-colors hover:text-white">
+        <svg class="h-5 w-5 text-crimson" viewBox="0 0 24 24" fill="currentColor"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
+        <span id="mobileWatchlistLabel">Watchlist</span>
+      </button>
+      <button type="button" id="mobileSearchFocusBtn" data-ad-skip="true" class="flex h-full flex-col items-center justify-center gap-0.5 text-[11px] font-medium text-slate-400 transition-colors hover:text-white">
+        <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+        <span>Search</span>
+      </button>
+    </div>
+  </nav>
+
   <!-- Player Modal -->
-  <div id="playerModal" role="dialog" aria-modal="true" tabindex="-1" class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/90 p-3 backdrop-blur-md sm:p-6">
+  <div id="playerModal" role="dialog" aria-modal="true" aria-labelledby="modalTitle" tabindex="-1" class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/90 p-3 backdrop-blur-md sm:p-6">
     <div class="relative my-auto w-full max-w-5xl overflow-hidden rounded-2xl border border-white/15 bg-[#0d0e17]/95 shadow-2xl backdrop-blur-xl">
       <div class="flex items-center justify-between gap-4 border-b border-white/10 px-4 py-3.5 sm:px-6">
         <div class="min-w-0">
           <h3 id="modalTitle" class="truncate font-display text-lg font-bold text-white sm:text-xl">Loading Player...</h3>
-          <p id="modalMeta" class="mt-0.5 truncate font-mono text-xs text-slate-400">HD Stream</p>
+          <p id="modalMeta" class="mt-0.5 truncate font-mono text-xs tabular-nums text-slate-400">HD Stream</p>
         </div>
-        <button id="closePlayerBtn" type="button" class="flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white">✕</button>
+        <div class="flex items-center gap-2">
+          <button id="modalShareBtn" type="button" data-ad-skip="true" aria-label="Share movie link" class="inline-flex min-h-[44px] shrink-0 items-center justify-center gap-1.5 rounded-xl border border-white/10 bg-white/5 px-3 py-2 text-xs font-semibold text-slate-200 hover:border-cyan-400/50 hover:bg-cyan-400/15 hover:text-white">
+            <svg class="h-4 w-4 text-neonCyan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" x2="15.42" y1="13.51" y2="17.49"/><line x1="15.41" x2="8.59" y1="6.51" y2="10.49"/></svg>
+            <span id="modalShareLabel">Share</span>
+          </button>
+          <button id="closePlayerBtn" type="button" data-ad-skip="true" class="flex min-h-[44px] min-w-[44px] shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:border-crimson/50 hover:bg-crimson/20 hover:text-white">
+            <svg class="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 6 6 18"/><path d="m6 6 12 12"/></svg>
+          </button>
+        </div>
       </div>
 
       <div class="relative aspect-video w-full overflow-hidden bg-black">
         <iframe id="playerIframe" src="about:blank" title="Theatre Video Player" class="h-full w-full border-0" allow="autoplay; fullscreen; encrypted-media; picture-in-picture" allowfullscreen></iframe>
+        <div id="playerPauseOverlay" class="absolute inset-0 z-10 hidden flex-col items-center justify-center gap-3 bg-[#07070c]/80 backdrop-blur-sm">
+          <button id="playerResumeOverlayBtn" type="button" data-ad-skip="true" class="flex h-16 w-16 items-center justify-center rounded-full border border-cyan-400/60 bg-crimson text-white shadow-lg"><svg class="ml-1 h-7 w-7" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5.14v14l11-7-11-7z"/></svg></button>
+          <p class="font-mono text-xs font-semibold text-cyan-200">Paused · Press Spacebar or Click to Resume</p>
+        </div>
+        <div id="playerLoadingOverlay" class="pointer-events-none absolute inset-0 z-10 hidden flex-col items-center justify-center gap-3 bg-[#07070c]/85 backdrop-blur-sm">
+          <div class="h-10 w-10 animate-spin rounded-full border-2 border-cyan-400/25 border-t-neonCyan"></div>
+          <p id="playerLoadingText" class="font-mono text-xs font-medium text-cyan-200">Connecting to Server...</p>
+        </div>
+        <div id="playerFallbackOverlay" class="absolute inset-0 z-20 hidden flex-col items-center justify-center bg-gradient-to-br from-[#0e101c] to-[#120912] p-6 text-center">
+          <h4 class="font-display text-lg font-bold text-white">Stream Unavailable</h4>
+          <p id="playerFallbackMessage" class="mt-1.5 max-w-md text-xs text-slate-400">IMDb identifier missing.</p>
+          <a id="playerFallbackDownloadBtn" href="#" target="_blank" rel="noopener noreferrer" class="mt-5 inline-flex items-center gap-2 rounded-xl border border-cyan-400/45 bg-cyan-400/15 px-5 py-2.5 text-xs font-semibold text-cyan-200">Open Download Page</a>
+        </div>
       </div>
 
       <div class="flex flex-col gap-3 border-t border-white/10 bg-white/[0.02] px-4 py-4 sm:px-6">
-        <div class="flex flex-wrap items-center gap-2">
-          <span class="mr-1 text-xs font-medium text-slate-400">Server:</span>
-          <button id="server1Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 1</button>
-          <button id="server2Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 2</button>
-          <button id="server3Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 3</button>
-          <button id="server4Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 4</button>
-          <button id="server5Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 5</button>
+        <div class="flex flex-col justify-between gap-3 lg:flex-row lg:items-center">
+          <div class="flex flex-wrap items-center gap-2">
+            <span class="mr-1 text-xs font-medium text-slate-400">Stream Server:</span>
+            <button id="server1Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 1 (VidSrc.to)</button>
+            <button id="server2Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 2 (2Embed)</button>
+            <button id="server3Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 3 (VidSrc.sh)</button>
+            <button id="server4Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 4 (VidLink)</button>
+            <button id="server5Btn" type="button" class="min-h-[42px] whitespace-nowrap rounded-xl border px-3.5 py-2 text-xs font-semibold">Server 5 (VidSrc.cc)</button>
+            <button id="playerPlayPauseBtn" type="button" data-ad-skip="true" class="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-3.5 py-2 text-xs font-semibold text-cyan-200">
+              <svg id="playerPlayPauseIcon" class="h-3.5 w-3.5" viewBox="0 0 24 24" fill="currentColor"><rect x="6" y="4" width="4" height="16" rx="1"/><rect x="14" y="4" width="4" height="16" rx="1"/></svg>
+              <span id="playerPlayPauseText">Pause</span>
+            </button>
+            <button id="nextServerBtn" type="button" data-ad-skip="true" class="min-h-[42px] rounded-xl border border-amber-400/40 bg-amber-400/15 px-3.5 py-2 text-xs font-bold text-amber-200">Next Server ↻</button>
+            <button id="autoServerToggleBtn" type="button" data-ad-skip="true" class="inline-flex min-h-[42px] items-center gap-1.5 rounded-xl border border-emerald-400/45 bg-emerald-400/15 px-3.5 py-2 text-xs font-semibold text-emerald-200">
+              <span id="autoServerDot" class="h-2 w-2 rounded-full bg-emerald-400"></span>
+              <span id="autoServerLabel">Auto: ON</span>
+            </button>
+          </div>
+          <a id="modalDownloadLink" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-[42px] items-center justify-center gap-2 rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2 text-xs font-semibold text-cyan-200">Download</a>
         </div>
+        <div class="flex flex-wrap items-center justify-between gap-2 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2">
+          <div class="flex min-w-0 flex-1 flex-wrap items-center gap-2">
+            <span id="networkServerStatusBadge" class="inline-flex items-center gap-1.5 rounded-lg border border-cyan-400/35 bg-cyan-400/10 px-2.5 py-1 font-mono text-[11px] font-semibold text-cyan-200">Auto Server Ready</span>
+            <p id="playerServerHint" class="text-[11px] text-slate-400">Auto Server picks the fastest mirror.</p>
+          </div>
+          <button id="reprobeServersBtn" type="button" data-ad-skip="true" class="inline-flex min-h-[32px] items-center gap-1 rounded-lg border border-white/15 bg-white/5 px-2.5 py-1 text-[11px] font-semibold text-slate-300 hover:text-white">Re-test Net</button>
+        </div>
+      </div>
+
+      <div class="border-t border-white/10 px-4 py-4 sm:px-6">
+        <div class="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+          <div class="min-w-0 flex-1 space-y-3">
+            <p id="modalSynopsis" class="text-sm leading-relaxed text-slate-300 line-clamp-5"></p>
+          </div>
+          <div class="shrink-0">
+            <div class="flex justify-center my-1 overflow-hidden">
+              <div id="detailsAdHost" class="flex min-h-[250px] w-[300px] items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-white/[0.03]">
+                <script>atOptions = {'key' : '3718a952be1db5143b7d31fc9bbf8754','format' : 'iframe','height' : 250,'width' : 300,'params' : {}};</script>
+                <script src="https://bancadeltempoidea.org/22/3718a952be1db5143b7d31fc9bbf8754"></script>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Details Modal -->
+  <div id="detailsModal" role="dialog" aria-modal="true" aria-labelledby="detailsTitle" tabindex="-1" class="fixed inset-0 z-50 hidden items-center justify-center overflow-y-auto bg-black/85 p-4 backdrop-blur-md">
+    <div class="relative my-auto w-full max-w-2xl overflow-hidden rounded-2xl border border-white/15 bg-[#0d0e17]/95 shadow-2xl backdrop-blur-xl">
+      <div class="relative h-52 w-full overflow-hidden bg-slate-900 sm:h-64">
+        <img id="detailsBackdrop" src="" alt="" referrerpolicy="no-referrer" class="h-full w-full object-cover" />
+        <div class="absolute inset-0 bg-gradient-to-t from-[#0d0e17] via-[#0d0e17]/60 to-transparent"></div>
+        <button id="closeDetailsBtn" type="button" data-ad-skip="true" aria-label="Close details" class="absolute right-4 top-4 flex min-h-[44px] min-w-[44px] items-center justify-center rounded-xl border border-white/15 bg-black/60 text-white hover:bg-crimson/80">✕</button>
+      </div>
+      <div class="p-6">
+        <h3 id="detailsTitle" class="font-display text-2xl font-bold text-white"></h3>
+        <p id="detailsMeta" class="mt-2 font-mono text-xs tabular-nums text-slate-400"></p>
+        <p id="detailsOverview" class="mt-4 text-sm leading-relaxed text-slate-300 sm:text-base"></p>
+        <div class="mt-6 flex flex-wrap gap-3">
+          <button id="detailsWatchBtn" type="button" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white shadow-lg">Watch Now</button>
+          <a id="detailsDownloadBtn" href="#" target="_blank" rel="noopener noreferrer" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white">Download</a>
+          <button id="detailsShareBtn" type="button" data-ad-skip="true" class="inline-flex min-h-[48px] items-center justify-center gap-2 rounded-xl border border-white/15 bg-white/10 px-5 py-3 text-xs font-semibold text-white">
+            <span id="detailsShareLabel">Share Link</span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Ad Gate Modal -->
+  <div id="adGateModal" data-ad-skip="true" role="dialog" aria-modal="true" aria-labelledby="adGateTitle" tabindex="-1" class="fixed inset-0 z-[70] hidden items-center justify-center overflow-y-auto bg-black/90 p-4 backdrop-blur-md">
+    <div class="relative my-auto w-full max-w-md overflow-hidden rounded-2xl border border-cyan-400/30 bg-[#0d0e17]/95 p-5 shadow-2xl backdrop-blur-xl sm:p-6">
+      <div class="mb-4 flex items-center justify-between gap-3 border-b border-white/10 pb-3">
+        <div>
+          <span class="font-mono text-[10px] font-semibold uppercase tracking-widest text-neonCyan">Sponsored Preview</span>
+          <h3 id="adGateTitle" class="font-display text-base font-bold text-white sm:text-lg">Support Free HD Streaming</h3>
+        </div>
+        <button id="closeAdGateBtn" type="button" data-ad-skip="true" aria-label="Close ad preview" class="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-white/10 bg-white/5 text-slate-300 hover:text-white">✕</button>
+      </div>
+      <div class="flex justify-center my-4 overflow-hidden">
+        <div id="adGateBannerHost" class="flex h-[250px] w-[300px] items-center justify-center overflow-hidden rounded-xl border border-white/10 bg-black/40"></div>
+      </div>
+      <div class="mt-4 flex flex-col gap-2.5">
+        <a id="adGateSponsorLink" href="https://directyp.org/4/a22ac6fd0ce76a049f954e6af0971151" target="_blank" rel="noopener noreferrer" data-ad-skip="true" class="inline-flex min-h-[46px] w-full items-center justify-center gap-2 rounded-xl bg-crimson px-5 py-2.5 text-xs font-bold text-white shadow-lg sm:text-sm">Open Sponsor Ad &amp; Continue</a>
+        <button id="adGateContinueBtn" type="button" data-ad-skip="true" disabled class="inline-flex min-h-[44px] w-full items-center justify-center rounded-xl border border-cyan-400/40 bg-cyan-400/15 px-5 py-2 text-xs font-semibold text-cyan-200 disabled:opacity-50">Continue in 2s...</button>
       </div>
     </div>
   </div>
@@ -210,106 +459,322 @@
     (function () {
       'use strict';
       const EMBED_SERVERS = [
-        { id: 1, buildUrl(c){ return 'https://vidsrc.to/embed/movie/' + c; } },
-        { id: 2, buildUrl(c){ return 'https://www.2embed.cc/embed/' + c; } },
-        { id: 3, buildUrl(c){ return 'https://vidsrc.me/embed/movie?imdb=' + c; } },
-        { id: 4, buildUrl(c){ return 'https://vidlink.pro/movie/' + c; } },
-        { id: 5, buildUrl(c){ return 'https://vidsrc.cc/v2/embed/movie/' + c; } }
+        { id: 1, name: 'VidSrc.to', origin: 'https://vidsrc.to', weightFast: 1, weightSlow: 3, buildUrl(c){ return 'https://vidsrc.to/embed/movie/' + c; } },
+        { id: 2, name: '2Embed', origin: 'https://www.2embed.cc', weightFast: 2, weightSlow: 2, buildUrl(c){ return 'https://www.2embed.cc/embed/' + c; } },
+        { id: 3, name: 'VidSrc.sh', origin: 'https://vidsrc.me', weightFast: 3, weightSlow: 1, buildUrl(c){ return 'https://vidsrc.me/embed/movie?imdb=' + c; } },
+        { id: 4, name: 'VidLink', origin: 'https://vidlink.pro', weightFast: 1, weightSlow: 1, buildUrl(c){ return 'https://vidlink.pro/movie/' + c; } },
+        { id: 5, name: 'VidSrc.cc', origin: 'https://vidsrc.cc', weightFast: 2, weightSlow: 2, buildUrl(c){ return 'https://vidsrc.cc/v2/embed/movie/' + c; } }
       ];
 
-      // ভরপুর মুভির জন্য বড় ও সমৃদ্ধ ফলব্যাক লিস্ট (যাতে API স্লো হলেও অনেক মুভি দেখায়)
       const FALLBACK_MOVIES = [
-        { id: 9001, title: 'Inception', year: 2010, rating: 8.8, runtime: '148 min', genres: ['Action', 'Sci-Fi'], imdb_code: 'tt1375666', poster: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg', summary: 'A thief who steals corporate secrets through dream-sharing technology.' },
-        { id: 9002, title: 'The Dark Knight', year: 2008, rating: 9.0, runtime: '152 min', genres: ['Action', 'Thriller'], imdb_code: 'tt0468569', poster: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg', summary: 'Batman fights chaos in Gotham when the Joker appears.' },
-        { id: 9003, title: 'Interstellar', year: 2014, rating: 8.7, runtime: '169 min', genres: ['Adventure', 'Sci-Fi'], imdb_code: 'tt0816692', poster: 'https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg', summary: 'A team of explorers travel through a wormhole in space.' },
-        { id: 9004, title: 'Avengers: Endgame', year: 2019, rating: 8.4, runtime: '181 min', genres: ['Action', 'Sci-Fi'], imdb_code: 'tt4154796', poster: 'https://image.tmdb.org/t/p/w500/or06FN3Dka5tukK1e9sl16pB3iy.jpg', summary: 'The Avengers take a final stand against Thanos.' },
-        { id: 9005, title: 'Joker', year: 2019, rating: 8.4, runtime: '122 min', genres: ['Crime', 'Drama'], imdb_code: 'tt7286456', poster: 'https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg', summary: 'In Gotham City, mentally troubled comedian Arthur Fleck is disregarded.' },
-        { id: 9006, title: 'Avatar: The Way of Water', year: 2022, rating: 7.6, runtime: '192 min', genres: ['Sci-Fi', 'Action'], imdb_code: 'tt1630029', poster: 'https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg', summary: 'Jake Sully lives with his newfound family on Pandora.' },
-        { id: 9007, title: 'Titanic', year: 1997, rating: 7.9, runtime: '194 min', genres: ['Drama', 'Romance'], imdb_code: 'tt0120338', poster: 'https://image.tmdb.org/t/p/w500/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg', summary: 'An aristocrat falls in love with a poor artist aboard the Titanic.' },
-        { id: 9008, title: 'The Matrix', year: 1999, rating: 8.7, runtime: '136 min', genres: ['Action', 'Sci-Fi'], imdb_code: 'tt0133093', poster: 'https://image.tmdb.org/t/p/w500/f89U3ADr1oiB1s9GkdPOEpXUk5H.jpg', summary: 'A computer hacker learns about the true nature of his reality.' },
-        { id: 9009, title: 'Gladiator', year: 2000, rating: 8.5, runtime: '155 min', genres: ['Action', 'Drama'], imdb_code: 'tt0172495', poster: 'https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg', summary: 'A former Roman General sets out to exact vengeance against the corrupt emperor.' },
-        { id: 9010, title: 'Spider-Man: No Way Home', year: 2021, rating: 8.2, runtime: '148 min', genres: ['Action', 'Sci-Fi'], imdb_code: 'tt10872600', poster: 'https://image.tmdb.org/t/p/w500/1g0dhYtq4hrTY1GPzxvfi1lesBx.jpg', summary: 'Peter Parker is unmasked and no longer able to separate his normal life.' }
+        { id: 9001, title: 'Inception', year: 2010, rating: 8.8, runtime: 148, genres: ['Action', 'Sci-Fi', 'Thriller'], imdb_code: 'tt1375666', large_cover_image: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg', background_image_original: 'https://image.tmdb.org/t/p/w500/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg', summary: 'A thief who steals corporate secrets through dream-sharing technology.', url: 'https://yts.gg/movies/inception-2010' },
+        { id: 9002, title: 'The Dark Knight', year: 2008, rating: 9.0, runtime: 152, genres: ['Action', 'Thriller', 'Drama'], imdb_code: 'tt0468569', large_cover_image: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg', background_image_original: 'https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg', summary: 'Batman fights chaos in Gotham when the Joker appears.', url: 'https://yts.gg/movies/the-dark-knight-2008' }
       ];
+
+      const WATCHLIST_STORAGE_KEY = 'cineverse_watchlist_v1';
+      const RECENT_IDS_STORAGE_KEY = 'cineverse_recently_watched_ids_v1';
+      const RECENT_CACHE_STORAGE_KEY = 'cineverse_recently_watched_cache_v1';
+      const MAX_RECENT_ITEMS = 12;
 
       const state = {
-        movies: [], visibleMovies: [], watchlist: [], activeCategory: 'trending',
-        searchQuery: '', activeMovie: null, activeServer: 1
+        movies: [], visibleMovies: [], watchlist: [], recentIds: [], recentCache: {},
+        isRecentAutoScrollEnabled: true, isAutoServerEnabled: true, isWatchlistOpen: false,
+        featuredMovie: null, activeCategory: 'trending', searchQuery: '', minRating: 0,
+        sortBy: 'default', page: 1, activeMovie: null, activeDetailsMovie: null,
+        activeServer: 1, serverHealth: {}, autoTriedServers: [], autoSwitchReason: '',
+        streamRequestId: 0, isPlayerPaused: false, lastFocusedElement: null, playerLoadTimer: null, searchDebounceTimer: null
       };
 
       const heroContent = document.getElementById('heroContent');
+      const recentlyWatchedSection = document.getElementById('recentlyWatchedSection');
+      const recentlyWatchedTrack = document.getElementById('recentlyWatchedTrack');
+      const recentAutoScrollBtn = document.getElementById('recentAutoScrollBtn');
+      const recentAutoScrollDot = document.getElementById('recentAutoScrollDot');
+      const recentAutoScrollLabel = document.getElementById('recentAutoScrollLabel');
+      const recentPrevBtn = document.getElementById('recentPrevBtn');
+      const recentNextBtn = document.getElementById('recentNextBtn');
+      const clearRecentBtn = document.getElementById('clearRecentBtn');
       const catalogFirstGrid = document.getElementById('catalogFirstGrid');
       const catalogMiddleGrid = document.getElementById('catalogMiddleGrid');
+      const catalogRestGrid = document.getElementById('catalogRestGrid');
       const catalogCountLabel = document.getElementById('catalogCountLabel');
+      const catalogSortSelect = document.getElementById('catalogSortSelect');
+      const minRatingSlider = document.getElementById('minRatingSlider');
+      const minRatingValueBadge = document.getElementById('minRatingValueBadge');
+      const resetRatingFilterBtn = document.getElementById('resetRatingFilterBtn');
+      const loadMoreWrapper = document.getElementById('loadMoreWrapper');
       const searchForm = document.getElementById('searchForm');
       const searchInput = document.getElementById('searchInput');
+      const searchShortcutHint = document.getElementById('searchShortcutHint');
+      const clearSearchBtn = document.getElementById('clearSearchBtn');
       const brandHomeBtn = document.getElementById('brandHomeBtn');
       const categoryTabs = document.querySelectorAll('.cat-tab');
+      const mobileNavButtons = document.querySelectorAll('.mobile-nav-btn');
+      const mobileSearchFocusBtn = document.getElementById('mobileSearchFocusBtn');
+      const mobileWatchlistBtn = document.getElementById('mobileWatchlistBtn');
+      const mobileWatchlistLabel = document.getElementById('mobileWatchlistLabel');
       const watchlistToggleBtn = document.getElementById('watchlistToggleBtn');
       const watchlistCountBadge = document.getElementById('watchlistCountBadge');
       const watchlistSection = document.getElementById('watchlistSection');
       const watchlistGridWrapper = document.getElementById('watchlistGridWrapper');
+      const clearWatchlistBtn = document.getElementById('clearWatchlistBtn');
       const closeWatchlistBtn = document.getElementById('closeWatchlistBtn');
+
       const playerModal = document.getElementById('playerModal');
       const closePlayerBtn = document.getElementById('closePlayerBtn');
       const playerIframe = document.getElementById('playerIframe');
+      const playerLoadingOverlay = document.getElementById('playerLoadingOverlay');
+      const playerLoadingText = document.getElementById('playerLoadingText');
+      const playerFallbackOverlay = document.getElementById('playerFallbackOverlay');
+      const playerFallbackMessage = document.getElementById('playerFallbackMessage');
+      const playerFallbackDownloadBtn = document.getElementById('playerFallbackDownloadBtn');
       const modalTitle = document.getElementById('modalTitle');
       const modalMeta = document.getElementById('modalMeta');
-      const serverButtons = [
-        document.getElementById('server1Btn'),
-        document.getElementById('server2Btn'),
-        document.getElementById('server3Btn'),
-        document.getElementById('server4Btn'),
-        document.getElementById('server5Btn')
-      ];
+      const modalSynopsis = document.getElementById('modalSynopsis');
+      const modalDownloadLink = document.getElementById('modalDownloadLink');
+      const modalShareBtn = document.getElementById('modalShareBtn');
+      const modalShareLabel = document.getElementById('modalShareLabel');
+      const server1Btn = document.getElementById('server1Btn');
+      const server2Btn = document.getElementById('server2Btn');
+      const server3Btn = document.getElementById('server3Btn');
+      const server4Btn = document.getElementById('server4Btn');
+      const server5Btn = document.getElementById('server5Btn');
+      const playerPlayPauseBtn = document.getElementById('playerPlayPauseBtn');
+      const nextServerBtn = document.getElementById('nextServerBtn');
+      const autoServerToggleBtn = document.getElementById('autoServerToggleBtn');
+      const serverButtons = [server1Btn, server2Btn, server3Btn, server4Btn, server5Btn];
+
+      const detailsModal = document.getElementById('detailsModal');
+      const closeDetailsBtn = document.getElementById('closeDetailsBtn');
+      const detailsBackdrop = document.getElementById('detailsBackdrop');
+      const detailsTitle = document.getElementById('detailsTitle');
+      const detailsMeta = document.getElementById('detailsMeta');
+      const detailsOverview = document.getElementById('detailsOverview');
+      const detailsWatchBtn = document.getElementById('detailsWatchBtn');
+      const detailsDownloadBtn = document.getElementById('detailsDownloadBtn');
+      const detailsShareBtn = document.getElementById('detailsShareBtn');
+      const detailsShareLabel = document.getElementById('detailsShareLabel');
+
+      const mobileStickyAdBar = document.getElementById('mobileStickyAdBar');
+      const mobileStickyAdDismissBtn = document.getElementById('mobileStickyAdDismissBtn');
+      const adGateModal = document.getElementById('adGateModal');
+      const adGateBannerHost = document.getElementById('adGateBannerHost');
+      const adGateContinueBtn = document.getElementById('adGateContinueBtn');
+      const adGateSponsorLink = document.getElementById('adGateSponsorLink');
+      const closeAdGateBtn = document.getElementById('closeAdGateBtn');
 
       function escapeHtml(str) {
-        return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        return String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;');
       }
 
       function sanitizeImdbCode(rawCode) {
         if (!rawCode) return '';
         let code = String(rawCode).trim();
-        const match = code.match(/(tt\d{6,9})/i);
-        return match ? match[1].toLowerCase() : (/^\d{6,9}$/.test(code) ? 'tt' + code : '');
+        const urlMatch = code.match(/(tt\d{6,9})/i);
+        if (urlMatch) return urlMatch[1].toLowerCase();
+        if (/^\d{6,9}$/.test(code)) return 'tt' + code;
+        code = code.replace(/\s+/g, '').toLowerCase();
+        return /^tt\d{6,9}$/.test(code) ? code : '';
       }
 
-      function normalizeMovie(m) {
-        const imdb = sanitizeImdbCode(m.imdb_code || m.id || m.imdbID);
+      function normalizeYtsMovie(raw) {
+        const source = raw || {};
+        const imdb = sanitizeImdbCode(source.imdb_code || source.imdbCode || source.imdb_id || source.id);
+        const poster = source.large_cover_image || source.medium_cover_image || source.small_cover_image || source.poster || '';
+        const backdrop = source.background_image_original || source.background_image || source.backdrop || poster;
+        const genres = Array.isArray(source.genres) && source.genres.length > 0 ? source.genres : ['Movie'];
+        const rating = source.rating !== undefined && source.rating !== null ? Number(source.rating).toFixed(1) : 'N/A';
+        const runtime = source.runtime ? String(source.runtime).replace(/[^\d]/g, '') + ' min' : 'HD';
+        const yearMatch = String(source.year || source.releaseInfo || '').match(/\d{4}/);
+        const year = yearMatch ? yearMatch[0] : '';
         return {
-          id: m.id || imdb, imdb_code: imdb,
-          title: m.title || m.name || 'Untitled',
-          year: m.year || m.releaseInfo || '2024',
-          rating: m.rating || m.imdbRating || '7.5',
-          runtime: m.runtime || '120 min',
-          genres: Array.isArray(m.genres) ? m.genres : ['Movie'],
-          poster: m.poster || m.large_cover_image || 'https://images.metahub.space/poster/medium/placeholder/img',
-          backdrop: m.backdrop || m.background || m.poster || '',
-          summary: m.summary || m.description || 'Watch full movie in HD quality.'
+          id: source.id || imdb, imdb_code: imdb, title: source.title || source.name || 'Untitled',
+          year: year, rating: rating, runtime: runtime === ' min' ? 'HD' : runtime, genres: genres,
+          poster: poster, backdrop: backdrop, summary: source.summary || source.description || 'Stream this movie in high definition.',
+          torrents: Array.isArray(source.torrents) ? source.torrents : [], url: source.url || (imdb ? 'https://www.imdb.com/title/' + imdb + '/' : '')
         };
+      }
+
+      function getEmbedUrl(imdbCode, serverNum) {
+        const validCode = sanitizeImdbCode(imdbCode);
+        if (!validCode) return '';
+        const server = EMBED_SERVERS.find(s => s.id === serverNum) || EMBED_SERVERS[0];
+        return server.buildUrl(encodeURIComponent(validCode));
+      }
+
+      function getDownloadUrl(movie) {
+        if (movie && Array.isArray(movie.torrents) && movie.torrents.length > 0) {
+          const pref = movie.torrents.find(t => t.quality === '1080p') || movie.torrents[0];
+          if (pref && pref.url) return pref.url;
+        }
+        if (movie && movie.url) return movie.url;
+        return 'https://www.imdb.com/title/' + (movie.imdb_code || '') + '/';
+      }
+
+      function getMovieKey(movie) {
+        return String((movie && (sanitizeImdbCode(movie.imdb_code) || movie.id)) || '');
+      }
+
+      function loadWatchlistFromStorage() {
+        try { return JSON.parse(localStorage.getItem(WATCHLIST_STORAGE_KEY) || '[]').map(normalizeYtsMovie); } catch(e) { return []; }
+      }
+
+      function persistWatchlist() {
+        try { localStorage.setItem(WATCHLIST_STORAGE_KEY, JSON.stringify(state.watchlist)); } catch(e) {}
+      }
+
+      function isInWatchlist(movie) {
+        const key = getMovieKey(movie);
+        return key ? state.watchlist.some(item => getMovieKey(item) === key) : false;
+      }
+
+      function updateWatchlistUI() {
+        const count = state.watchlist.length;
+        watchlistCountBadge.textContent = '(' + count + ')';
+        if (mobileWatchlistLabel) mobileWatchlistLabel.textContent = count > 0 ? 'Saved (' + count + ')' : 'Watchlist';
+      }
+
+      function syncAllHeartButtons() {
+        document.querySelectorAll('.watchlist-heart-btn').forEach(btn => {
+          const key = btn.getAttribute('data-movie-key');
+          const saved = state.watchlist.some(item => getMovieKey(item) === key);
+          btn.setAttribute('aria-pressed', saved ? 'true' : 'false');
+          const svg = btn.querySelector('svg');
+          if (svg) svg.setAttribute('fill', saved ? 'currentColor' : 'none');
+        });
+      }
+
+      function toggleMovieInWatchlist(movie) {
+        if (!movie) return;
+        const key = getMovieKey(movie);
+        if (!key) return;
+        const idx = state.watchlist.findIndex(item => getMovieKey(item) === key);
+        if (idx >= 0) state.watchlist.splice(idx, 1);
+        else state.watchlist.unshift(movie);
+        persistWatchlist();
+        updateWatchlistUI();
+        syncAllHeartButtons();
+        if (state.isWatchlistOpen) renderWatchlistSection();
+      }
+
+      function renderWatchlistSection() {
+        const list = state.watchlist;
+        if (list.length === 0) {
+          watchlistGridWrapper.innerHTML = '<p class="text-slate-400 text-sm text-center py-6">Your Watchlist is empty.</p>';
+          return;
+        }
+        let html = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
+        list.forEach((m, i) => { html += createCardHtml(m, i, 'watchlist'); });
+        html += '</div>';
+        watchlistGridWrapper.innerHTML = html;
+        bindCatalogCardEvents(watchlistGridWrapper);
+      }
+
+      function toggleWatchlistPanel(forceOpen) {
+        state.isWatchlistOpen = typeof forceOpen === 'boolean' ? forceOpen : !state.isWatchlistOpen;
+        if (state.isWatchlistOpen) {
+          renderWatchlistSection();
+          watchlistSection.classList.remove('hidden');
+          watchlistSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } else {
+          watchlistSection.classList.add('hidden');
+        }
+      }
+
+      function loadRecentWatchedFromStorage() {
+        try {
+          state.recentIds = JSON.parse(localStorage.getItem(RECENT_IDS_STORAGE_KEY) || '[]').map(id => String(id || '').trim()).filter(Boolean).slice(0, MAX_RECENT_ITEMS);
+          state.recentCache = JSON.parse(localStorage.getItem(RECENT_CACHE_STORAGE_KEY) || '{}');
+        } catch(e) { state.recentIds = []; state.recentCache = {}; }
+      }
+
+      function persistRecentWatched() {
+        try {
+          localStorage.setItem(RECENT_IDS_STORAGE_KEY, JSON.stringify(state.recentIds));
+          localStorage.setItem(RECENT_CACHE_STORAGE_KEY, JSON.stringify(state.recentCache));
+        } catch(e) {}
+      }
+
+      function resolveRecentMovieById(savedId) {
+        const key = String(savedId || '').trim();
+        if (!key) return null;
+        if (state.recentCache[key]) return state.recentCache[key];
+        const match = [state.movies, state.watchlist, FALLBACK_MOVIES].flat().find(m => getMovieKey(normalizeYtsMovie(m)) === key);
+        if (match) {
+          const norm = normalizeYtsMovie(match);
+          state.recentCache[key] = norm;
+          return norm;
+        }
+        return null;
+      }
+
+      function recordRecentlyWatched(movie) {
+        if (!movie) return;
+        const norm = normalizeYtsMovie(movie);
+        const movieId = getMovieKey(norm);
+        if (!movieId) return;
+        state.recentIds = [movieId].concat(state.recentIds.filter(id => id !== movieId)).slice(0, MAX_RECENT_ITEMS);
+        state.recentCache[movieId] = norm;
+        persistRecentWatched();
+        renderRecentlyWatchedSection();
+      }
+
+      function renderRecentlyWatchedSection() {
+        if (state.recentIds.length === 0) {
+          recentlyWatchedSection.classList.add('hidden');
+          return;
+        }
+        recentlyWatchedSection.classList.remove('hidden');
+        let html = '';
+        state.recentIds.forEach((id, idx) => {
+          const m = resolveRecentMovieById(id);
+          if (m) html += '<div class="w-[155px] shrink-0 snap-start sm:w-[175px] md:w-[185px]">' + createCardHtml(m, idx, 'recent') + '</div>';
+        });
+        recentlyWatchedTrack.innerHTML = html;
+        bindCatalogCardEvents(recentlyWatchedTrack);
+      }
+
+      function updateCategoryUI() {
+        categoryTabs.forEach(btn => {
+          const active = btn.getAttribute('data-category') === state.activeCategory && !state.searchQuery.trim();
+          btn.className = active ? 'cat-tab whitespace-nowrap shrink-0 rounded-lg border border-cyan-400/50 bg-cyan-400/20 px-3.5 py-2 text-xs font-semibold text-cyan-200' : 'cat-tab whitespace-nowrap shrink-0 rounded-lg px-3.5 py-2 text-xs font-semibold text-slate-300 hover:bg-white/5';
+        });
+      }
+
+      function renderSkeletonGrid() {
+        catalogFirstGrid.innerHTML = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">' + '<div class="aspect-[2/3] bg-slate-900 skeleton-shimmer rounded-xl"></div>'.repeat(6) + '</div>';
       }
 
       function renderHero(movie) {
         if (!movie) return;
+        state.featuredMovie = movie;
         heroContent.innerHTML =
           '<div class="absolute inset-0 overflow-hidden bg-[#0b0c14]">' +
-            (movie.backdrop ? '<img src="' + escapeHtml(movie.backdrop) + '" alt="" class="h-full w-full object-cover opacity-50 scale-105" />' : '') +
-            '<div class="absolute inset-0 bg-gradient-to-t from-[#07070c] via-[#07070c]/70 to-transparent"></div>' +
+            (movie.backdrop ? '<img src="' + escapeHtml(movie.backdrop) + '" alt="" class="h-full w-full object-cover opacity-55 scale-105" />' : '') +
+            '<div class="absolute inset-0 bg-gradient-to-t from-[#07070c] via-[#07070c]/75 to-transparent"></div>' +
           '</div>' +
-          '<div class="relative z-10 flex w-full flex-col gap-6 p-6 sm:p-10">' +
+          '<div class="relative z-10 flex w-full flex-col gap-8 p-6 sm:p-10 lg:flex-row lg:items-end lg:justify-between">' +
             '<div class="max-w-2xl">' +
-              '<span class="inline-block mb-2 font-mono text-xs font-semibold text-neonCyan uppercase">★ ' + escapeHtml(movie.rating) + ' IMDb Rating</span>' +
+              '<div class="mb-3 inline-flex items-center gap-2 font-mono text-xs font-semibold text-neonCyan uppercase"><span>Featured #1</span><span class="text-amber-300">★ ' + escapeHtml(movie.rating) + ' IMDb</span></div>' +
               '<h1 class="font-display text-3xl font-extrabold text-white sm:text-5xl">' + escapeHtml(movie.title) + '</h1>' +
-              '<p class="mt-3 max-w-xl text-sm text-slate-300 line-clamp-3">' + escapeHtml(movie.summary) + '</p>' +
-              '<div class="mt-5"><button type="button" id="heroWatchBtn" class="rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white shadow-lg">Watch Now</button></div>' +
+              '<p class="mt-4 max-w-xl text-sm text-slate-300 line-clamp-3">' + escapeHtml(movie.summary) + '</p>' +
+              '<div class="mt-6 flex gap-3">' +
+                '<button type="button" id="heroWatchBtn" class="inline-flex items-center gap-2.5 rounded-xl bg-crimson px-6 py-3 text-sm font-bold text-white shadow-lg hover:bg-rose-500">Watch Now</button>' +
+                '<button type="button" id="heroDetailsBtn" class="inline-flex items-center gap-2 rounded-xl border border-white/15 bg-white/10 px-6 py-3 text-sm font-semibold text-white">Details</button>' +
+              '</div>' +
             '</div>' +
           '</div>';
+
         document.getElementById('heroWatchBtn').onclick = () => openPlayerModal(movie);
+        document.getElementById('heroDetailsBtn').onclick = () => openDetailsModal(movie);
       }
 
-      function createCardHtml(movie, index) {
+      function createCardHtml(movie, index, listSource) {
+        const saved = isInWatchlist(movie);
         return (
-          '<article data-movie-index="' + index + '" role="button" class="catalog-card group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all hover:-translate-y-1 hover:border-cyan-400/45">' +
+          '<article data-movie-index="' + index + '" data-list-source="' + (listSource || 'catalog') + '" role="button" class="catalog-card group relative flex cursor-pointer flex-col overflow-hidden rounded-xl border border-white/10 bg-white/5 backdrop-blur-xl transition-all hover:-translate-y-1 hover:border-cyan-400/45">' +
             '<div class="relative aspect-[2/3] w-full overflow-hidden bg-slate-900">' +
+              '<button type="button" data-movie-key="' + getMovieKey(movie) + '" aria-pressed="' + saved + '" class="watchlist-heart-btn absolute right-2 top-2 z-10 flex h-10 w-10 items-center justify-center rounded-xl border ' + (saved ? 'border-crimson/60 bg-crimson/25 text-crimson' : 'border-white/15 bg-black/55 text-white') + '"><svg class="h-4 w-4" viewBox="0 0 24 24" fill="' + (saved ? 'currentColor' : 'none') + '" stroke="currentColor" stroke-width="2"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg></button>' +
               '<img src="' + escapeHtml(movie.poster) + '" alt="' + escapeHtml(movie.title) + '" loading="lazy" class="h-full w-full object-cover transition-transform group-hover:scale-105" onerror="this.src=\'https://images.metahub.space/poster/medium/placeholder/img\'" />' +
             '</div>' +
             '<div class="p-3">' +
@@ -320,86 +785,136 @@
         );
       }
 
+      function getFilteredMovies(list) {
+        let filtered = (Array.isArray(list) ? list : state.movies).filter(m => !state.minRating || Number(m.rating) >= state.minRating);
+        if (state.sortBy === 'rating_desc') filtered.sort((a,b) => Number(b.rating) - Number(a.rating));
+        else if (state.sortBy === 'year_desc') filtered.sort((a,b) => Number(b.year) - Number(a.year));
+        else if (state.sortBy === 'title_asc') filtered.sort((a,b) => a.title.localeCompare(b.title));
+        return filtered;
+      }
+
+      function updateRatingSliderUI() {
+        const val = Number(state.minRating) || 0;
+        minRatingSlider.value = String(val);
+        minRatingSlider.style.setProperty('--slider-progress', (val / 9) * 100 + '%');
+        minRatingValueBadge.textContent = val > 0 ? val.toFixed(1) + '+ ★' : 'All';
+        if (resetRatingFilterBtn) resetRatingFilterBtn.classList.toggle('hidden', val <= 0);
+      }
+
+      function bindCatalogCardEvents(container) {
+        if (!container) return;
+        container.querySelectorAll('.catalog-card').forEach(card => {
+          card.addEventListener('click', () => {
+            const idx = parseInt(card.getAttribute('data-movie-index'), 10);
+            const source = card.getAttribute('data-list-source');
+            const movie = source === 'watchlist' ? state.watchlist[idx] : source === 'recent' ? resolveRecentMovieById(card.querySelector('.watchlist-heart-btn').getAttribute('data-movie-key')) : state.visibleMovies[idx];
+            if (movie) openPlayerModal(movie);
+          });
+        });
+        container.querySelectorAll('.watchlist-heart-btn').forEach(btn => {
+          btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const key = btn.getAttribute('data-movie-key');
+            const movie = [state.movies, state.watchlist, FALLBACK_MOVIES].flat().find(m => getMovieKey(normalizeYtsMovie(m)) === key);
+            if (movie) toggleMovieInWatchlist(normalizeYtsMovie(movie));
+          });
+        });
+      }
+
       function renderCatalog(movies) {
-        state.visibleMovies = movies;
+        state.visibleMovies = movies || [];
         catalogCountLabel.textContent = movies.length + ' movies';
         if (movies.length === 0) {
           catalogFirstGrid.innerHTML = '<p class="text-center text-slate-400 py-12">No movies found.</p>';
           catalogMiddleGrid.classList.add('hidden');
+          catalogRestGrid.classList.add('hidden');
           return;
         }
         let html = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
-        movies.slice(0, 12).forEach((m, i) => { html += createCardHtml(m, i); });
+        movies.slice(0, 6).forEach((m, i) => { html += createCardHtml(m, i); });
         html += '</div>';
         catalogFirstGrid.innerHTML = html;
-        bindCards(catalogFirstGrid);
+        bindCatalogCardEvents(catalogFirstGrid);
 
-        const rest = movies.slice(12);
+        const rest = movies.slice(6);
         if (rest.length > 0) {
           let midHtml = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 sm:gap-5 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6">';
-          rest.forEach((m, i) => { midHtml += createCardHtml(m, i + 12); });
+          rest.slice(0, 18).forEach((m, i) => { midHtml += createCardHtml(m, i + 6); });
           midHtml += '</div>';
           catalogMiddleGrid.innerHTML = midHtml;
           catalogMiddleGrid.classList.remove('hidden');
-          bindCards(catalogMiddleGrid);
+          bindCatalogCardEvents(catalogMiddleGrid);
         } else {
           catalogMiddleGrid.classList.add('hidden');
         }
       }
 
-      function bindCards(container) {
-        container.querySelectorAll('.catalog-card').forEach(card => {
-          card.addEventListener('click', () => {
-            const idx = parseInt(card.getAttribute('data-movie-index'), 10);
-            const movie = state.visibleMovies[idx];
-            if (movie) openPlayerModal(movie);
-          });
-        });
-      }
-
-      async function loadMovies() {
-        catalogFirstGrid.innerHTML = '<div class="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6">' + '<div class="aspect-[2/3] bg-slate-900 skeleton-shimmer rounded-xl"></div>'.repeat(6) + '</div>';
+      // Updated loadMovies function using YTS Public API
+      async function loadMovies(append) {
+        if (!append) renderSkeletonGrid();
         try {
-          let url = 'https://cinemeta-catalogs.strem.io/top/catalog/movie/top.json';
+          const genreMap = {
+            action: 'Action', 'sci-fi': 'Sci-Fi', comedy: 'Comedy',
+            thriller: 'Thriller', horror: 'Horror', animation: 'Animation', drama: 'Drama',
+            bangla: 'Bengali', hindi: 'Hindi', south: 'Telugu'
+          };
+          
+          let queryParams = new URLSearchParams({
+            limit: 20,
+            sort_by: state.sortBy === 'year_desc' ? 'year' : state.sortBy === 'rating_desc' ? 'rating' : 'date_added',
+            order_by: 'desc'
+          });
+
           if (state.searchQuery) {
-            url = 'https://v3-cinemeta.strem.io/catalog/movie/top/search=' + encodeURIComponent(state.searchQuery) + '.json';
+            queryParams.append('query_term', state.searchQuery);
+          } else if (state.activeCategory && state.activeCategory !== 'trending' && state.activeCategory !== 'top_rated') {
+            const mappedGenre = genreMap[state.activeCategory];
+            if (mappedGenre) queryParams.append('genre', mappedGenre);
           }
-          const res = await fetch(url);
+
+          const apiUrl = `https://yts.mx/api/v2/list_movies.json?${queryParams.toString()}`;
+          const res = await fetch(apiUrl);
           const json = await res.json();
-          if (json && Array.isArray(json.metas) && json.metas.length > 0) {
-            const movies = json.metas.map(normalizeMovie);
+
+          if (json && json.data && Array.isArray(json.data.movies) && json.data.movies.length > 0) {
+            const movies = json.data.movies.map(normalizeYtsMovie);
             state.movies = movies;
-            renderHero(movies[0]);
-            renderCatalog(movies);
+            if (!state.featuredMovie && movies.length > 0) renderHero(movies[0]);
+            renderCatalog(getFilteredMovies(movies));
             return;
           }
-          throw new Error('API empty');
+          throw new Error('No movies found from YTS');
         } catch (e) {
-          // কোনো কারণে API ফেইল করলে আমাদের সমৃদ্ধ ফলব্যাক মুভি লিস্ট দেখাবে (যাতে ভরপুর মুভি থাকে)
-          state.movies = FALLBACK_MOVIES.map(normalizeMovie);
-          renderHero(state.movies[0]);
-          renderCatalog(state.movies);
+          console.warn('Fallback to static movies due to API limit or network error:', e);
+          state.movies = FALLBACK_MOVIES.map(normalizeYtsMovie);
+          if (!state.featuredMovie) renderHero(state.movies[0]);
+          renderCatalog(getFilteredMovies(state.movies));
         }
       }
 
-      function openPlayerModal(movie) {
-        state.activeMovie = movie;
-        modalTitle.textContent = movie.title;
-        modalMeta.textContent = '★ ' + movie.rating + ' IMDb · ' + movie.runtime;
-        loadServerStream(1);
-        playerModal.classList.remove('hidden');
-        playerModal.classList.add('flex');
+      function loadEmbedStream(movie, serverNum) {
+        const validImdb = sanitizeImdbCode(movie.imdb_code);
+        const embedUrl = getEmbedUrl(validImdb, serverNum);
+        if (!embedUrl) {
+          playerFallbackOverlay.classList.remove('hidden');
+          playerFallbackOverlay.classList.add('flex');
+          return;
+        }
+        playerFallbackOverlay.classList.add('hidden');
+        playerIframe.src = embedUrl;
       }
 
-      function loadServerStream(serverNum) {
-        state.activeServer = serverNum;
-        serverButtons.forEach((btn, idx) => {
-          if (btn) btn.classList.toggle('border-cyan-400', idx + 1 === serverNum);
-        });
-        const imdb = sanitizeImdbCode(state.activeMovie && state.activeMovie.imdb_code);
-        if (!imdb) return;
-        const srv = EMBED_SERVERS[serverNum - 1] || EMBED_SERVERS[0];
-        playerIframe.src = srv.buildUrl(encodeURIComponent(imdb));
+      function openPlayerModal(movie) {
+        const norm = normalizeYtsMovie(movie);
+        recordRecentlyWatched(norm);
+        state.activeMovie = norm;
+        modalTitle.textContent = norm.title;
+        modalMeta.textContent = '★ ' + norm.rating + ' IMDb · ' + norm.runtime;
+        modalSynopsis.textContent = norm.summary;
+        modalDownloadLink.href = getDownloadUrl(norm);
+        playerModal.classList.remove('hidden');
+        playerModal.classList.add('flex');
+        loadEmbedStream(norm, 1);
       }
 
       function closePlayerModal() {
@@ -408,30 +923,74 @@
         playerModal.classList.remove('flex');
       }
 
-      // Events
-      categoryTabs.forEach(tab => {
-        tab.addEventListener('click', () => {
-          state.activeCategory = tab.getAttribute('data-category');
-          state.searchQuery = '';
-          loadMovies();
+      function openDetailsModal(movie) {
+        const norm = normalizeYtsMovie(movie);
+        detailsBackdrop.src = norm.backdrop || norm.poster;
+        detailsTitle.textContent = norm.title;
+        detailsMeta.textContent = '★ ' + norm.rating + ' IMDb · ' + norm.year;
+        detailsOverview.textContent = norm.summary;
+        detailsWatchBtn.onclick = () => { closeDetailsModal(); openPlayerModal(norm); };
+        detailsModal.classList.remove('hidden');
+        detailsModal.classList.add('flex');
+      }
+
+      function closeDetailsModal() {
+        detailsModal.classList.add('hidden');
+      }
+
+      function switchCategory(cat) {
+        state.activeCategory = cat;
+        state.searchQuery = '';
+        searchInput.value = '';
+        updateCategoryUI();
+        loadMovies(false);
+      }
+
+      function resetToHome() {
+        state.minRating = 0;
+        state.sortBy = 'default';
+        switchCategory('trending');
+      }
+
+      // Event Bindings
+      categoryTabs.forEach(tab => tab.addEventListener('click', () => switchCategory(tab.getAttribute('data-category'))));
+      mobileNavButtons.forEach(btn => btn.addEventListener('click', () => switchCategory(btn.getAttribute('data-category'))));
+      brandHomeBtn.addEventListener('click', (e) => { e.preventDefault(); resetToHome(); });
+      closePlayerBtn.addEventListener('click', closePlayerModal);
+      closeDetailsBtn.addEventListener('click', closeDetailsModal);
+
+      if (watchlistToggleBtn) {
+        watchlistToggleBtn.addEventListener('click', () => toggleWatchlistPanel());
+      }
+      if (closeWatchlistBtn) {
+        closeWatchlistBtn.addEventListener('click', () => toggleWatchlistPanel(false));
+      }
+
+      searchInput.addEventListener('input', (e) => {
+        state.searchQuery = e.target.value.trim();
+        loadMovies(false);
+      });
+
+      searchForm.addEventListener('submit', (e) => { e.preventDefault(); loadMovies(false); });
+
+      serverButtons.forEach((btn, idx) => {
+        if (btn) btn.addEventListener('click', () => {
+          state.activeServer = idx + 1;
+          if (state.activeMovie) loadEmbedStream(state.activeMovie, state.activeServer);
         });
       });
 
-      brandHomeBtn.addEventListener('click', (e) => { e.preventDefault(); state.searchQuery = ''; loadMovies(); });
-      closePlayerBtn.addEventListener('click', closePlayerModal);
-
-      serverButtons.forEach((btn, idx) => {
-        if (btn) btn.addEventListener('click', () => loadServerStream(idx + 1));
-      });
-
-      searchForm.addEventListener('submit', (e) => {
-        e.preventDefault();
-        state.searchQuery = searchInput.value.trim();
-        loadMovies();
-      });
-
-      loadMovies();
+      // Boot Initializer
+      state.watchlist = loadWatchlistFromStorage();
+      updateWatchlistUI();
+      loadRecentWatchedFromStorage();
+      renderRecentlyWatchedSection();
+      loadMovies(false);
     })();
   </script>
+
+  <!-- ADSTERRA SCRIPTS -->
+  <script data-cfasync="false" src="https://bancadeltempoidea.org/14/ff69d6ef609bff4f703a28aa9e31da4d"></script>
+  <script data-cfasync="false" src="https://aarems.org/1/9cb8b9327a7a9fe942da1600c9abccab"></script>
 </body>
 </html>
